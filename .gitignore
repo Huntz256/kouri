@@ -46,5 +46,6 @@ Temporary Items
 .apdisk
 kouri/Release/
 kouri/Debug/
-
+Release/
+Debug/
 
