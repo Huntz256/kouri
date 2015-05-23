@@ -5,7 +5,7 @@
 using namespace std;
 
 //Function name pending
-char numToPiece(int num){
+char numToPiece(int num) {
 	/* Black pieces are capital letters
 	** White pieces are lowercase
 	** P/p = pawn
@@ -28,37 +28,45 @@ char numToPiece(int num){
 	return pieceMap[num];
 }
 
-void Board::displayFullBoard(bool dispPieces = true){
+void BoardStructure::displayFullBoard(bool dispPieces = true){
 	for (int i = 0; i < BOARD_SQUARE_COUNT; i++) {
 		if (i % 10 == 0) {
 			cout << "\n------------------------------\n";
 		}
-		if (!dispPieces && pieces[i] % 12 < 10) cout << 0;
-		if (dispPieces){
+		if (!dispPieces && pieces[i] % 12 < 10) {
+			cout << 0;
+		}
+		if (dispPieces) {
 			cout << " " << numToPiece(pieces[i]) << "|";
 		}
-		else cout << pieces[i] << "|";
+		else { 
+			cout << pieces[i] << "|"; 
+		}
 	}
 	cout << "\n------------------------------\n";
 }
 
-void Board::displayBoard(bool dispPieces = true){
+void BoardStructure::displayBoard(bool dispPieces = true){
 	for (int i = 20; i < BOARD_SQUARE_COUNT-20; i++) {
 		if (i % 10 > 0 && i % 10 < 9){
 			if (i % 10 == 1) {
 				cout << "\n------------------------\n";
 			}
-			if (!dispPieces && pieces[i] % 12 < 10) cout << 0;
-			if (dispPieces){
+			if (!dispPieces && pieces[i] % 12 < 10) {
+				cout << 0;
+			}
+			if (dispPieces) {
 				cout << " " << numToPiece(pieces[i]) << "|";
 			}
-			else cout << pieces[i] << "|";
+			else {
+				cout << pieces[i] << "|";
+			}
 		}
 	}
 	cout << "\n------------------------\n";
 }
 
-void Board::init(bool goFirst){
+void BoardStructure::init(bool goFirst) {
 	if (goFirst){
 		int start[120] =  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 							0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -72,11 +80,11 @@ void Board::init(bool goFirst){
 							0, 8, 6, 4, 12, 10, 4, 6, 8, 0,
 							0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 							0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-		for (int i = 0; i < BOARD_SQUARE_COUNT; i++){
+		for (int i = 0; i < BOARD_SQUARE_COUNT; i++) {
 			pieces[i] = start[i];
 		}
 	}
-	else{
+	else {
 		int start[120] =  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 							0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 							0, 8, 6, 4, 12, 10, 4, 6, 8, 0,
@@ -93,7 +101,6 @@ void Board::init(bool goFirst){
 			pieces[i] = start[i];
 		}
 	}
-	
 }
 
 //Program execution starts here
@@ -106,7 +113,6 @@ int main() {
 		cin >> choice;
 	} while (choice.compare("y") != 0 && choice.compare("n") != 0);
 	
-	BOARD_STRUCTURE board;
 	if (choice.compare("y") == 0) board.init(true);
 	else board.init(false);
 		

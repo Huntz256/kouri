@@ -14,8 +14,8 @@
 //Define a new type called U64 as an unsigned long long integer
 typedef unsigned long long U64;
 
-//Define the board structure
-typedef struct Board{
+//Board structure class represents a board
+class BoardStructure {
 
 	//Represents every piece in a position using the 10x12 board representation.
 	//E.g. pieces[21] represents the square a1, pieces[98] represents the square h8.
@@ -25,10 +25,11 @@ typedef struct Board{
 
 	int sideToMove; //the side to move
 
+public:
 	void displayFullBoard(bool dispPieces); //Outputs full 10x10 board to console
 	void displayBoard(bool dispPieces); //Outputs 8x8 board to console
 	void init(bool goFirst); //Sets up pieces for standard chess match
 
-} BOARD_STRUCTURE;
+} board;
 
 #endif
