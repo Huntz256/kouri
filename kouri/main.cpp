@@ -4,26 +4,18 @@
 #include <string>
 using namespace std;
 
-//Function name pending
+/*
+ * Returns a character representing a piece, given a piece number.
+*/
 char numToPiece(int num) {
-	/* Black pieces are capital letters
-	** White pieces are lowercase
-	** P/p = pawn
-	** B/b = bishop
-	** K/k = knight
-	** R/r = rook
-	** Q/q = queen
-	** (smiley) = king
-	*/
-
-	unordered_map<int, char> pieceMap;
+unordered_map<int, char> pieceMap;
 	pieceMap[0] = ' ';
-	pieceMap[1] = 'P';  pieceMap[2] = 'p';
-	pieceMap[3] = 'B';  pieceMap[4] = 'b';
-	pieceMap[5] = 'K';  pieceMap[6] = 'k';
-	pieceMap[7] = 'R';  pieceMap[8] = 'r';
-	pieceMap[9] = 'Q';  pieceMap[10] = 'q';
-	pieceMap[11] = 002; pieceMap[12] = 001; //Black/white smiley faces
+	pieceMap[1] = 'P';  pieceMap[2] = 'p'; // P/p = black pawn / white pawn
+	pieceMap[3] = 'B';  pieceMap[4] = 'b'; // B/b = black bishop / white bishop
+	pieceMap[5] = 'N';  pieceMap[6] = 'n'; // N/n = black knight / white knight
+	pieceMap[7] = 'R';  pieceMap[8] = 'r'; // R/r = black rook / white rook
+	pieceMap[9] = 'Q';  pieceMap[10] = 'q'; // Q/q = black queen / white queen
+	pieceMap[11] = 002; pieceMap[12] = 001; // smiley faces = black king / white king
 
 	return pieceMap[num];
 }
