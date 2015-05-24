@@ -45,6 +45,9 @@ const int squareID120[64] = {
 enum { RANK_1, RANK_2, RANK_3, RANK_4, RANK_5, RANK_6, RANK_7, RANK_8 };
 enum { FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H };
 
+//Define WHITE as 0 and BLACK as 1
+enum { WHITE, BLACK };
+
 //An array of these represent a move history 
 class MoveHistory {
 	int move; //Represents a move
@@ -53,11 +56,6 @@ class MoveHistory {
 
 //Board structure class represents a board
 class BoardStructure {
-
-	//Represents every piece in a position using the 10x12 board representation.
-	//E.g. pieces[21] represents the square a1, pieces[98] represents the square h8.
-	int pieces[BOARD_SQUARE_COUNT]; 
-
 	U64 pawns[2]; //pawns[0] represents all white pawns on this board, pawns[1] is the same for black
 
 	int sideToMove; //The current side to move on this board
@@ -67,11 +65,18 @@ class BoardStructure {
 	MoveHistory history[1028]; //Represents previous moves that have been played on this board. Assumes that amount of half moves < 1028.
 
 public:
+	//Represents every piece in a position using the 10x12 board representation.
+	//E.g. pieces[21] represents the square a1, pieces[98] represents the square h8.
+	int pieces[BOARD_SQUARE_COUNT];
+
 	void displayFullBoard(bool dispPieces); //Outputs full 10x10 board to console
 	void displayBoard(); //Outputs 8x8 board to console
 	void init(bool goFirst); //Sets up pieces for a standard chess match
 	void resetBoardToEmpty(); //Resets the board
 	int setUpBoardUsingFEN(char* fen); //Sets up pieces given a FEN string. Returns 0 if successful.
-} board;
+};
+
+void testIsSquareAttacked(int side, BoardStructure board);
+char numToPieceChar(int num);
 
 #endif

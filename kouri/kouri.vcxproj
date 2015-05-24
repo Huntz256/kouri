@@ -65,7 +65,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="board.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="moves.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="defs.h" />
