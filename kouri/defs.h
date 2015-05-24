@@ -68,7 +68,7 @@ class BoardStructure {
 
 public:
 	void displayFullBoard(bool dispPieces); //Outputs full 10x10 board to console
-	void displayBoard(bool dispPieces); //Outputs 8x8 board to console
+	void displayBoard(); //Outputs 8x8 board to console
 	void init(bool goFirst); //Sets up pieces for a standard chess match
 	void resetBoardToEmpty(); //Resets the board
 	int setUpBoardUsingFEN(char* fen); //Sets up pieces given a FEN string. Returns 0 if successful.

@@ -23,6 +23,7 @@ char numToPieceChar(int num) {
 
 	return '~';
 }
+
 void BoardStructure::displayFullBoard(bool dispPieces = true){
 	for (int i = 0; i < BOARD_SQUARE_COUNT; i++) {
 		if (i % 10 == 0) {
@@ -44,7 +45,7 @@ void BoardStructure::displayFullBoard(bool dispPieces = true){
 	cout << "Side to move: " << (sideToMove == 0 ? "White" : "Black");
 	cout << "\nCastling permissions: " << castlePerms << '\n';
 }
-void BoardStructure::displayBoard(bool dispPieces = true) {
+void BoardStructure::displayBoard() {
 
 	//Display the board
 	for (int rank = RANK_8; rank >= RANK_1; rank--) {
@@ -150,15 +151,16 @@ int BoardStructure::setUpBoardUsingFEN(char* fen) {
 //Program execution starts here
 int main() {
 	cout << "Hello. My name is " << NAME << ".\n";
-	
+
 	string choice;
 	do {
 		cout << "Would you like to go first? (y/n) \n";
 		getline(cin, choice);
 	} while (choice.compare("y") != 0 && choice.compare("n") != 0);
-	
+
 	//Output the starting position
-	board.init(choice.compare("y") == 0); board.displayBoard(); getline(cin, choice);
+	board.init(choice.compare("y") == 0); board.displayBoard(); 
+	cout << "\nI will now output some random board positions... (enter anything to continue)\n";  getline(cin, choice);
 
 	//Output an empty board
 	board.resetBoardToEmpty(); board.displayBoard(); getline(cin, choice);
@@ -210,7 +212,19 @@ int main() {
 		return -1;
 	}
 
-	board.displayBoard(); getline(cin, choice);
+	string fen; 
+	board.displayBoard(); 
+	cout << "\nGive me a valid FEN string:\n";
+	getline(cin, fen);
+
+	while (42 == 42) {
+		if (board.setUpBoardUsingFEN(&fen[0u]) == -1) {
+			return -1;
+		}
+		board.displayBoard(); 
+		cout << "\nGive me a valid FEN string:\n";  
+		getline(cin, fen);
+	}
 
 	return 0;
 }
