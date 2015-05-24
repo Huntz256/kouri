@@ -11,9 +11,6 @@
 //Define the number of squares, BOARD_SQUARE_COUNT, on our board representation as 120
 #define BOARD_SQUARE_COUNT 120
 
-//Define the starting position
-#define START_FEN "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w"
-
 //Define a new type called U64 as an unsigned long long integer
 typedef unsigned long long U64;
 

@@ -6,7 +6,7 @@ using namespace std;
 
 
 //Returns a character representing a piece, given a piece number.
-char numToPiece(int num) {
+char numToPieceChar(int num) {
 	unordered_map<int, char> pieceMap;
 	
 	if (num >= 0) {
@@ -32,39 +32,38 @@ void BoardStructure::displayFullBoard(bool dispPieces = true){
 			cout << 0;
 		}
 		if (dispPieces) {
-			cout << " " << numToPiece(pieces[i]) << "|";
+			cout << " " << numToPieceChar(pieces[i]) << "|";
 		}
 		else { 
 			cout << pieces[i] << "|"; 
 		}
 	}
 	cout << "\n------------------------------\n";
+
+	//Also display some more infomation
+	cout << "Side to move: " << (sideToMove == 0 ? "White" : "Black");
+	cout << "\nCastling permissions: " << castlePerms << '\n';
 }
-void BoardStructure::displayBoard(bool dispPieces = true){
-	for (int i = 20; i < BOARD_SQUARE_COUNT-20; i++) {
-		if (i % 10 > 0 && i % 10 < 9) {
-			if (i % 10 == 1) {
-				cout << "\n------------------------\n";
-			}
-			if (!dispPieces && pieces[i] % 12 < 10) {
-				cout << 0;
-			}
-			if (dispPieces) {
-				cout << " " << numToPiece(pieces[i]) << "|";
-			}
-			else {
-				cout << pieces[i] << "|";
-			}
+void BoardStructure::displayBoard(bool dispPieces = true) {
+
+	//Display the board
+	for (int rank = RANK_8; rank >= RANK_1; rank--) {
+		for (int file = FILE_A; file <= FILE_H; file++) {
+			cout << " " << numToPieceChar(pieces[squareID120[rank * 8 + file]]) << "|";
 		}
+		cout << "\n------------------------\n";
 	}
-	cout << "\n------------------------\n";
+
+	//Also display some more infomation
+	cout << "Side to move: " << (sideToMove == 0 ? "White" : "Black");
+	cout << "\nCastling permissions: " << castlePerms << '\n';
 }
 void BoardStructure::init(bool goFirst) {
 	if (goFirst) {
-		setUpBoardUsingFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w");
+		setUpBoardUsingFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w  KQkq - 0 1");
 	}
 	else {
-		setUpBoardUsingFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b");
+		setUpBoardUsingFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b  KQkq - 0 1");
 	}
 }
 void BoardStructure::resetBoardToEmpty() {
@@ -92,9 +91,10 @@ int BoardStructure::setUpBoardUsingFEN(char* fen) {
 
 	int currentRank = RANK_8, currentFile = FILE_A, emptyNum = 0, piece = 0, currentSquare = 0;
 
-	//Go through each character in the fen string
+	//Set up board pieces using the infomation in fen
 	while ((currentRank >= RANK_1) && *fen) {
 		emptyNum = 1;
+
 		switch (*fen) {
 			case 'p': piece = 1; break; case 'P': piece = 2; break;
 			case 'b': piece = 3; break; case 'B': piece = 4; break;
@@ -122,7 +122,26 @@ int BoardStructure::setUpBoardUsingFEN(char* fen) {
 		fen++;
 	}
 
+	//Set the side to move using infomation in FEN
 	sideToMove = (*fen == 'w') ? 0 : 1;
+
+	//Set castling permissions using infomation in FEN
+	fen += 2;
+	for (int i = 0; i < 4; i++) {
+		if (*fen == ' ') {
+			break;
+		}
+
+		//for a FEN such as ...blah blah w KQkq blah blah...
+		switch (*fen) {
+			case 'K': castlePerms |= 1;  break; //... if there is a K, do castlePerms OR 0001; e.g. 0000 | 0001 = 0001
+			case 'Q': castlePerms |= 2;  break; //... if there is a Q, do castlePerms OR 0010; e.g. 0001 | 0010 = 0011
+			case 'k': castlePerms |= 4;  break; //... if there is a k, do castlePerms OR 0100; e.g. 0011 | 0100 = 0111
+			case 'q': castlePerms |= 8; break; //... if there is a q, do castlePerms OR 1000; e.g. 0111 | 1000 = 1111
+			default: break;
+		}
+		fen++;
+	}
 
 	return 0;
 }
