@@ -14,22 +14,17 @@
 //Define a new type called U64 as an unsigned long long integer
 typedef unsigned long long U64;
 
-//Square ids for each square on a board
-const int squareID64[BOARD_SQUARE_COUNT] = {
-	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-	-1,  0,  1,  2,  3,  4,  5,  6,  7, -1,
-	-1,  8,  9, 10, 11, 12, 13, 14, 15, -1,
-	-1, 16, 17, 18, 19, 20, 21, 22, 23, -1,
-	-1, 24, 25, 26, 27, 28, 29, 30, 31, -1,
-	-1, 32, 33, 34, 35, 36, 37, 38, 39, -1,
-	-1, 40, 41, 42, 43, 44, 45, 46, 47, -1,
-	-1, 48, 49, 50, 51, 52, 53, 54, 55, -1,
-	-1, 56, 57, 58, 59, 60, 61, 62, 63, -1,
-	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1
-};
+//Define RANK_1 as 0, RANK_2 as 1, etc. Define FILE_1 as 0, etc.
+enum { RANK_1, RANK_2, RANK_3, RANK_4, RANK_5, RANK_6, RANK_7, RANK_8 };
+enum { FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H };
 
+//Define WHITE as 0 and BLACK as 1
+enum { WHITE, BLACK };
+
+//Define MOVE(from,to,capture,promotion,fl
+#define MOVE(from,to,capture,promotion,fl) ( (from) | ((to) << 7) | ((capture) << 14) | ((promotion) << 20) | fl)
+
+//Square ids for each square on a board
 const int squareID120[64] = {
 	21, 22, 23, 24, 25, 26, 27, 28,
 	31, 32, 33, 34, 35, 36, 37, 38,
@@ -41,12 +36,35 @@ const int squareID120[64] = {
 	91, 92, 93, 94, 95, 96, 97, 98
 };
 
-//Define RANK_1 as 0, RANK_2 as 1, etc. Define FILE_1 as 0, etc.
-enum { RANK_1, RANK_2, RANK_3, RANK_4, RANK_5, RANK_6, RANK_7, RANK_8 };
-enum { FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H };
+const int files[BOARD_SQUARE_COUNT] = {
+	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+	-1, FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H, -1,
+	-1, FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H, -1,
+	-1, FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H, -1,
+	-1, FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H, -1,
+	-1, FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H, -1,
+	-1, FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H, -1,
+	-1, FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H, -1,
+	-1, FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H, -1,
+	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1
+};
 
-//Define WHITE as 0 and BLACK as 1
-enum { WHITE, BLACK };
+const int ranks[BOARD_SQUARE_COUNT] = {
+	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+	-1, RANK_1, RANK_1, RANK_1, RANK_1, RANK_1, RANK_1, RANK_1, RANK_1, -1,
+	-1, RANK_2, RANK_2, RANK_2, RANK_2, RANK_2, RANK_2, RANK_2, RANK_2, -1,
+	-1, RANK_3, RANK_3, RANK_3, RANK_3, RANK_3, RANK_3, RANK_3, RANK_3, -1,
+	-1, RANK_4, RANK_4, RANK_4, RANK_4, RANK_4, RANK_4, RANK_4, RANK_4, -1,
+	-1, RANK_5, RANK_5, RANK_5, RANK_5, RANK_5, RANK_5, RANK_5, RANK_5, -1,
+	-1, RANK_6, RANK_6, RANK_6, RANK_6, RANK_6, RANK_6, RANK_6, RANK_6, -1,
+	-1, RANK_7, RANK_7, RANK_7, RANK_7, RANK_7, RANK_7, RANK_7, RANK_7, -1,
+	-1, RANK_8, RANK_8, RANK_8, RANK_8, RANK_8, RANK_8, RANK_8, RANK_8, -1,
+	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1
+};
 
 //An array of these represent a move history 
 class MoveHistory {
@@ -56,11 +74,6 @@ class MoveHistory {
 
 //Board structure class represents a board
 class BoardStructure {
-	U64 pawns[2]; //pawns[0] represents all white pawns on this board, pawns[1] is the same for black
-
-	int sideToMove; //The current side to move on this board
-
-	int castlePerms; //Describes what types of castling is allowed on this board
 
 	MoveHistory history[1028]; //Represents previous moves that have been played on this board. Assumes that amount of half moves < 1028.
 
@@ -69,6 +82,12 @@ public:
 	//E.g. pieces[21] represents the square a1, pieces[98] represents the square h8.
 	int pieces[BOARD_SQUARE_COUNT];
 
+	int sideToMove; //The current side to move on this board
+
+	int castlePerms; //Describes what types of castling is allowed on this board
+
+	U64 pawns[2]; //pawns[0] represents all white pawns on this board, pawns[1] is the same for black
+
 	void displayFullBoard(bool dispPieces); //Outputs full 10x10 board to console
 	void displayBoard(); //Outputs 8x8 board to console
 	void init(bool goFirst); //Sets up pieces for a standard chess match
@@ -76,7 +95,30 @@ public:
 	int setUpBoardUsingFEN(char* fen); //Sets up pieces given a FEN string. Returns 0 if successful.
 };
 
+//Move class represents a move
+class Move {
+public:
+	int move; //Stores all infomation regarding a single move
+	int getFromSquare();
+	int getToSquare();
+	int getCapturedPiece();
+	int getPromoted();
+};
+
 void testIsSquareAttacked(int side, BoardStructure board);
 char numToPieceChar(int num);
+void printSquare(int square);
+
+//Move list class reprsents a list of moves
+class MoveList {
+public:
+	Move moves[512];
+	int numberOfMoves;
+	void generateMoveList(BoardStructure board);
+	void addPawnCapturingMove(BoardStructure board, int fromSquare, int toSquare, int capture, int side);
+	void addPawnMove(BoardStructure board, int fromSquare, int toSquare, int side);
+	void printMoveList();
+};
+
 
 #endif
