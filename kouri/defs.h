@@ -11,6 +11,9 @@
 //Define the number of squares, BOARD_SQUARE_COUNT, on our board representation as 120
 #define BOARD_SQUARE_COUNT 120
 
+//Define the starting position
+#define START_FEN "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w"
+
 //Define a new type called U64 as an unsigned long long integer
 typedef unsigned long long U64;
 
@@ -41,6 +44,10 @@ const int squareID120[64] = {
 	91, 92, 93, 94, 95, 96, 97, 98
 };
 
+//Define RANK_1 as 0, RANK_2 as 1, etc. Define FILE_1 as 0, etc.
+enum { RANK_1, RANK_2, RANK_3, RANK_4, RANK_5, RANK_6, RANK_7, RANK_8 };
+enum { FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H };
+
 //An array of these represent a move history 
 class MoveHistory {
 	int move; //Represents a move
@@ -67,6 +74,7 @@ public:
 	void displayBoard(bool dispPieces); //Outputs 8x8 board to console
 	void init(bool goFirst); //Sets up pieces for a standard chess match
 	void resetBoardToEmpty(); //Resets the board
+	int setUpBoardUsingFEN(char* fen); //Sets up pieces given a FEN string. Returns 0 if successful.
 } board;
 
 #endif
