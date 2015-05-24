@@ -138,25 +138,60 @@ int main() {
 		getline(cin, choice);
 	} while (choice.compare("y") != 0 && choice.compare("n") != 0);
 	
-	board.init(choice.compare("y") == 0);
+	//Output the starting position
+	board.init(choice.compare("y") == 0); board.displayBoard(); getline(cin, choice);
 
-	board.displayBoard();
+	//Output an empty board
+	board.resetBoardToEmpty(); board.displayBoard(); getline(cin, choice);
 
-	getline(cin, choice);
-
-	board.resetBoardToEmpty();
-
-	board.displayBoard();
-
-	getline(cin, choice);
-
-	if (board.setUpBoardUsingFEN("r1bqk2r/ppp2ppp/2n2n2/3p4/3PP3/P1P2N2/5PPP/R1BQKB1R w") == -1) {
+	//Output the first parts of a game from http://en.lichess.org/NgHuzc5J ...
+	if (board.setUpBoardUsingFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") == -1) {
 		return -1;
 	}
 
-	board.displayBoard();
+	board.displayBoard(); getline(cin, choice);
 
-	getline(cin, choice);
+	//e4
+	if (board.setUpBoardUsingFEN("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1") == -1) {
+		return -1;
+	}
+
+	board.displayBoard(); getline(cin, choice);
+
+	//d5
+	if (board.setUpBoardUsingFEN("rnbqkbnr/ppp1pppp/8/3p4/4P3/8/PPPP1PPP/RNBQKBNR w KQkq d6 0 2") == -1) {
+		return -1;
+	}
+
+	board.displayBoard(); getline(cin, choice);
+
+	//d4?!
+	if (board.setUpBoardUsingFEN("rnbqkbnr/ppp1pppp/8/3p4/3PP3/8/PPP2PPP/RNBQKBNR b KQkq d3 0 2") == -1) {
+		return -1;
+	}
+
+	board.displayBoard(); getline(cin, choice);
+
+	//e6?!
+	if (board.setUpBoardUsingFEN("rnbqkbnr/ppp2ppp/4p3/3p4/3PP3/8/PPP2PPP/RNBQKBNR w KQkq - 0 3") == -1) {
+		return -1;
+	}
+
+	board.displayBoard(); getline(cin, choice);
+
+	//c4?!
+	if (board.setUpBoardUsingFEN("rnbqkbnr/ppp2ppp/4p3/3p4/2PPP3/8/PP3PPP/RNBQKBNR b KQkq c3 0 3") == -1) {
+		return -1;
+	}
+
+	board.displayBoard(); getline(cin, choice);
+
+	//c6?!
+	if (board.setUpBoardUsingFEN("rnbqkbnr/pp3ppp/2p1p3/3p4/2PPP3/8/PP3PPP/RNBQKBNR w KQkq - 0 4") == -1) {
+		return -1;
+	}
+
+	board.displayBoard(); getline(cin, choice);
 
 	return 0;
 }
