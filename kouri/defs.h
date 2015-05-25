@@ -111,7 +111,6 @@ class BoardStructure {
 void testIsSquareAttacked(int side, BoardStructure board);
 char numToPieceChar(int num);
 void printSquare(int square);
-int convertToMoveInt(int from, int to); //Given starting and ending board indices, convert them to a single move integer
 
 //Move list class reprsents a list of moves
 class MoveList {
