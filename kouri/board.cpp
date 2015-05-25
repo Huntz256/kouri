@@ -145,16 +145,14 @@ int BoardStructure::setUpBoardUsingFEN(char* fen) {
 	return 0;
 }
 
-void BoardStructure::makeMove(Move m){
+void BoardStructure::makeMove(Move m) {
 	//If there is a promoted piece, set the destination square to that. Else, set it to the piece that's moving
 	pieces[m.getToSquare()] = (m.getPromoted() != 0) ? m.getPromoted() : pieces[m.getFromSquare()];
 	pieces[m.getFromSquare()] = 0; //Clear the square the piece moved from
 
-	//Change pawns array as well?
-
 	//Store move in next blank element of history[]
-	for (int i = 0; i < 1028; i++){
-		if (history[i].move == 0){
+	for (int i = 0; i < 1028; i++) {
+		if (history[i].move == 0) {
 			history[i].move = m.move;
 			break;
 		}
