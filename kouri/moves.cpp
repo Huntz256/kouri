@@ -125,15 +125,12 @@ void testIsSquareAttacked(int side, BoardStructure board) {
 int Move::getFromSquare() {
 	return move & 0x7F;
 }
-
 int Move::getToSquare() {
 	return (move >> 7) & 0x7F;
 }
-
 int Move::getCapturedPiece() {
 	return (move >> 14) & 0xF;
 }
-
 int Move::getPromoted() {
 	return (move >> 20) & 0xF;
 }

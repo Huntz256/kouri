@@ -85,11 +85,9 @@ class Move {
 
 //Board structure class represents a board
 class BoardStructure {
-
-	public: //Made public for testing purposes
+	public:
 		MoveHistory history[1028]; //Represents previous moves that have been played on this board. Assumes that amount of half moves < 1028.
 
-	public:
 		//Represents every piece in a position using the 10x12 board representation.
 		//E.g. pieces[21] represents the square a1, pieces[98] represents the square h8.
 		int pieces[BOARD_SQUARE_COUNT];

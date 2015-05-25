@@ -46,12 +46,15 @@ void BoardStructure::displayFullBoard(bool dispPieces){
 void BoardStructure::displayBoard() {
 
 	//Display the board
+	cout << "\n";
 	for (int rank = RANK_8; rank >= RANK_1; rank--) {
+		cout << rank + 1 << " ";
 		for (int file = FILE_A; file <= FILE_H; file++) {
 			cout << " " << numToPieceChar(pieces[squareID120[rank * 8 + file]]) << "|";
 		}
-		cout << "\n------------------------\n";
+		cout << "\n  ------------------------\n";
 	}
+	cout << "   a  b  c  d  e  f  g  h\n\n";
 
 	//Also display some more infomation
 	cout << "Side to move: " << (sideToMove == 0 ? "White" : "Black");
