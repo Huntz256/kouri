@@ -107,7 +107,7 @@ bool isSquareAttacked(int square, int attackingSide, BoardStructure board) {
 
 //Used for debugging the function isSquareAttacked()
 void testIsSquareAttacked(int side, BoardStructure board) {
-	cout << "All sqaures attacked by side " << side << '\n';
+	cout << "All squares attacked by side " << side << '\n';
 	for (int rank = RANK_8; rank >= RANK_1; rank--) {
 		for (int file = FILE_A; file <= FILE_H; file++) {
 			if (isSquareAttacked(squareID120[rank * 8 + file], side, board)) {

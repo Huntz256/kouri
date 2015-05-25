@@ -5,10 +5,8 @@ using namespace std;
 
 BoardStructure board; MoveList movelist;
 
-//Program execution starts here
-int main() {
-	cout << "Hello. My name is " << NAME << ".\n";
-
+//Moved everything that was in main() to hunterTestFunction() to clear up space
+int hunterTestFunction(){
 	string choice;
 	do {
 		cout << "Would you like to go first? (y/n) \n";
@@ -16,7 +14,8 @@ int main() {
 	} while (choice.compare("y") != 0 && choice.compare("n") != 0);
 
 	//Output the starting position
-	board.init(choice.compare("y") == 0); board.displayBoard(); 
+	board.init(choice.compare("y") == 0); board.displayBoard();
+	
 	cout << "\nI will now output some random board positions... (enter anything to continue)\n";  getline(cin, choice);
 
 	//Output an empty board
@@ -27,7 +26,7 @@ int main() {
 		return -1;
 	}
 
-	board.displayBoard(); testIsSquareAttacked(WHITE, board); testIsSquareAttacked(BLACK, board); 
+	board.displayBoard(); testIsSquareAttacked(WHITE, board); testIsSquareAttacked(BLACK, board);
 	movelist.generateMoveList(board); movelist.printMoveList();
 	getline(cin, choice);
 
@@ -95,8 +94,8 @@ int main() {
 	cout << "from:" << move.getFromSquare() << " to:" << move.getToSquare() << " cap:" << move.getCapturedPiece() << " prom:" << move.getPromoted();
 
 
-	string fen; 
-	board.displayBoard(); 
+	string fen;
+	board.displayBoard();
 	cout << "\nGive me a valid FEN string:\n";
 	getline(cin, fen);
 
@@ -106,9 +105,38 @@ int main() {
 		}
 		board.displayBoard(); testIsSquareAttacked(WHITE, board); testIsSquareAttacked(BLACK, board);
 		movelist.generateMoveList(board); movelist.printMoveList();
-		cout << "\nGive me a valid FEN string:\n";  
+		cout << "\nGive me a valid FEN string:\n";
 		getline(cin, fen);
 	}
+}
+
+void minhTestFunction(){
+	//Output board info + first 5 elements of history
+	board.init(true); board.displayBoard();
+	for (int i = 0; i < 5; i++){
+		cout << board.history[i].move << " ";
+	}
+	cout << "\n";
+
+	//Test move 
+	Move m;	m.move = 8276;
+	cout << "from: " << m.getFromSquare() << " to: " << m.getToSquare() << "\n"; //Output fromSquare and toSquare board indices
+	board.makeMove(m);
+	
+	//Output board info + first 5 elements of history again
+	board.displayBoard();
+	for (int i = 0; i < 5; i++){
+		cout << board.history[i].move << " ";
+	}
+	cout << "\n";
+}
+
+//Program execution starts here
+int main() {
+	cout << "Hello. My name is " << NAME << ".\n";
+
+	// return hunterTestFunction();
+	minhTestFunction();
 
 	return 0;
 }

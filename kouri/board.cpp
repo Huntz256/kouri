@@ -22,12 +22,12 @@ char numToPieceChar(int num) {
 	return '~';
 }
 
-void BoardStructure::displayFullBoard(bool dispPieces = true){
+void BoardStructure::displayFullBoard(bool dispPieces){
 	for (int i = 0; i < BOARD_SQUARE_COUNT; i++) {
 		if (i % 10 == 0) {
 			cout << "\n------------------------------\n";
 		}
-		if (!dispPieces && pieces[i] % 12 < 10) {
+		if (!dispPieces && pieces[i] < 10 && pieces[i] >= 0) {
 			cout << 0;
 		}
 		if (dispPieces) {
@@ -95,20 +95,20 @@ int BoardStructure::setUpBoardUsingFEN(char* fen) {
 		emptyNum = 1;
 
 		switch (*fen) {
-		case 'p': piece = 1; break; case 'P': piece = 2; break;
-		case 'b': piece = 3; break; case 'B': piece = 4; break;
-		case 'n': piece = 5; break; case 'N': piece = 6; break;
-		case 'r': piece = 7; break; case 'R': piece = 8; break;
-		case 'q': piece = 9; break; case 'Q': piece = 10; break;
-		case 'k': piece = 11; break; case 'K': piece = 12; break;
+			case 'p': piece = 1; break; case 'P': piece = 2; break;
+			case 'b': piece = 3; break; case 'B': piece = 4; break;
+			case 'n': piece = 5; break; case 'N': piece = 6; break;
+			case 'r': piece = 7; break; case 'R': piece = 8; break;
+			case 'q': piece = 9; break; case 'Q': piece = 10; break;
+			case 'k': piece = 11; break; case 'K': piece = 12; break;
 
-		case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8':
-			piece = 0; emptyNum = *fen - '0'; break;
+			case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8':
+				piece = 0; emptyNum = *fen - '0'; break;
 
-		case '/': case ' ':
-			currentRank--; currentFile = FILE_A; fen++; continue;
-		default:
-			return -1;
+			case '/': case ' ':
+				currentRank--; currentFile = FILE_A; fen++; continue;
+			default:
+				return -1;
 		}
 
 		for (int i = 0; i < emptyNum; i++) {
@@ -133,14 +133,30 @@ int BoardStructure::setUpBoardUsingFEN(char* fen) {
 
 		//for a FEN such as ...blah blah w KQkq blah blah...
 		switch (*fen) {
-		case 'K': castlePerms |= 1;  break; //... if there is a K, do castlePerms OR 0001; e.g. 0000 | 0001 = 0001
-		case 'Q': castlePerms |= 2;  break; //... if there is a Q, do castlePerms OR 0010; e.g. 0001 | 0010 = 0011
-		case 'k': castlePerms |= 4;  break; //... if there is a k, do castlePerms OR 0100; e.g. 0011 | 0100 = 0111
-		case 'q': castlePerms |= 8; break; //... if there is a q, do castlePerms OR 1000; e.g. 0111 | 1000 = 1111
-		default: break;
+			case 'K': castlePerms |= 1;  break; //... if there is a K, do castlePerms OR 0001; e.g. 0000 | 0001 = 0001
+			case 'Q': castlePerms |= 2;  break; //... if there is a Q, do castlePerms OR 0010; e.g. 0001 | 0010 = 0011
+			case 'k': castlePerms |= 4;  break; //... if there is a k, do castlePerms OR 0100; e.g. 0011 | 0100 = 0111
+			case 'q': castlePerms |= 8; break; //... if there is a q, do castlePerms OR 1000; e.g. 0111 | 1000 = 1111
+			default: break;
 		}
 		fen++;
 	}
 
 	return 0;
+}
+
+void BoardStructure::makeMove(Move m){
+	//If there is a promoted piece, set the destination square to that. Else, set it to the piece that's moving
+	pieces[m.getToSquare()] = (m.getPromoted() != 0) ? m.getPromoted() : pieces[m.getFromSquare()];
+	pieces[m.getFromSquare()] = 0; //Clear the square the piece moved from
+
+	//Change pawns array as well?
+
+	//Store move in next blank element of history[]
+	for (int i = 0; i < 1028; i++){
+		if (history[i].move == 0){
+			history[i].move = m.move;
+			break;
+		}
+	}
 }
