@@ -108,31 +108,38 @@ bool isSquareAttacked(int square, int attackingSide, BoardStructure board) {
 //Used for debugging the function isSquareAttacked()
 void testIsSquareAttacked(int side, BoardStructure board) {
 	cout << "All squares attacked by side " << side << '\n';
+
+	//Display the board
+	cout << "\n";
 	for (int rank = RANK_8; rank >= RANK_1; rank--) {
+		cout << rank + 1 << " ";
 		for (int file = FILE_A; file <= FILE_H; file++) {
 			if (isSquareAttacked(squareID120[rank * 8 + file], side, board)) {
-				cout << "X ";
+				cout << " X|";
 			}
 			else {
-				cout << "- ";
+				cout << "  |";
 			}
 		}
-		cout << '\n';
+		cout << "\n  ------------------------\n";
 	}
-	cout << '\n';
+	cout << "   a  b  c  d  e  f  g  h\n\n";
 }
 
 int Move::getFromSquare() {
-	return move & 0x7F;
+	return move & 0x7F; 
 }
 int Move::getToSquare() {
-	return (move >> 7) & 0x7F;
+	return (move >> 7) & 0x7F; 
 }
 int Move::getCapturedPiece() {
 	return (move >> 14) & 0xF;
 }
 int Move::getPromoted() {
-	return (move >> 20) & 0xF;
+	return (move >> 18) & 0x7;
+}
+int Move::getCastling() {
+	return (move >> 21) & 0x7;
 }
 
 void MoveList::addPawnCapturingMove(BoardStructure board, int fromSquare, int toSquare, int capture, int side) {
@@ -160,6 +167,7 @@ void MoveList::addPawnCapturingMove(BoardStructure board, int fromSquare, int to
 	}
 }
 void MoveList::addPawnMove(BoardStructure board, int fromSquare, int toSquare, int side) {
+	//White--
 	if (side == WHITE) {
 		if (ranks[fromSquare] == RANK_7) {
 			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, 0, 10, 0); numberOfMoves++;
@@ -167,10 +175,13 @@ void MoveList::addPawnMove(BoardStructure board, int fromSquare, int toSquare, i
 			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, 0, 6, 0); numberOfMoves++;
 			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, 0, 4, 0); numberOfMoves++;
 		}
-		else {
+		{
 			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, 0, 0, 0); numberOfMoves++;
 		}
+
 	}
+
+	//Black----
 	else {
 		if (ranks[fromSquare] == RANK_2) {
 			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, 0, 9, 0); numberOfMoves++;
@@ -199,8 +210,21 @@ void MoveList::generateMoveList(BoardStructure board) {
 
 					//... and the square in front of it is empty, add a move
 					if (board.pieces[i + 10] == 0) {
-						addPawnMove(board, i, i + 10, WHITE);
+
+						//.. and the pawn is on starting rank
+						if (ranks[i] == RANK_2 && board.sideToMove == WHITE) {
+							addPawnMove(board, i, i + 20, WHITE);
+						}
+
+						//.. and if the pawn is not on starting rank
+						else {
+							addPawnMove(board, i, i + 10, WHITE);
+						}
+
+
 					}
+
+					
 
 					
 				}

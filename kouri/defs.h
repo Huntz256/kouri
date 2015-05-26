@@ -21,8 +21,8 @@ enum { FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H };
 //Define WHITE as 0 and BLACK as 1
 enum { WHITE, BLACK };
 
-//Define MOVE(from,to,capture,promotion,fl
-#define MOVE(from,to,capture,promotion,fl) ( (from) | ((to) << 7) | ((capture) << 14) | ((promotion) << 20) | fl)
+//Define MOVE(from,to,capture,promotion
+#define MOVE(from,to,capture,promotion,castling) ( (from) | ((to) << 7) | ((capture) << 14) | ((promotion) << 18) | ((castling) << 21))
 
 //Square ids for each square on a board
 const int squareID120[64] = {
@@ -81,6 +81,7 @@ class Move {
 		int getToSquare();
 		int getCapturedPiece();
 		int getPromoted();
+		int getCastling();
 };
 
 //Board structure class represents a board
