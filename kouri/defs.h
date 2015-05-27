@@ -97,6 +97,8 @@ class BoardStructure {
 
 		int castlePerms; //Describes what types of castling is allowed on this board
 
+		int enPassSquare; //The square that en pass can be done on
+
 		U64 pawns[2]; //pawns[0] represents all white pawns on this board, pawns[1] is the same for black
 
 		void displayFullBoard(bool dispPieces = true); //Outputs full 10x12 board to console
@@ -105,6 +107,8 @@ class BoardStructure {
 		void resetBoardToEmpty(); //Resets the board
 		int setUpBoardUsingFEN(char* fen); //Sets up pieces given a FEN string. Returns 0 if successful.
 		void makeMove(Move move); //Assuming the move passed in is valid, modifies the board and stores the move in history[]
+		int getPieceColor(int pieceNumber); //Retrieves the piece color of a piece
+		
 };
 
 void testIsSquareAttacked(int side, BoardStructure board);

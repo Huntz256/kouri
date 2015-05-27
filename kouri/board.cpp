@@ -86,7 +86,11 @@ void BoardStructure::resetBoardToEmpty() {
 
 	//No side can castle on an empty board
 	castlePerms = 0;
+
+	//Reset en pass square
+	enPassSquare = 0;
 }
+
 int BoardStructure::setUpBoardUsingFEN(char* fen) {
 
 	resetBoardToEmpty();
@@ -159,5 +163,16 @@ void BoardStructure::makeMove(Move m) {
 			history[i].move = m.move;
 			break;
 		}
+	}
+}
+
+int BoardStructure::getPieceColor(int pieceNum) {
+	switch (pieceNum) {
+	case 1: case 3: case 5: case 7: case 9: case 11:
+		return BLACK; break;
+	case 2: case 4: case 6: case 8: case 10: case 12:
+		return WHITE; break;
+	default:
+		return -42; break;
 	}
 }

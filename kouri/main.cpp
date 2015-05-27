@@ -155,15 +155,15 @@ void minhTestFunction() {
 int main() {
 	cout << "Hello. My name is " << NAME << ".\n";
 
-	//return hunterTestFunction();
+	return hunterTestFunction();
 	//minhTestFunction();
 
 	//Make move 95 to 93, no capture, no promotion, castling
-	Move m;  m.move = MOVE(95, 93, 0, 0, 3);
+	//Move m;  m.move = MOVE(95, 93, 0, 0, 3);
 
 	//Output fromSquare and toSquare board indices
-	cout << "from: " << m.getFromSquare() << " to: " << m.getToSquare() << " capture: " << m.getCapturedPiece() <<
-		" promotion: " << m.getPromoted() << " castling: " << m.getCastling();
+	//cout << "from: " << m.getFromSquare() << " to: " << m.getToSquare() << " capture: " << m.getCapturedPiece() <<
+	//	" promotion: " << m.getPromoted() << " castling: " << m.getCastling();
 
 
 	int x; cin >> x;

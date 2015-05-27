@@ -212,19 +212,33 @@ void MoveList::generateMoveList(BoardStructure board) {
 					if (board.pieces[i + 10] == 0) {
 
 						//.. and the pawn is on starting rank
-						if (ranks[i] == RANK_2 && board.sideToMove == WHITE) {
+						if (ranks[i] == RANK_2 && board.pieces[i + 20] == 0) {
 							addPawnMove(board, i, i + 20, WHITE);
 						}
 
-						//.. and if the pawn is not on starting rank
-						else {
-							addPawnMove(board, i, i + 10, WHITE);
-						}
-
+						//.. regardless ...
+						
+						addPawnMove(board, i, i + 10, WHITE);
+						
 
 					}
 
-					
+					//Pawn capturing
+					if (board.getPieceColor(board.pieces[i + 9]) == BLACK) {
+						addPawnCapturingMove(board, i, i + 9, board.pieces[i + 9], WHITE);
+					}
+
+					if (board.getPieceColor(board.pieces[i + 11]) == BLACK) {
+						addPawnCapturingMove(board, i, i + 11, board.pieces[i + 11], WHITE);
+					}
+
+					//En passant 
+					if (board.pieces[i + 9] == board.enPassSquare) {
+						//addPawnCapturingMove(board, i, i + 9, 0, WHITE);
+					}
+					if (board.pieces[i + 11] == board.enPassSquare) {
+						//addPawnCapturingMove(board, i, i + 11, 0, WHITE);
+					}
 
 					
 				}
@@ -243,8 +257,33 @@ void MoveList::generateMoveList(BoardStructure board) {
 
 					//... and the square in front of it is empty, add a move
 					if (board.pieces[i - 10] == 0) {
+
+						//.. and the pawn is on starting rank
+						if (ranks[i] == RANK_7 && board.pieces[i - 20] == 0) {
+							addPawnMove(board, i, i - 20, BLACK);
+						}
+
+						//.. regardless...
 						addPawnMove(board, i, i - 10, BLACK);
 					}
+
+					//Pawn capturing
+					if (board.getPieceColor(board.pieces[i - 9]) == WHITE) {
+						addPawnCapturingMove(board, i, i - 9, board.pieces[i - 9], BLACK);
+					}
+
+					if (board.getPieceColor(board.pieces[i - 11]) == WHITE) {
+						addPawnCapturingMove(board, i, i - 11, board.pieces[i - 11], BLACK);
+					}
+					
+					//En passant 
+					if (board.pieces[i - 9] == board.enPassSquare) {
+					//	addPawnCapturingMove(board, i, i - 9, 0, BLACK);
+					}
+					if (board.pieces[i - 11] == board.enPassSquare) {
+						//addPawnCapturingMove(board, i, i - 11, 0, BLACK);
+					}
+
 
 				}
 			}
