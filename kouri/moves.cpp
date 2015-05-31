@@ -312,8 +312,14 @@ void MoveList::generateSliderMoves(BoardStructure board) {
 	pieceIndex++;
 
 	while (piece != 0) {
-		piece = SLIDING_PIECES[pieceIndex];
-		pieceIndex++;
+		//Go through every square on the board
+		for (int i = 0; i < BOARD_SQUARE_COUNT; i++) {
+
+			//If there is a piece on square i that is a slider piece...
+			if (board.pieces[i] == piece) {
+				//to do
+			}
+		}
 	}
 
 }
