@@ -1,11 +1,17 @@
 #include "defs.h"
 #include <iostream>
 #include <string>
+#include <random>
+#include <ctime>
 using namespace std;
 
 BoardStructure board; MoveList movelist;
 
 
+int getRandomInteger(int min, int max) {
+	srand(time(NULL)); 
+	return rand() % (max - min + 1) + min;
+}
 int testFunction1(){
 	string choice;
 	do {
@@ -150,13 +156,15 @@ void testFunction2() {
 
 	cout << "\n";
 }
+
+//Has kouri play against itself
 void testFunction3() {
 	string x; board.init(true);
 	while (42 == 42) {
 		board.displayBoard();
 		movelist.generateMoveList(board);
 		movelist.printMoveList(board);
-		board.makeMove(movelist.moves[0]);
+		board.makeMove(movelist.moves[getRandomInteger(0, movelist.numberOfMoves)]);
 		board.sideToMove = board.sideToMove ^ 1;
 		getline(cin, x);
 	}
