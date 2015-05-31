@@ -26,8 +26,8 @@ int hunterTestFunction(){
 		return -1;
 	}
 
-	board.displayBoard(); testIsSquareAttacked(WHITE, board); testIsSquareAttacked(BLACK, board);
-	movelist.generateMoveList(board); movelist.printMoveList();
+	board.displayBoard(); 
+	movelist.generateMoveList(board); movelist.printMoveList(board);
 	getline(cin, choice);
 
 	//Output the first parts of a game from http://en.lichess.org/NgHuzc5J ...
@@ -36,7 +36,7 @@ int hunterTestFunction(){
 	}
 
 	board.displayBoard(); 
-	movelist.generateMoveList(board); movelist.printMoveList();
+	movelist.generateMoveList(board); movelist.printMoveList(board);
 	getline(cin, choice);
 
 	//e4
@@ -45,7 +45,7 @@ int hunterTestFunction(){
 	}
 
 	board.displayBoard(); 
-	movelist.generateMoveList(board); movelist.printMoveList();
+	movelist.generateMoveList(board); movelist.printMoveList(board);
 	getline(cin, choice);
 
 	//d5
@@ -54,7 +54,7 @@ int hunterTestFunction(){
 	}
 
 	board.displayBoard();
-	movelist.generateMoveList(board); movelist.printMoveList();
+	movelist.generateMoveList(board); movelist.printMoveList(board);
 	getline(cin, choice);
 
 	//d4?!
@@ -63,7 +63,7 @@ int hunterTestFunction(){
 	}
 
 	board.displayBoard(); 
-	movelist.generateMoveList(board); movelist.printMoveList();
+	movelist.generateMoveList(board); movelist.printMoveList(board);
 	getline(cin, choice);
 
 	//e6?!
@@ -72,7 +72,7 @@ int hunterTestFunction(){
 	}
 
 	board.displayBoard(); 
-	movelist.generateMoveList(board); movelist.printMoveList();
+	movelist.generateMoveList(board); movelist.printMoveList(board);
 	getline(cin, choice);
 
 	//c4?!
@@ -81,7 +81,7 @@ int hunterTestFunction(){
 	}
 
 	board.displayBoard(); 
-	movelist.generateMoveList(board); movelist.printMoveList();
+	movelist.generateMoveList(board); movelist.printMoveList(board);
 	getline(cin, choice);
 
 	//c6?!
@@ -104,7 +104,7 @@ int hunterTestFunction(){
 			return -1;
 		}
 		board.displayBoard(); testIsSquareAttacked(WHITE, board); testIsSquareAttacked(BLACK, board);
-		movelist.generateMoveList(board); movelist.printMoveList();
+		movelist.generateMoveList(board); movelist.printMoveList(board);
 		cout << "\nGive me a valid FEN string:\n";
 		getline(cin, fen);
 	}

@@ -70,6 +70,8 @@ const int RANKS[BOARD_SQUARE_COUNT] = {
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1
 };
 
+const char FILES_TO_CHAR[8] = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' };
+
 //An array of these represent a move history 
 class MoveHistory {
 	public:
@@ -142,7 +144,7 @@ class MoveList {
 
 		void addPawnCapturingMove(BoardStructure board, int fromSquare, int toSquare, int capture, int side);
 		void addPawnMove(BoardStructure board, int fromSquare, int toSquare, int side);
-		void printMoveList();
+		void printMoveList(BoardStructure board);
 };
 
 

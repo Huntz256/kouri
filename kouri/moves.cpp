@@ -372,22 +372,26 @@ void MoveList::generateMoveList(BoardStructure board) {
 	generateNonSliderMoves(board);
 }
 
-//Prints all of the moves in our move list in a kind of long algebraic notation
-void MoveList::printMoveList() {
+//Prints all of the moves in our move list in algebraic notation
+void MoveList::printMoveList(BoardStructure board) {
+
+	const char PIECE_NUM_TO_CHAR[13] = { ' ', ' ', ' ', 'B', 'B', 'N', 'N', 'R', 'R', 'Q', 'Q', 'K', 'K' };
+	
 	for (int i = 0; i < numberOfMoves; i++) {	
-		cout << "Move Found: ";
-		printSquare(moves[i].getFromSquare());
+		int fromSquare = moves[i].getFromSquare();
+		int toSquare = moves[i].getToSquare();
+		int capPiece = moves[i].getCapturedPiece();
+		int promPiece = moves[i].getPromoted();
+
+		cout << "Move Found: " << PIECE_NUM_TO_CHAR[board.pieces[fromSquare]];
 
 		if (moves[i].getCapturedPiece() != 0) {
-			cout << "x";
-		}
-		else {
-			cout << "-";
+			cout << FILES_TO_CHAR[FILES[fromSquare]] << "x";
 		}
 
-		printSquare(moves[i].getToSquare());
+		printSquare(toSquare);
 
-		cout << " (cap:" << moves[i].getCapturedPiece() << " prom:" << moves[i].getPromoted() << ")\n";
+		cout << " (f:" << fromSquare << " t:" << toSquare << " c:" << capPiece << " p: " << promPiece << ")\n";
 	}
 
 	cout << "# of moves: " << numberOfMoves;
