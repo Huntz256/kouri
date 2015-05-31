@@ -46,7 +46,7 @@ void BoardStructure::displayFullBoard(bool dispPieces){
 void BoardStructure::displayBoard() {
 
 	//Display the board
-	cout << "\n\n";
+	cout << "\n\n\n";
 	for (int rank = RANK_8; rank >= RANK_1; rank--) {
 		cout << rank + 1 << " ";
 		for (int file = FILE_A; file <= FILE_H; file++) {

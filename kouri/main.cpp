@@ -13,6 +13,16 @@ int getRandomInteger(int min, int max) {
 	return rand() % (max - min + 1) + min;
 }
 
+//Make a move from the move list using user input
+void playerMove() {
+	int x;
+	do {
+		cout << "\n\nIt's your turn. Choose a move from the list above and enter the move number:";
+		cin >> x;
+		board.makeMove(movelist.moves[x]);
+	} while ((x < 0) || (x >= movelist.numberOfMoves));
+}
+
 //Look at various positions
 int testFunction1(){
 	string choice;
@@ -229,15 +239,37 @@ void testFunction3() {
 	}
 }
 
+//Play against kouri
+void testFunction4() {
+	string x; board.init(true);
+
+	while (42 == 42) {
+		movelist.generateMoveList(board);
+
+		board.displayBoard();
+		movelist.printMoveList(board);
+
+		playerMove();
+		board.sideToMove = board.sideToMove ^ 1;
+
+		movelist.generateMoveList(board);
+		int moveNum = getRandomInteger(0, movelist.numberOfMoves - 1);
+		board.makeMove(movelist.moves[moveNum]);
+
+		board.displayBoard();
+		movelist.printMoveList(board);
+
+		cout << "\n\nI, " << NAME << ", have decided to make move " << moveNum << ".";
+		board.sideToMove = board.sideToMove ^ 1;
+
+	}
+}
+
 //Program execution starts here
 int main() {
 	cout << "Hello. My name is " << NAME << ".\n";
 
-	//return testFunction1();
-	//testFunction2();
-	//testFunction3();
-
-	string in; cout << "Type \"1\" to run function1, \"2\" to run function2, or \"3\" to run function3:\n";
+	string in; cout << "Type \"1\" to run function1, \"2\" to run function2, \"3\" to run function3, or \"4\" to run function4.\n";
 	getline(cin, in);
 
 	if (in.compare("1") == 0) { 
@@ -246,8 +278,11 @@ int main() {
 	else if (in.compare("2") == 0) { 
 		testFunction2(); 
 	}
-	else {
+	else if (in.compare("3") == 0){
 		testFunction3();
+	}
+	else {
+		testFunction4();
 	}
 
 	return 0;
