@@ -434,7 +434,7 @@ void MoveListGenerator::generateCastlingMoves(BoardStructure board) {
 		if (board.castlePerms & 4) {
 			if (board.pieces[96] == 0 && board.pieces[97] == 0) {
 				if (!isSquareAttacked(95, WHITE, board) && !isSquareAttacked(96, WHITE, board) && !isSquareAttacked(97, WHITE, board)) {
-					moves[numberOfMoves].move = MOVE(95, 97, 0, 0, 4);
+					moves[numberOfMoves].move = MOVE(95, 97, 0, 0, 3);
 					numberOfMoves++;
 				}
 			}
@@ -445,7 +445,7 @@ void MoveListGenerator::generateCastlingMoves(BoardStructure board) {
 		if (board.castlePerms & 8) {
 			if (board.pieces[92] == 0 && board.pieces[93] == 0 && board.pieces[94] == 0) {
 				if (!isSquareAttacked(93, WHITE, board) && !isSquareAttacked(94, WHITE, board) && !isSquareAttacked(95, WHITE, board)) {
-					moves[numberOfMoves].move = MOVE(95, 93, 0, 0, 8);
+					moves[numberOfMoves].move = MOVE(95, 93, 0, 0, 4);
 					numberOfMoves++;
 				}
 			}
@@ -474,10 +474,10 @@ void MoveListGenerator::printMoveList(BoardStructure board) {
 
 		cout << "Move " << i << " Found: ";
 
-		if ((moves[i].getCastling() & 1) || (moves[i].getCastling() & 4)) {
+		if ((moves[i].getCastling() == 1) || (moves[i].getCastling() == 3)) {
 			cout << "O-O\n";
 		}
-		else if ((moves[i].getCastling() & 2) || (moves[i].getCastling() & 8)) {
+		else if ((moves[i].getCastling() == 2) || (moves[i].getCastling() == 4)) {
 			cout << "O-O-O\n";
 		}
 		else {

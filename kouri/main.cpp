@@ -12,6 +12,8 @@ int getRandomInteger(int min, int max) {
 	srand(time(NULL)); 
 	return rand() % (max - min + 1) + min;
 }
+
+//Look at various positions
 int testFunction1(){
 	string choice;
 	do {
@@ -116,7 +118,8 @@ int testFunction1(){
 	}
 }
 
-void testFunction2() {
+//Castling testing
+int testFunction2() {
 
 	Move m; string next;
 
@@ -207,7 +210,7 @@ void testFunction2() {
 	return 0;
 }
 
-//Has kouri play against itself
+//Have kouri play against itself
 void testFunction3() {
 	string x; board.init(true);
 
@@ -232,12 +235,20 @@ int main() {
 
 	//return testFunction1();
 	//testFunction2();
-	testFunction3();
+	//testFunction3();
 
-	string in; cout << "There are two test functions. Type \"h\" for Hunter and \"m\" for Minh:\n";
+	string in; cout << "Type \"1\" to run function1, \"2\" to run function2, or \"3\" to run function3:\n";
 	getline(cin, in);
 
-	if (in.compare("h") == 0) return hunterTestFunction();
-	else if (in.compare("m") == 0) return minhTestFunction();
-	else return -1;
+	if (in.compare("1") == 0) { 
+		return testFunction1(); 
+	}
+	else if (in.compare("2") == 0) { 
+		testFunction2(); 
+	}
+	else {
+		testFunction3();
+	}
+
+	return 0;
 }
