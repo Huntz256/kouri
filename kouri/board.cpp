@@ -167,8 +167,8 @@ int BoardStructure::setUpBoardUsingFEN(char* fen) {
 }
 
 void BoardStructure::makeMove(Move m) {
-	if (m.getCastling() != 0){
-		switch (m.getCastling()){ //Take care of castling
+	if (m.getCastling() != 0) {
+		switch (m.getCastling()) { //Take care of castling
 		case 1: //white king side
 			pieces[25] = 0; pieces[28] = 0; //Clear king and rook spaces
 			pieces[27] = W_KING; pieces[26] = W_ROOK; //Place king and rook
@@ -189,8 +189,10 @@ void BoardStructure::makeMove(Move m) {
 			break;
 		}
 	}
-	else{
+	else {
 		//If there is a promoted piece, set the destination square to that. Else, set it to the piece that's moving
+		cout << "\nm.getPromoted():" << m.getPromoted() << "\n";
+
 		pieces[m.getToSquare()] = (m.getPromoted() != 0) ? m.getPromoted() : pieces[m.getFromSquare()];
 		pieces[m.getFromSquare()] = 0; //Clear the square the piece moved from
 	}

@@ -163,10 +163,10 @@ int Move::getCapturedPiece() {
 	return (move >> 14) & 0xF;
 }
 int Move::getPromoted() {
-	return (move >> 18) & 0x7;
+	return (move >> 18) & 0x7F;
 }
 int Move::getCastling() {
-	return (move >> 21) & 0x7;
+	return (move >> 22) & 0x7;
 }
 
 void MoveListGenerator::addPawnCapturingMove(BoardStructure board, int fromSquare, int toSquare, int capture, int side) {
