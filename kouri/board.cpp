@@ -154,9 +154,33 @@ int BoardStructure::setUpBoardUsingFEN(char* fen) {
 }
 
 void BoardStructure::makeMove(Move m) {
-	//If there is a promoted piece, set the destination square to that. Else, set it to the piece that's moving
-	pieces[m.getToSquare()] = (m.getPromoted() != 0) ? m.getPromoted() : pieces[m.getFromSquare()];
-	pieces[m.getFromSquare()] = 0; //Clear the square the piece moved from
+	if (m.getCastling() != 0){
+		switch (m.getCastling()){ //Take care of castling
+		case 1: //white king side
+			pieces[25] = 0; pieces[28] = 0; //Clear king and rook spaces
+			pieces[27] = W_KING; pieces[26] = W_ROOK; //Place king and rook
+			break;
+		case 2: //white queen side
+			pieces[25] = 0; pieces[21] = 0;
+			pieces[23] = W_KING; pieces[24] = W_ROOK;
+			break;
+		case 3: //black king side
+			pieces[95] = 0; pieces[98] = 0;
+			pieces[97] = B_KING; pieces[96] = B_ROOK;
+			break;
+		case 4: //black queen side
+			pieces[95] = 0; pieces[91] = 0;
+			pieces[93] = B_KING; pieces[94] = B_ROOK;
+			break;
+		default: //nothing
+			break;
+		}
+	}
+	else{
+		//If there is a promoted piece, set the destination square to that. Else, set it to the piece that's moving
+		pieces[m.getToSquare()] = (m.getPromoted() != 0) ? m.getPromoted() : pieces[m.getFromSquare()];
+		pieces[m.getFromSquare()] = 0; //Clear the square the piece moved from
+	}
 
 	//Store move in next blank element of history[]
 	for (int i = 0; i < 1028; i++) {
@@ -176,6 +200,14 @@ int BoardStructure::getPieceColor(int pieceNum) {
 	default:
 		return -42; break;
 	}
+}
+
+void BoardStructure::displayHistory(){
+	for (int i = 0; i < 1028; i++) {
+		if (history[i].move == 0) break;
+		cout << history[i].move << " ";
+	}
+	cout << "\n";
 }
 
 //Prints a square. For example, printSquare(55) prints "e4"
