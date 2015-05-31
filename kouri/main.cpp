@@ -12,6 +12,7 @@ int getRandomInteger(int min, int max) {
 	srand(time(NULL)); 
 	return rand() % (max - min + 1) + min;
 }
+
 int testFunction1(){
 	string choice;
 	do {
@@ -116,7 +117,8 @@ int testFunction1(){
 	}
 }
 
-void testFunction2() {
+//Tests castling
+int testFunction2() {
 
 	Move m; string next;
 
@@ -235,10 +237,5 @@ int main() {
 	//testFunction2();
 	testFunction3();
 
-	string in; cout << "There are two test functions. Type \"h\" for Hunter and \"m\" for Minh:\n";
-	getline(cin, in);
-
-	if (in.compare("h") == 0) return hunterTestFunction();
-	else if (in.compare("m") == 0) return minhTestFunction();
-	else return -1;
+	return 0;
 }
