@@ -21,7 +21,7 @@ enum { FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H };
 //Define WHITE as 0 and BLACK as 1
 enum { WHITE, BLACK };
 
-//Define MOVE(from,to,capture,promotion
+//Define MOVE(from,to,capture,promotion,castling
 #define MOVE(from,to,capture,promotion,castling) ( (from) | ((to) << 7) | ((capture) << 14) | ((promotion) << 18) | ((castling) << 21))
 
 //Define B_PAWN = 1, W_PAWN = 2, B_BISHOP = 3, W_BISHOP = 4, B_KNIGHT = 5, W_KNIGHT = 6, B_ROOK = 7, W_ROOK = 8, B_QUEEN = 9, W_QUEEN = 10, B_KING = 11, W_KING = 12
@@ -124,8 +124,7 @@ class BoardStructure {
 		int setUpBoardUsingFEN(char* fen); //Sets up pieces given a FEN string. Returns 0 if successful.
 		void makeMove(Move move); //Assuming the move passed in is valid, modifies the board and stores the move in history[]
 		int getPieceColor(int pieceNumber); //Retrieves the piece color of a piece
-
-		
+		void displayHistory(); //Displays all the moves so far as move integers
 };
 
 void testIsSquareAttacked(int side, BoardStructure board);

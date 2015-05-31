@@ -118,43 +118,93 @@ int testFunction1(){
 
 void testFunction2() {
 
-	//Initatize board to starting position
-	board.init(true); Move m;
+	Move m; string next;
 
-	//Display the board and first 5 elements of history
-	board.displayBoard(); cout << "\n";
-	for (int i = 0; i < 5; i++) {
-		cout << board.history[i].move << " ";
+	//Set up board for castling tests
+	cout << "\nTesting white castling king side\n";
+	if (board.setUpBoardUsingFEN("r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R w KQkq - 0 1") == -1) {
+		return -1;
 	}
-	cout << "\n";
+	board.displayBoard(); cout << "\n";
+	cout << "Press enter to continue:";
+	getline(cin, next);
 
-	//Make move 35 to 55 (e2e4)
-	m.move = MOVE(35, 55, 0, 0, 0);
+	//White castle king side (e1g1)
+	m.move = MOVE(25, 27, 0, 0, 1);
 	board.makeMove(m);
-
 	//Output fromSquare and toSquare board indices
-	cout << "from: " << m.getFromSquare() << " to: " << m.getToSquare() << "\n";
+	cout << "from: " << m.getFromSquare() << " to: " << m.getToSquare() << "\n\n";
 
-	//Display the board and first 5 elements of history
+	//Display the board
 	board.displayBoard(); cout << "\n";
-	for (int i = 0; i < 5; i++) {
-		cout << board.history[i].move << " ";
-	}
+
+	cout << "Press enter to continue:";
+	getline(cin, next);
 	
-	//Make move 84 to 64 (d7d5)
-	m.move = MOVE(84, 64, 0, 0, 0);
+	/******************New test*********************/
+	cout << "\nTesting white castling queen side\n";
+	if (board.setUpBoardUsingFEN("r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R w KQkq - 0 1") == -1) {
+		return -1;
+	}
+	board.displayBoard(); cout << "\n";
+	cout << "Press enter to continue:";
+	getline(cin, next);
+	
+	//White castle queen side (d7d5)
+	m.move = MOVE(25, 23, 0, 0, 2);
 	board.makeMove(m);
-
 	//Output move's from square and to square
-	cout << "from: " << m.getFromSquare() << " to: " << m.getToSquare() << "\n";
+	cout << "from: " << m.getFromSquare() << " to: " << m.getToSquare() << "\n\n";
 	
-	//Display the board and first 5 elements of history
+	//Display the board
 	board.displayBoard(); cout << "\n";
-	for (int i = 0; i < 5; i++){
-		cout << board.history[i].move << " ";
-	}
 
-	cout << "\n";
+	cout << "Press enter to continue:";
+	getline(cin, next);
+
+	/******************New test*********************/
+	cout << "\nTesting black castling king side\n";
+	if (board.setUpBoardUsingFEN("r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R w KQkq - 0 1") == -1) {
+		return -1;
+	}
+	board.displayBoard(); cout << "\n";
+	cout << "Press enter to continue:";
+	getline(cin, next);
+
+	//White castle queen side (d7d5)
+	m.move = MOVE(95, 97, 0, 0, 3);
+	board.makeMove(m);
+	//Output move's from square and to square
+	cout << "from: " << m.getFromSquare() << " to: " << m.getToSquare() << "\n\n";
+	
+	//Display the board
+	board.displayBoard(); cout << "\n";
+
+	cout << "Press enter to continue:";
+	getline(cin, next);
+
+	/******************New test*********************/
+	cout << "\nTesting black castling queen side\n";
+	if (board.setUpBoardUsingFEN("r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R w KQkq - 0 1") == -1) {
+		return -1;
+	}
+	board.displayBoard(); cout << "\n";
+	cout << "Press enter to continue:";
+	getline(cin, next);
+
+	//White castle queen side (d7d5)
+	m.move = MOVE(95, 93, 0, 0, 4);
+	board.makeMove(m);
+	//Output move's from square and to square
+	cout << "from: " << m.getFromSquare() << " to: " << m.getToSquare() << "\n\n";
+
+	//Display the board
+	board.displayBoard(); cout << "\n";
+
+	cout << "Press enter to continue:";
+	getline(cin, next);
+
+	return 0;
 }
 
 //Has kouri play against itself
@@ -184,7 +234,10 @@ int main() {
 	//testFunction2();
 	testFunction3();
 
-	int x; cin >> x;
+	string in; cout << "There are two test functions. Type \"h\" for Hunter and \"m\" for Minh:\n";
+	getline(cin, in);
 
-	return 0;
+	if (in.compare("h") == 0) return hunterTestFunction();
+	else if (in.compare("m") == 0) return minhTestFunction();
+	else return -1;
 }

@@ -168,6 +168,11 @@ int Move::getPromoted() {
 }
 int Move::getCastling() {
 	return (move >> 21) & 0x7;
+	/*000 = no castling
+	001 = white king side
+	010 = white queen side
+	011 = black king side
+	100 = black queen side*/
 }
 
 void MoveListGenerator::addPawnCapturingMove(BoardStructure board, int fromSquare, int toSquare, int capture, int side) {
