@@ -128,8 +128,10 @@ class BoardStructure {
 };
 
 void testIsSquareAttacked(int side, BoardStructure board);
-char numToPieceChar(int num);
+char numToPieceChar(int num); //Converts integer to char representing a piece
 void printSquare(int square); //Prints square in alg. notation
+int charToPieceInt(char c); //Converts char like 'p' or 'Q' to the corresponding integer
+bool isMoveValid(int move); //Checks if a move integer is contained in the generated movelist
 
 //Contains all move generation functions
 class MoveListGenerator {

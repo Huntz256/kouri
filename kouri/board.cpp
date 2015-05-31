@@ -22,6 +22,19 @@ char numToPieceChar(int num) {
 	return '~';
 }
 
+//Used for pawn promotion user command
+int charToPieceInt(char c){
+	switch (c){
+		case 'p': return B_PAWN; case 'P': return W_PAWN;
+		case 'b': return B_BISHOP; case 'B': return W_BISHOP;
+		case 'n': return B_KNIGHT; case 'N': return W_KNIGHT;
+		case 'r': return B_ROOK; case 'R': return W_ROOK;
+		case 'q': return B_QUEEN; case 'Q': return W_QUEEN;
+		case 'k': return B_KING; case 'K': return W_KING;
+		default: return -1;
+	}
+}
+
 void BoardStructure::displayFullBoard(bool dispPieces){
 	for (int i = 0; i < BOARD_SQUARE_COUNT; i++) {
 		if (i % 10 == 0) {

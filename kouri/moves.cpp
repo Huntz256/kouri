@@ -67,15 +67,15 @@ bool isSquareAttacked(int square, int attackingSide, BoardStructure board) {
 	for (int i = 0; i < 8; i++) {
 
 		//If square square is being attacked by a white knight, return true
-		if (board.pieces[square + KNIGHT_MOVEMENTS[i]] == 6 && attackingSide == WHITE) {
+		if (attackingSide == WHITE && board.pieces[square + KNIGHT_MOVEMENTS[i]] == 6) {
 			return true;
 		}
-
-		//If square square is being attacked by a black knight, return true
-		if (board.pieces[square + KNIGHT_MOVEMENTS[i]] == 5 && attackingSide == BLACK) {
-			return true;
+		else{
+			//If square square is being attacked by a black knight, return true
+			if (board.pieces[square + KNIGHT_MOVEMENTS[i]] == 5) {
+				return true;
+			}
 		}
-
 	}
 
 	//Check if square square is being attacked by attackingSide by any rooks or queens...
@@ -118,17 +118,16 @@ bool isSquareAttacked(int square, int attackingSide, BoardStructure board) {
 	for (int i = 0; i < 8; i++) {
 
 		//If square square is being attacked by a white knight, return true
-		if (board.pieces[square + KING_MOVEMENTS[i]] == 12 && attackingSide == WHITE) {
+		if (attackingSide == WHITE && board.pieces[square + KING_MOVEMENTS[i]] == 12) {
 			return true;
 		}
-
-		//If square square is being attacked by a black knight, return true
-		if (board.pieces[square + KING_MOVEMENTS[i]] == 11 && attackingSide == BLACK) {
-			return true;
+		else{
+			//If square square is being attacked by a black knight, return true
+			if (board.pieces[square + KING_MOVEMENTS[i]] == 11 && attackingSide == BLACK) {
+				return true;
+			}
 		}
-
 	}
-
 
 	return false;
 }
@@ -168,11 +167,6 @@ int Move::getPromoted() {
 }
 int Move::getCastling() {
 	return (move >> 21) & 0x7;
-	/*000 = no castling
-	001 = white king side
-	010 = white queen side
-	011 = black king side
-	100 = black queen side*/
 }
 
 void MoveListGenerator::addPawnCapturingMove(BoardStructure board, int fromSquare, int toSquare, int capture, int side) {
@@ -200,15 +194,16 @@ void MoveListGenerator::addPawnCapturingMove(BoardStructure board, int fromSquar
 	}
 }
 void MoveListGenerator::addPawnMove(BoardStructure board, int fromSquare, int toSquare, int side) {
-	//White--
+	//White----
 	if (side == WHITE) {
+		//Promotions
 		if (RANKS[fromSquare] == RANK_7) {
 			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, 0, W_QUEEN, 0); numberOfMoves++;
 			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, 0, W_ROOK, 0); numberOfMoves++;
 			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, 0, W_KNIGHT, 0); numberOfMoves++;
 			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, 0, W_BISHOP, 0); numberOfMoves++;
 		}
-		{
+		else {
 			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, 0, 0, 0); numberOfMoves++;
 		}
 
@@ -216,6 +211,7 @@ void MoveListGenerator::addPawnMove(BoardStructure board, int fromSquare, int to
 
 	//Black----
 	else {
+		//Promotions
 		if (RANKS[fromSquare] == RANK_2) {
 			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, 0, B_QUEEN, 0); numberOfMoves++;
 			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, 0, B_ROOK, 0); numberOfMoves++;
@@ -493,5 +489,5 @@ void MoveListGenerator::printMoveList(BoardStructure board) {
 		}
 	}
 
-	cout << "# of moves: " << numberOfMoves;
+	cout << "# of moves: " << numberOfMoves << "\n";
 }
