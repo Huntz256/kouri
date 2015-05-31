@@ -9,12 +9,12 @@ char numToPieceChar(int num) {
 
 	if (num >= 0) {
 		pieceMap[0] = ' ';
-		pieceMap[1] = 'p';  pieceMap[2] = 'P'; // black pawn / white pawn
-		pieceMap[3] = 'b';  pieceMap[4] = 'B'; // black bishop / white bishop
-		pieceMap[5] = 'n';  pieceMap[6] = 'N'; // black knight / white knight
-		pieceMap[7] = 'r';  pieceMap[8] = 'R'; // black rook / white rook
-		pieceMap[9] = 'q';  pieceMap[10] = 'Q'; // black queen / white queen
-		pieceMap[11] = 002; pieceMap[12] = 001; // smiley faces = black king / white king
+		pieceMap[B_PAWN] = 'p';  pieceMap[W_PAWN] = 'P'; 
+		pieceMap[B_BISHOP] = 'b';  pieceMap[W_BISHOP] = 'B';
+		pieceMap[B_KNIGHT] = 'n';  pieceMap[W_KNIGHT] = 'N';
+		pieceMap[B_ROOK] = 'r';  pieceMap[W_ROOK] = 'R'; 
+		pieceMap[B_QUEEN] = 'q';  pieceMap[W_QUEEN] = 'Q';
+		pieceMap[B_KING] = 002; pieceMap[W_KING] = 001; // smiley faces
 
 		return pieceMap[num];
 	}
@@ -46,12 +46,15 @@ void BoardStructure::displayFullBoard(bool dispPieces){
 void BoardStructure::displayBoard() {
 
 	//Display the board
+	cout << "\n";
 	for (int rank = RANK_8; rank >= RANK_1; rank--) {
+		cout << rank + 1 << " ";
 		for (int file = FILE_A; file <= FILE_H; file++) {
 			cout << " " << numToPieceChar(pieces[squareID120[rank * 8 + file]]) << "|";
 		}
-		cout << "\n------------------------\n";
+		cout << "\n  ------------------------\n";
 	}
+	cout << "   a  b  c  d  e  f  g  h\n\n";
 
 	//Also display some more infomation
 	cout << "Side to move: " << (sideToMove == 0 ? "White" : "Black");
@@ -76,14 +79,19 @@ void BoardStructure::resetBoardToEmpty() {
 		pieces[squareID120[i]] = 0;
 	}
 
-	//Clear the pawns bitboard 
+	//Clear the pawns bitboard and reset material value to zero
 	for (int i = 0; i < 2; i++) {
 		pawns[i] = 0ULL;
+		material[i] = 0;
 	}
 
 	//No side can castle on an empty board
 	castlePerms = 0;
+
+	//Reset en pass square
+	enPassSquare = 0;
 }
+
 int BoardStructure::setUpBoardUsingFEN(char* fen) {
 
 	resetBoardToEmpty();
@@ -95,12 +103,12 @@ int BoardStructure::setUpBoardUsingFEN(char* fen) {
 		emptyNum = 1;
 
 		switch (*fen) {
-			case 'p': piece = 1; break; case 'P': piece = 2; break;
-			case 'b': piece = 3; break; case 'B': piece = 4; break;
-			case 'n': piece = 5; break; case 'N': piece = 6; break;
-			case 'r': piece = 7; break; case 'R': piece = 8; break;
-			case 'q': piece = 9; break; case 'Q': piece = 10; break;
-			case 'k': piece = 11; break; case 'K': piece = 12; break;
+			case 'p': piece = B_PAWN; break; case 'P': piece = W_PAWN; break;
+			case 'b': piece = B_BISHOP; break; case 'B': piece = W_BISHOP; break;
+			case 'n': piece = B_KNIGHT; break; case 'N': piece = W_KNIGHT; break;
+			case 'r': piece = B_ROOK; break; case 'R': piece = W_ROOK; break;
+			case 'q': piece = B_QUEEN; break; case 'Q': piece = W_QUEEN; break;
+			case 'k': piece = B_KING; break; case 'K': piece = W_KING; break;
 
 			case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8':
 				piece = 0; emptyNum = *fen - '0'; break;
@@ -145,18 +153,33 @@ int BoardStructure::setUpBoardUsingFEN(char* fen) {
 	return 0;
 }
 
-void BoardStructure::makeMove(Move m){
+void BoardStructure::makeMove(Move m) {
 	//If there is a promoted piece, set the destination square to that. Else, set it to the piece that's moving
 	pieces[m.getToSquare()] = (m.getPromoted() != 0) ? m.getPromoted() : pieces[m.getFromSquare()];
 	pieces[m.getFromSquare()] = 0; //Clear the square the piece moved from
 
-	//Change pawns array as well?
-
 	//Store move in next blank element of history[]
-	for (int i = 0; i < 1028; i++){
-		if (history[i].move == 0){
+	for (int i = 0; i < 1028; i++) {
+		if (history[i].move == 0) {
 			history[i].move = m.move;
 			break;
 		}
 	}
+}
+
+int BoardStructure::getPieceColor(int pieceNum) {
+	switch (pieceNum) {
+	case B_PAWN: case B_BISHOP: case B_KNIGHT: case B_ROOK: case B_QUEEN: case B_KING:
+		return BLACK; break;
+	case W_PAWN: case W_BISHOP: case W_KNIGHT: case W_ROOK: case W_QUEEN: case W_KING:
+		return WHITE; break;
+	default:
+		return -42; break;
+	}
+}
+
+//Prints a square. For example, printSquare(55) prints "e4"
+void printSquare(int square) {
+	const char FILES_TO_CHAR[8] = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' };
+	cout << FILES_TO_CHAR[FILES[square]] << (1 + RANKS[square]);
 }

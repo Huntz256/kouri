@@ -5,7 +5,7 @@ using namespace std;
 
 BoardStructure board; MoveList movelist;
 
-//Moved everything that was in main() to hunterTestFunction() to clear up space
+
 int hunterTestFunction(){
 	string choice;
 	do {
@@ -35,7 +35,7 @@ int hunterTestFunction(){
 		return -1;
 	}
 
-	board.displayBoard(); testIsSquareAttacked(WHITE, board); testIsSquareAttacked(BLACK, board);
+	board.displayBoard(); 
 	movelist.generateMoveList(board); movelist.printMoveList();
 	getline(cin, choice);
 
@@ -44,7 +44,7 @@ int hunterTestFunction(){
 		return -1;
 	}
 
-	board.displayBoard(); testIsSquareAttacked(WHITE, board); testIsSquareAttacked(BLACK, board);
+	board.displayBoard(); 
 	movelist.generateMoveList(board); movelist.printMoveList();
 	getline(cin, choice);
 
@@ -53,7 +53,7 @@ int hunterTestFunction(){
 		return -1;
 	}
 
-	board.displayBoard(); testIsSquareAttacked(WHITE, board); testIsSquareAttacked(BLACK, board);
+	board.displayBoard();
 	movelist.generateMoveList(board); movelist.printMoveList();
 	getline(cin, choice);
 
@@ -62,7 +62,7 @@ int hunterTestFunction(){
 		return -1;
 	}
 
-	board.displayBoard(); testIsSquareAttacked(WHITE, board); testIsSquareAttacked(BLACK, board);
+	board.displayBoard(); 
 	movelist.generateMoveList(board); movelist.printMoveList();
 	getline(cin, choice);
 
@@ -71,7 +71,7 @@ int hunterTestFunction(){
 		return -1;
 	}
 
-	board.displayBoard(); testIsSquareAttacked(WHITE, board); testIsSquareAttacked(BLACK, board);
+	board.displayBoard(); 
 	movelist.generateMoveList(board); movelist.printMoveList();
 	getline(cin, choice);
 
@@ -80,7 +80,7 @@ int hunterTestFunction(){
 		return -1;
 	}
 
-	board.displayBoard(); testIsSquareAttacked(WHITE, board); testIsSquareAttacked(BLACK, board);
+	board.displayBoard(); 
 	movelist.generateMoveList(board); movelist.printMoveList();
 	getline(cin, choice);
 
@@ -110,24 +110,44 @@ int hunterTestFunction(){
 	}
 }
 
-void minhTestFunction(){
-	//Output board info + first 5 elements of history
-	board.init(true); board.displayBoard();
-	for (int i = 0; i < 5; i++){
+void minhTestFunction() {
+
+	//Initatize board to starting position
+	board.init(true); Move m;
+
+	//Display the board and first 5 elements of history
+	board.displayBoard(); cout << "\n";
+	for (int i = 0; i < 5; i++) {
 		cout << board.history[i].move << " ";
 	}
 	cout << "\n";
 
-	//Test move 
-	Move m;	m.move = 8276;
-	cout << "from: " << m.getFromSquare() << " to: " << m.getToSquare() << "\n"; //Output fromSquare and toSquare board indices
+	//Make move 35 to 55 (e2e4)
+	m.move = MOVE(35, 55, 0, 0, 0);
 	board.makeMove(m);
+
+	//Output fromSquare and toSquare board indices
+	cout << "from: " << m.getFromSquare() << " to: " << m.getToSquare() << "\n";
+
+	//Display the board and first 5 elements of history
+	board.displayBoard(); cout << "\n";
+	for (int i = 0; i < 5; i++) {
+		cout << board.history[i].move << " ";
+	}
 	
-	//Output board info + first 5 elements of history again
-	board.displayBoard();
+	//Make move 84 to 64 (d7d5)
+	m.move = MOVE(84, 64, 0, 0, 0);
+	board.makeMove(m);
+
+	//Output move's from square and to square
+	cout << "from: " << m.getFromSquare() << " to: " << m.getToSquare() << "\n";
+	
+	//Display the board and first 5 elements of history
+	board.displayBoard(); cout << "\n";
 	for (int i = 0; i < 5; i++){
 		cout << board.history[i].move << " ";
 	}
+
 	cout << "\n";
 }
 
@@ -135,8 +155,10 @@ void minhTestFunction(){
 int main() {
 	cout << "Hello. My name is " << NAME << ".\n";
 
-	// return hunterTestFunction();
-	minhTestFunction();
+	return hunterTestFunction();
+	//minhTestFunction();
+
+	int x; cin >> x;
 
 	return 0;
 }
