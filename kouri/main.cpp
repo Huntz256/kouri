@@ -35,7 +35,7 @@ int hunterTestFunction(){
 		return -1;
 	}
 
-	board.displayBoard(); testIsSquareAttacked(WHITE, board); testIsSquareAttacked(BLACK, board);
+	board.displayBoard(); 
 	movelist.generateMoveList(board); movelist.printMoveList();
 	getline(cin, choice);
 
@@ -44,7 +44,7 @@ int hunterTestFunction(){
 		return -1;
 	}
 
-	board.displayBoard(); testIsSquareAttacked(WHITE, board); testIsSquareAttacked(BLACK, board);
+	board.displayBoard(); 
 	movelist.generateMoveList(board); movelist.printMoveList();
 	getline(cin, choice);
 
@@ -53,7 +53,7 @@ int hunterTestFunction(){
 		return -1;
 	}
 
-	board.displayBoard(); testIsSquareAttacked(WHITE, board); testIsSquareAttacked(BLACK, board);
+	board.displayBoard();
 	movelist.generateMoveList(board); movelist.printMoveList();
 	getline(cin, choice);
 
@@ -62,7 +62,7 @@ int hunterTestFunction(){
 		return -1;
 	}
 
-	board.displayBoard(); testIsSquareAttacked(WHITE, board); testIsSquareAttacked(BLACK, board);
+	board.displayBoard(); 
 	movelist.generateMoveList(board); movelist.printMoveList();
 	getline(cin, choice);
 
@@ -71,7 +71,7 @@ int hunterTestFunction(){
 		return -1;
 	}
 
-	board.displayBoard(); testIsSquareAttacked(WHITE, board); testIsSquareAttacked(BLACK, board);
+	board.displayBoard(); 
 	movelist.generateMoveList(board); movelist.printMoveList();
 	getline(cin, choice);
 
@@ -80,7 +80,7 @@ int hunterTestFunction(){
 		return -1;
 	}
 
-	board.displayBoard(); testIsSquareAttacked(WHITE, board); testIsSquareAttacked(BLACK, board);
+	board.displayBoard(); 
 	movelist.generateMoveList(board); movelist.printMoveList();
 	getline(cin, choice);
 
@@ -157,14 +157,6 @@ int main() {
 
 	return hunterTestFunction();
 	//minhTestFunction();
-
-	//Make move 95 to 93, no capture, no promotion, castling
-	//Move m;  m.move = MOVE(95, 93, 0, 0, 3);
-
-	//Output fromSquare and toSquare board indices
-	//cout << "from: " << m.getFromSquare() << " to: " << m.getToSquare() << " capture: " << m.getCapturedPiece() <<
-	//	" promotion: " << m.getPromoted() << " castling: " << m.getCastling();
-
 
 	int x; cin >> x;
 
