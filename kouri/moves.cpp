@@ -392,7 +392,7 @@ void MoveList::printMoveList(BoardStructure board) {
 		int capPiece = moves[i].getCapturedPiece();
 		int promPiece = moves[i].getPromoted();
 
-		cout << "Move Found: " << PIECE_NUM_TO_CHAR[board.pieces[fromSquare]];
+		cout << "Move " << i << " Found: " << PIECE_NUM_TO_CHAR[board.pieces[fromSquare]];
 
 		if (moves[i].getCapturedPiece() != 0) {
 			cout << FILES_TO_CHAR[FILES[fromSquare]] << "x";

@@ -6,7 +6,7 @@ using namespace std;
 BoardStructure board; MoveList movelist;
 
 
-int hunterTestFunction(){
+int testFunction1(){
 	string choice;
 	do {
 		cout << "Would you like to go first? (y/n) \n";
@@ -110,7 +110,7 @@ int hunterTestFunction(){
 	}
 }
 
-void minhTestFunction() {
+void testFunction2() {
 
 	//Initatize board to starting position
 	board.init(true); Move m;
@@ -150,13 +150,25 @@ void minhTestFunction() {
 
 	cout << "\n";
 }
+void testFunction3() {
+	string x; board.init(true);
+	while (42 == 42) {
+		board.displayBoard();
+		movelist.generateMoveList(board);
+		movelist.printMoveList(board);
+		board.makeMove(movelist.moves[0]);
+		board.sideToMove = board.sideToMove ^ 1;
+		getline(cin, x);
+	}
+}
 
 //Program execution starts here
 int main() {
 	cout << "Hello. My name is " << NAME << ".\n";
 
-	return hunterTestFunction();
-	//minhTestFunction();
+	//return testFunction1();
+	//testFunction2();
+	testFunction3();
 
 	int x; cin >> x;
 
