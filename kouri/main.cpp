@@ -200,8 +200,7 @@ int main() {
 		}
 		else if (t == "isready") {
 			cout << "readyok\n";
-			board.init(true);
-			
+			board.init(true);		
 		}
 		else if (t == "go") {
 			movelist.generateMoveList(board);
@@ -209,6 +208,9 @@ int main() {
 			board.makeMove(movelist.moves[moveNum]);
 			cout << "bestmove ";
 			movelist.uciPrintMove(board, moveNum);
+			board.sideToMove = board.sideToMove ^ 1;
+		}
+		else if (t == "position") {
 			board.sideToMove = board.sideToMove ^ 1;
 		}
 
