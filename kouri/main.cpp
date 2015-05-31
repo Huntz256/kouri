@@ -23,94 +23,8 @@ void playerMove() {
 	} while ((x < 0) || (x >= movelist.numberOfMoves));
 }
 
-//Look at various positions
+//Parse an FEN string
 int testFunction1(){
-	string choice;
-	do {
-		cout << "Would you like to go first? (y/n) \n";
-		getline(cin, choice);
-	} while (choice.compare("y") != 0 && choice.compare("n") != 0);
-
-	//Output the starting position
-	board.init(choice.compare("y") == 0); board.displayBoard();
-	
-	cout << "\nI will now output some random board positions... (enter anything to continue)\n";  getline(cin, choice);
-
-	//Output an empty board
-	board.resetBoardToEmpty(); board.displayBoard(); getline(cin, choice);
-
-	//Output a position with two queens and two pawns
-	if (board.setUpBoardUsingFEN("8/3q1p2/8/5P2/4Q3/8/8/8 w - - 0 1 ") == -1) {
-		return -1;
-	}
-
-	board.displayBoard(); 
-	movelist.generateMoveList(board); movelist.printMoveList(board);
-	getline(cin, choice);
-
-	//Output the first parts of a game from http://en.lichess.org/NgHuzc5J ...
-	if (board.setUpBoardUsingFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") == -1) {
-		return -1;
-	}
-
-	board.displayBoard(); 
-	movelist.generateMoveList(board); movelist.printMoveList(board);
-	getline(cin, choice);
-
-	//e4
-	if (board.setUpBoardUsingFEN("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1") == -1) {
-		return -1;
-	}
-
-	board.displayBoard(); 
-	movelist.generateMoveList(board); movelist.printMoveList(board);
-	getline(cin, choice);
-
-	//d5
-	if (board.setUpBoardUsingFEN("rnbqkbnr/ppp1pppp/8/3p4/4P3/8/PPPP1PPP/RNBQKBNR w KQkq d6 0 2") == -1) {
-		return -1;
-	}
-
-	board.displayBoard();
-	movelist.generateMoveList(board); movelist.printMoveList(board);
-	getline(cin, choice);
-
-	//d4?!
-	if (board.setUpBoardUsingFEN("rnbqkbnr/ppp1pppp/8/3p4/3PP3/8/PPP2PPP/RNBQKBNR b KQkq d3 0 2") == -1) {
-		return -1;
-	}
-
-	board.displayBoard(); 
-	movelist.generateMoveList(board); movelist.printMoveList(board);
-	getline(cin, choice);
-
-	//e6?!
-	if (board.setUpBoardUsingFEN("rnbqkbnr/ppp2ppp/4p3/3p4/3PP3/8/PPP2PPP/RNBQKBNR w KQkq - 0 3") == -1) {
-		return -1;
-	}
-
-	board.displayBoard(); 
-	movelist.generateMoveList(board); movelist.printMoveList(board);
-	getline(cin, choice);
-
-	//c4?!
-	if (board.setUpBoardUsingFEN("rnbqkbnr/ppp2ppp/4p3/3p4/2PPP3/8/PP3PPP/RNBQKBNR b KQkq c3 0 3") == -1) {
-		return -1;
-	}
-
-	board.displayBoard(); 
-	movelist.generateMoveList(board); movelist.printMoveList(board);
-	getline(cin, choice);
-
-	//c6?!
-	if (board.setUpBoardUsingFEN("rnbqkbnr/pp3ppp/2p1p3/3p4/2PPP3/8/PP3PPP/RNBQKBNR w KQkq - 0 4") == -1) {
-		return -1;
-	}
-
-	Move move; move.move = 0; int fromSquare = 6, toSquare = 12, capturedPiece = 8, promote = 7;
-	move.move = MOVE(fromSquare, toSquare, capturedPiece, promote, 0);
-	cout << "from:" << move.getFromSquare() << " to:" << move.getToSquare() << " cap:" << move.getCapturedPiece() << " prom:" << move.getPromoted();
-
 
 	string fen;
 	board.displayBoard();
@@ -268,21 +182,25 @@ void testFunction4() {
 //Program execution starts here
 int main() {
 	cout << "Hello. My name is " << NAME << ".\n";
+	cout << "\nI have been created by Hunter and Minh for a CS class project";
+	cout << "\n\nCurrently, I understand some rules of chess.";
+	cout << "\nEnough to generate and make most legal moves.";
+	cout << "\nHowever, I do not know at all what makes one move better than another.\n\n";
 
-	string in; cout << "Type \"1\" to run function1, \"2\" to run function2, \"3\" to run function3, or \"4\" to run function4.\n";
+	string in; cout << "Enter:\n \"1\" to play against me\n \"2\" to have me play against myself\n \"3\" to do castling testing\n \"4\" to parse a FEN string\n";
 	getline(cin, in);
 
 	if (in.compare("1") == 0) { 
-		return testFunction1(); 
+		testFunction4(); 
 	}
 	else if (in.compare("2") == 0) { 
-		testFunction2(); 
+		testFunction3(); 
 	}
 	else if (in.compare("3") == 0){
-		testFunction3();
+		testFunction2();
 	}
 	else {
-		testFunction4();
+		testFunction1();
 	}
 
 	return 0;
