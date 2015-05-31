@@ -24,7 +24,7 @@ enum { WHITE, BLACK };
 //Define MOVE(from,to,capture,promotion,castling
 #define MOVE(from,to,capture,promotion,castling) ( (from) | ((to) << 7) | ((capture) << 14) | ((promotion) << 18) | ((castling) << 21))
 
-//Define B_PAWN = 1, W_PAWN = 2, etc.
+//Define B_PAWN = 1, W_PAWN = 2, B_BISHOP = 3, W_BISHOP = 4, B_KNIGHT = 5, W_KNIGHT = 6, B_ROOK = 7, W_ROOK = 8, B_QUEEN = 9, W_QUEEN = 10, B_KING = 11, W_KING = 12
 enum { EMPTY, B_PAWN, W_PAWN, B_BISHOP, W_BISHOP, B_KNIGHT, W_KNIGHT, 
 B_ROOK, W_ROOK, B_QUEEN, W_QUEEN, B_KING, W_KING };
 
@@ -69,6 +69,8 @@ const int RANKS[BOARD_SQUARE_COUNT] = {
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1
 };
+
+const char FILES_TO_CHAR[8] = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' };
 
 //An array of these represent a move history 
 class MoveHistory {
@@ -141,7 +143,7 @@ class MoveList {
 
 		void addPawnCapturingMove(BoardStructure board, int fromSquare, int toSquare, int capture, int side);
 		void addPawnMove(BoardStructure board, int fromSquare, int toSquare, int side);
-		void printMoveList();
+		void printMoveList(BoardStructure board);
 };
 
 

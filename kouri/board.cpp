@@ -46,7 +46,7 @@ void BoardStructure::displayFullBoard(bool dispPieces){
 void BoardStructure::displayBoard() {
 
 	//Display the board
-	cout << "\n";
+	cout << "\n\n";
 	for (int rank = RANK_8; rank >= RANK_1; rank--) {
 		cout << rank + 1 << " ";
 		for (int file = FILE_A; file <= FILE_H; file++) {
@@ -212,6 +212,5 @@ void BoardStructure::displayHistory(){
 
 //Prints a square. For example, printSquare(55) prints "e4"
 void printSquare(int square) {
-	const char FILES_TO_CHAR[8] = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' };
 	cout << FILES_TO_CHAR[FILES[square]] << (1 + RANKS[square]);
 }

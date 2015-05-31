@@ -1,12 +1,18 @@
 #include "defs.h"
 #include <iostream>
 #include <string>
+#include <random>
+#include <ctime>
 using namespace std;
 
 BoardStructure board; MoveList movelist;
 
 
-int hunterTestFunction(){
+int getRandomInteger(int min, int max) {
+	srand(time(NULL)); 
+	return rand() % (max - min + 1) + min;
+}
+int testFunction1(){
 	string choice;
 	do {
 		cout << "Would you like to go first? (y/n) \n";
@@ -26,8 +32,8 @@ int hunterTestFunction(){
 		return -1;
 	}
 
-	board.displayBoard(); testIsSquareAttacked(WHITE, board); testIsSquareAttacked(BLACK, board);
-	movelist.generateMoveList(board); movelist.printMoveList();
+	board.displayBoard(); 
+	movelist.generateMoveList(board); movelist.printMoveList(board);
 	getline(cin, choice);
 
 	//Output the first parts of a game from http://en.lichess.org/NgHuzc5J ...
@@ -36,7 +42,7 @@ int hunterTestFunction(){
 	}
 
 	board.displayBoard(); 
-	movelist.generateMoveList(board); movelist.printMoveList();
+	movelist.generateMoveList(board); movelist.printMoveList(board);
 	getline(cin, choice);
 
 	//e4
@@ -45,7 +51,7 @@ int hunterTestFunction(){
 	}
 
 	board.displayBoard(); 
-	movelist.generateMoveList(board); movelist.printMoveList();
+	movelist.generateMoveList(board); movelist.printMoveList(board);
 	getline(cin, choice);
 
 	//d5
@@ -54,7 +60,7 @@ int hunterTestFunction(){
 	}
 
 	board.displayBoard();
-	movelist.generateMoveList(board); movelist.printMoveList();
+	movelist.generateMoveList(board); movelist.printMoveList(board);
 	getline(cin, choice);
 
 	//d4?!
@@ -63,7 +69,7 @@ int hunterTestFunction(){
 	}
 
 	board.displayBoard(); 
-	movelist.generateMoveList(board); movelist.printMoveList();
+	movelist.generateMoveList(board); movelist.printMoveList(board);
 	getline(cin, choice);
 
 	//e6?!
@@ -72,7 +78,7 @@ int hunterTestFunction(){
 	}
 
 	board.displayBoard(); 
-	movelist.generateMoveList(board); movelist.printMoveList();
+	movelist.generateMoveList(board); movelist.printMoveList(board);
 	getline(cin, choice);
 
 	//c4?!
@@ -81,7 +87,7 @@ int hunterTestFunction(){
 	}
 
 	board.displayBoard(); 
-	movelist.generateMoveList(board); movelist.printMoveList();
+	movelist.generateMoveList(board); movelist.printMoveList(board);
 	getline(cin, choice);
 
 	//c6?!
@@ -104,13 +110,13 @@ int hunterTestFunction(){
 			return -1;
 		}
 		board.displayBoard(); testIsSquareAttacked(WHITE, board); testIsSquareAttacked(BLACK, board);
-		movelist.generateMoveList(board); movelist.printMoveList();
+		movelist.generateMoveList(board); movelist.printMoveList(board);
 		cout << "\nGive me a valid FEN string:\n";
 		getline(cin, fen);
 	}
 }
 
-int minhTestFunction() {
+void testFunction2() {
 
 	Move m; string next;
 
@@ -143,7 +149,7 @@ int minhTestFunction() {
 	board.displayBoard(); cout << "\n";
 	cout << "Press enter to continue:";
 	getline(cin, next);
-
+	
 	//White castle queen side (d7d5)
 	m.move = MOVE(25, 23, 0, 0, 2);
 	board.makeMove(m);
@@ -170,7 +176,7 @@ int minhTestFunction() {
 	board.makeMove(m);
 	//Output move's from square and to square
 	cout << "from: " << m.getFromSquare() << " to: " << m.getToSquare() << "\n\n";
-
+	
 	//Display the board
 	board.displayBoard(); cout << "\n";
 
@@ -197,17 +203,41 @@ int minhTestFunction() {
 
 	cout << "Press enter to continue:";
 	getline(cin, next);
-	
+
 	return 0;
+}
+
+//Has kouri play against itself
+void testFunction3() {
+	string x; board.init(true);
+
+	while (42 == 42) {
+
+		movelist.generateMoveList(board);
+		int moveNum = getRandomInteger(0, movelist.numberOfMoves - 1);
+		board.makeMove(movelist.moves[moveNum]);
+
+		board.displayBoard();
+		movelist.printMoveList(board);
+		
+		cout << "\n\n" << NAME << " has decided to make move " << moveNum << "!";
+		board.sideToMove = board.sideToMove ^ 1;
+		
+		getline(cin, x);
+	}
 }
 
 //Program execution starts here
 int main() {
-	cout << "Hello. My name is " << NAME << ".\n\n";
+	cout << "Hello. My name is " << NAME << ".\n";
+
+	//return testFunction1();
+	//testFunction2();
+	testFunction3();
 
 	string in; cout << "There are two test functions. Type \"h\" for Hunter and \"m\" for Minh:\n";
 	getline(cin, in);
-	
+
 	if (in.compare("h") == 0) return hunterTestFunction();
 	else if (in.compare("m") == 0) return minhTestFunction();
 	else return -1;
