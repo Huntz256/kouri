@@ -320,6 +320,9 @@ void MoveList::generateSliderMoves(BoardStructure board) {
 				//to do
 			}
 		}
+
+		piece = SLIDING_PIECES[pieceIndex];
+		pieceIndex++;
 	}
 
 }
