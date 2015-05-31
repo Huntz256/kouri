@@ -46,7 +46,7 @@ void BoardStructure::displayFullBoard(bool dispPieces){
 void BoardStructure::displayBoard() {
 
 	//Display the board
-	cout << "\n\n";
+	cout << "\n\n\n";
 	for (int rank = RANK_8; rank >= RANK_1; rank--) {
 		cout << rank + 1 << " ";
 		for (int file = FILE_A; file <= FILE_H; file++) {
@@ -62,10 +62,10 @@ void BoardStructure::displayBoard() {
 }
 void BoardStructure::init(bool goFirst) {
 	if (goFirst) {
-		setUpBoardUsingFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w  KQkq - 0 1");
+		setUpBoardUsingFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	}
 	else {
-		setUpBoardUsingFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b  KQkq - 0 1");
+		setUpBoardUsingFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1");
 	}
 }
 void BoardStructure::resetBoardToEmpty() {
