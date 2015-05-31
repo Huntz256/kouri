@@ -173,10 +173,10 @@ int Move::getCastling() {
 void MoveList::addPawnCapturingMove(BoardStructure board, int fromSquare, int toSquare, int capture, int side) {
 	if (side == WHITE) {
 		if (RANKS[fromSquare] == RANK_7) {
-			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, capture, 10, 0); numberOfMoves++;
-			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, capture, 8, 0); numberOfMoves++;
-			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, capture, 6, 0); numberOfMoves++;
-			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, capture, 4, 0); numberOfMoves++;
+			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, capture, W_QUEEN, 0); numberOfMoves++;
+			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, capture, W_ROOK, 0); numberOfMoves++;
+			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, capture, W_KNIGHT, 0); numberOfMoves++;
+			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, capture, W_BISHOP, 0); numberOfMoves++;
 		}
 		else {
 			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, capture, 0, 0); numberOfMoves++;
@@ -184,10 +184,10 @@ void MoveList::addPawnCapturingMove(BoardStructure board, int fromSquare, int to
 	}
 	else {
 		if (RANKS[fromSquare] == RANK_2) {
-			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, capture, 9, 0); numberOfMoves++;
-			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, capture, 7, 0); numberOfMoves++;
-			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, capture, 5, 0); numberOfMoves++;
-			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, capture, 3, 0); numberOfMoves++;
+			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, capture, B_QUEEN, 0); numberOfMoves++;
+			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, capture, B_ROOK, 0); numberOfMoves++;
+			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, capture, B_KNIGHT, 0); numberOfMoves++;
+			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, capture, B_BISHOP, 0); numberOfMoves++;
 		}
 		else {
 			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, capture, 0, 0); numberOfMoves++;
@@ -198,10 +198,10 @@ void MoveList::addPawnMove(BoardStructure board, int fromSquare, int toSquare, i
 	//White--
 	if (side == WHITE) {
 		if (RANKS[fromSquare] == RANK_7) {
-			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, 0, 10, 0); numberOfMoves++;
-			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, 0, 8, 0); numberOfMoves++;
-			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, 0, 6, 0); numberOfMoves++;
-			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, 0, 4, 0); numberOfMoves++;
+			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, 0, W_QUEEN, 0); numberOfMoves++;
+			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, 0, W_ROOK, 0); numberOfMoves++;
+			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, 0, W_KNIGHT, 0); numberOfMoves++;
+			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, 0, W_BISHOP, 0); numberOfMoves++;
 		}
 		{
 			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, 0, 0, 0); numberOfMoves++;
@@ -212,10 +212,10 @@ void MoveList::addPawnMove(BoardStructure board, int fromSquare, int toSquare, i
 	//Black----
 	else {
 		if (RANKS[fromSquare] == RANK_2) {
-			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, 0, 9, 0); numberOfMoves++;
-			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, 0, 7, 0); numberOfMoves++;
-			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, 0, 5, 0); numberOfMoves++;
-			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, 0, 3, 0); numberOfMoves++;
+			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, 0, B_QUEEN, 0); numberOfMoves++;
+			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, 0, B_ROOK, 0); numberOfMoves++;
+			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, 0, B_KNIGHT, 0); numberOfMoves++;
+			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, 0, B_BISHOP, 0); numberOfMoves++;
 		}
 		else {
 			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, 0, 0, 0); numberOfMoves++;
@@ -317,7 +317,35 @@ void MoveList::generateSliderMoves(BoardStructure board) {
 
 			//If there is a piece on square i that is a slider piece...
 			if (board.pieces[i] == piece) {
-				//to do
+				
+				//For each direction...
+				for (int j = 0; j < NUMBER_OF_DIRECTIONS[piece]; j++) {
+					int tempSquare = i + PIECE_MOVEMENTS[piece][j];
+
+					//While tempSquare is not off board...
+					while (board.pieces[tempSquare] != -1) {
+
+						//If tempSquare is not empty, generate a capturing move
+						if (board.pieces[tempSquare] != 0) {
+							//If tempSquare has a piece opposite in color to the piece on square i
+							//BLACK ^ 1 == WHITE, WHITE ^ 1 == BLACK (^ is the XOR operator)
+							if (board.getPieceColor(board.pieces[tempSquare]) == (board.sideToMove ^ 1)) {
+								moves[numberOfMoves].move = MOVE(i, tempSquare, board.pieces[tempSquare], 0, 0);
+								numberOfMoves++;
+							}
+							break;
+						}
+
+						//If tempSquare is empty, generate a non capture move 
+						else if (board.pieces[tempSquare] == 0) {
+							moves[numberOfMoves].move = MOVE(i, tempSquare, 0, 0, 0);
+							numberOfMoves++;
+						}
+
+						tempSquare += PIECE_MOVEMENTS[piece][j];
+
+					}
+				}
 			}
 		}
 
