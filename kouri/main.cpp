@@ -3,6 +3,7 @@
 #include <string>
 #include <random>
 #include <ctime>
+#include <sstream>
 using namespace std;
 
 BoardStructure board; MoveListGenerator movelist;
@@ -181,27 +182,37 @@ void testFunction4() {
 
 //Program execution starts here
 int main() {
-	cout << "Hello. My name is " << NAME << ".\n";
-	cout << "\nI have been created by Hunter and Minh for a CS class project";
-	cout << "\n\nCurrently, I understand some rules of chess.";
-	cout << "\nEnough to generate and make most legal moves.";
-	cout << "\nHowever, I do not know at all what makes one move better than another.\n\n";
+	string t, c;
 
-	string in; cout << "Enter:\n \"1\" to play against me\n \"2\" to have me play against myself\n \"3\" to do castling testing\n \"4\" to parse a FEN string\n";
-	getline(cin, in);
+	do {
+		if (!getline(cin, c)) {
+			c = "quit";
+		}
 
-	if (in.compare("1") == 0) { 
-		testFunction4(); 
-	}
-	else if (in.compare("2") == 0) { 
-		testFunction3(); 
-	}
-	else if (in.compare("3") == 0){
-		testFunction2();
-	}
-	else {
-		testFunction1();
-	}
+		istringstream is(c);
+		t.clear();
+		is >> skipws >> t;
+
+		if (t == "uci") {
+			cout << "id name " << NAME << "\n";
+			cout << "id author Minter\n";
+			cout << "uciok\n";
+		}
+		else if (t == "isready") {
+			cout << "readyok\n";
+			board.init(true);
+			
+		}
+		else if (t == "go") {
+			movelist.generateMoveList(board);
+			int moveNum = getRandomInteger(0, movelist.numberOfMoves - 1);
+			board.makeMove(movelist.moves[moveNum]);
+			cout << "bestmove ";
+			movelist.uciPrintMove(board, moveNum);
+			board.sideToMove = board.sideToMove ^ 1;
+		}
+
+	} while (t != "quit");
 
 	return 0;
 }

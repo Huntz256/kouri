@@ -495,3 +495,17 @@ void MoveListGenerator::printMoveList(BoardStructure board) {
 
 	cout << "# of moves: " << numberOfMoves;
 }
+
+void MoveListGenerator::uciPrintMove(BoardStructure board, int moveNum) {
+	const char PIECE_NUM_TO_CHAR[13] = { ' ', ' ', ' ', 'B', 'B', 'N', 'N', 'R', 'R', 'Q', 'Q', 'K', 'K' };
+	
+	int fromSquare = moves[moveNum].getFromSquare();
+	int toSquare = moves[moveNum].getToSquare();
+
+	printSquare(fromSquare);
+
+	printSquare(toSquare);
+
+	cout << "\n";
+
+}
