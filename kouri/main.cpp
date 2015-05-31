@@ -160,12 +160,19 @@ void testFunction2() {
 //Has kouri play against itself
 void testFunction3() {
 	string x; board.init(true);
+
 	while (42 == 42) {
-		board.displayBoard();
+
 		movelist.generateMoveList(board);
+		int moveNum = getRandomInteger(0, movelist.numberOfMoves - 1);
+		board.makeMove(movelist.moves[moveNum]);
+
+		board.displayBoard();
 		movelist.printMoveList(board);
-		board.makeMove(movelist.moves[getRandomInteger(0, movelist.numberOfMoves)]);
+		
+		cout << "\n\n" << NAME << " has decided to make move " << moveNum << "!";
 		board.sideToMove = board.sideToMove ^ 1;
+		
 		getline(cin, x);
 	}
 }
