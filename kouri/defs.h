@@ -132,8 +132,8 @@ void testIsSquareAttacked(int side, BoardStructure board);
 char numToPieceChar(int num);
 void printSquare(int square); //Prints square in alg. notation
 
-//Move list class reprsents a list of moves
-class MoveList {
+//Contains all move generation functions
+class MoveListGenerator {
 	public:
 		Move moves[512];
 		int numberOfMoves;
@@ -141,6 +141,7 @@ class MoveList {
 		void generatePawnMoves(BoardStructure board);
 		void generateSliderMoves(BoardStructure board);
 		void generateNonSliderMoves(BoardStructure board);
+		void generateCastlingMoves(BoardStructure board);
 
 		void addPawnCapturingMove(BoardStructure board, int fromSquare, int toSquare, int capture, int side);
 		void addPawnMove(BoardStructure board, int fromSquare, int toSquare, int side);

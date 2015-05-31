@@ -170,7 +170,7 @@ int Move::getCastling() {
 	return (move >> 21) & 0x7;
 }
 
-void MoveList::addPawnCapturingMove(BoardStructure board, int fromSquare, int toSquare, int capture, int side) {
+void MoveListGenerator::addPawnCapturingMove(BoardStructure board, int fromSquare, int toSquare, int capture, int side) {
 	if (side == WHITE) {
 		if (RANKS[fromSquare] == RANK_7) {
 			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, capture, W_QUEEN, 0); numberOfMoves++;
@@ -194,7 +194,7 @@ void MoveList::addPawnCapturingMove(BoardStructure board, int fromSquare, int to
 		}
 	}
 }
-void MoveList::addPawnMove(BoardStructure board, int fromSquare, int toSquare, int side) {
+void MoveListGenerator::addPawnMove(BoardStructure board, int fromSquare, int toSquare, int side) {
 	//White--
 	if (side == WHITE) {
 		if (RANKS[fromSquare] == RANK_7) {
@@ -222,7 +222,7 @@ void MoveList::addPawnMove(BoardStructure board, int fromSquare, int toSquare, i
 		}
 	}
 }
-void MoveList::generatePawnMoves(BoardStructure board) {
+void MoveListGenerator::generatePawnMoves(BoardStructure board) {
 	if (board.sideToMove == WHITE) {
 
 		//Go through every square on the board
@@ -306,7 +306,7 @@ void MoveList::generatePawnMoves(BoardStructure board) {
 		}
 	}
 }
-void MoveList::generateSliderMoves(BoardStructure board) {
+void MoveListGenerator::generateSliderMoves(BoardStructure board) {
 	int pieceIndex = SLIDING_PIECES_START_INDEX[board.sideToMove];
 	int piece = SLIDING_PIECES[pieceIndex];
 	pieceIndex++;
@@ -354,7 +354,7 @@ void MoveList::generateSliderMoves(BoardStructure board) {
 	}
 
 }
-void MoveList::generateNonSliderMoves(BoardStructure board) {
+void MoveListGenerator::generateNonSliderMoves(BoardStructure board) {
 	int pieceIndex = NON_SLIDING_PIECES_START_INDEX[board.sideToMove];
 	int piece = NON_SLIDING_PIECES[pieceIndex];
 	pieceIndex++;
@@ -402,15 +402,62 @@ void MoveList::generateNonSliderMoves(BoardStructure board) {
 		pieceIndex++;
 	}
 }
-void MoveList::generateMoveList(BoardStructure board) {
+void MoveListGenerator::generateCastlingMoves(BoardStructure board) {
+	if (board.sideToMove == WHITE) {
+		//White Kingside Castling
+		if (board.castlePerms & 1) {
+			if (board.pieces[26] == 0 && board.pieces[27] == 0) {
+				if (!isSquareAttacked(25, BLACK, board) && !isSquareAttacked(26, BLACK, board) && !isSquareAttacked(27, BLACK, board)) {
+					moves[numberOfMoves].move = MOVE(25, 27, 0, 0, 1);
+					numberOfMoves++;
+				}
+			}
+		}
+
+		//White Queenside Castling
+		if (board.castlePerms & 2) {
+			if (board.pieces[22] == 0 && board.pieces[23] == 0 && board.pieces[24] == 0) {
+				if (!isSquareAttacked(23, BLACK, board) && !isSquareAttacked(24, BLACK, board) && !isSquareAttacked(25, BLACK, board)) {
+					moves[numberOfMoves].move = MOVE(25, 23, 0, 0, 2);
+					numberOfMoves++;
+				}
+			}
+		}
+	}
+	else {
+		//Black Kingside Castling
+		if (board.castlePerms & 4) {
+			if (board.pieces[96] == 0 && board.pieces[97] == 0) {
+				if (!isSquareAttacked(95, WHITE, board) && !isSquareAttacked(96, WHITE, board) && !isSquareAttacked(97, WHITE, board)) {
+					moves[numberOfMoves].move = MOVE(95, 97, 0, 0, 4);
+					numberOfMoves++;
+				}
+			}
+		}
+
+
+		//Black Queenside Castling
+		if (board.castlePerms & 8) {
+			if (board.pieces[92] == 0 && board.pieces[93] == 0 && board.pieces[94] == 0) {
+				if (!isSquareAttacked(93, WHITE, board) && !isSquareAttacked(94, WHITE, board) && !isSquareAttacked(95, WHITE, board)) {
+					moves[numberOfMoves].move = MOVE(95, 93, 0, 0, 8);
+					numberOfMoves++;
+				}
+			}
+		}
+
+	}
+}
+void MoveListGenerator::generateMoveList(BoardStructure board) {
 	numberOfMoves = 0;
 	generatePawnMoves(board);
 	generateSliderMoves(board);
 	generateNonSliderMoves(board);
+	generateCastlingMoves(board);
 }
 
 //Prints all of the moves in our move list in algebraic notation
-void MoveList::printMoveList(BoardStructure board) {
+void MoveListGenerator::printMoveList(BoardStructure board) {
 
 	const char PIECE_NUM_TO_CHAR[13] = { ' ', ' ', ' ', 'B', 'B', 'N', 'N', 'R', 'R', 'Q', 'Q', 'K', 'K' };
 	
@@ -420,15 +467,25 @@ void MoveList::printMoveList(BoardStructure board) {
 		int capPiece = moves[i].getCapturedPiece();
 		int promPiece = moves[i].getPromoted();
 
-		cout << "Move " << i << " Found: " << PIECE_NUM_TO_CHAR[board.pieces[fromSquare]];
+		cout << "Move " << i << " Found: ";
 
-		if (moves[i].getCapturedPiece() != 0) {
-			cout << FILES_TO_CHAR[FILES[fromSquare]] << "x";
+		if ((moves[i].getCastling() & 1) || (moves[i].getCastling() & 4)) {
+			cout << "O-O\n";
 		}
+		else if ((moves[i].getCastling() & 2) || (moves[i].getCastling() & 8)) {
+			cout << "O-O-O\n";
+		}
+		else {
+			 cout << PIECE_NUM_TO_CHAR[board.pieces[fromSquare]];
 
-		printSquare(toSquare);
+			if (moves[i].getCapturedPiece() != 0) {
+				cout << FILES_TO_CHAR[FILES[fromSquare]] << "x";
+			}
 
-		cout << " (f:" << fromSquare << " t:" << toSquare << " c:" << capPiece << " p: " << promPiece << ")\n";
+			printSquare(toSquare);
+
+			cout << " (f:" << fromSquare << " t:" << toSquare << " c:" << capPiece << " p: " << promPiece << ")\n";
+		}
 	}
 
 	cout << "# of moves: " << numberOfMoves;

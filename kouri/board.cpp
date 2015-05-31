@@ -62,10 +62,10 @@ void BoardStructure::displayBoard() {
 }
 void BoardStructure::init(bool goFirst) {
 	if (goFirst) {
-		setUpBoardUsingFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w  KQkq - 0 1");
+		setUpBoardUsingFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	}
 	else {
-		setUpBoardUsingFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b  KQkq - 0 1");
+		setUpBoardUsingFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1");
 	}
 }
 void BoardStructure::resetBoardToEmpty() {

@@ -5,7 +5,7 @@
 #include <ctime>
 using namespace std;
 
-BoardStructure board; MoveList movelist;
+BoardStructure board; MoveListGenerator movelist;
 
 
 int getRandomInteger(int min, int max) {
@@ -162,7 +162,6 @@ void testFunction3() {
 	string x; board.init(true);
 
 	while (42 == 42) {
-
 		movelist.generateMoveList(board);
 		int moveNum = getRandomInteger(0, movelist.numberOfMoves - 1);
 		board.makeMove(movelist.moves[moveNum]);
