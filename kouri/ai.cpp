@@ -35,7 +35,7 @@ int negaMax(BoardStructure board, int depth, int a, int b)
 	for (Move m : movegen.moves) {
 		board.makeMove(m);
 		a = max(a, -negaMax(board, depth - 1, -a, -b));
-		//board.undo();
+		board.undoMove();
 		if (b <= a){
 			return b;
 		}

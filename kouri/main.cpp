@@ -367,7 +367,6 @@ void testFunction22(){
 		movelist.printMoveList(board);
 		cout << "\n\nI, " << NAME << ", have decided to make move " << moveNum << ".";
 
-		board.sideToMove = board.sideToMove ^ 1;
 		board.countPieces();
 	}
 
