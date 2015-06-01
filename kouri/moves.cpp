@@ -167,19 +167,19 @@ void MoveListGenerator::generatePawnMoves(BoardStructure board) {
 				}
 
 				//Pawn capturing
-				if (board.getPieceColor(board.pieces[i + 9]) == BLACK) {
+				if (board.pieces[i + 9] > 0 && board.getPieceColor(board.pieces[i + 9]) == BLACK) {
 					addPawnCapturingMove(board, i, i + 9, board.pieces[i + 9], WHITE);
 				}
 
-				if (board.getPieceColor(board.pieces[i + 11]) == BLACK) {
+				if (board.pieces[i + 11] > 0 && board.getPieceColor(board.pieces[i + 11]) == BLACK) {
 					addPawnCapturingMove(board, i, i + 11, board.pieces[i + 11], WHITE);
 				}
 
 				//En passant 
-				if (board.pieces[i + 9] == board.enPassSquare) {
+				if (board.pieces[i + 9] > 0 && board.pieces[i + 9] == board.enPassSquare) {
 					//addPawnCapturingMove(board, i, i + 9, 0, WHITE);
 				}
-				if (board.pieces[i + 11] == board.enPassSquare) {
+				if (board.pieces[i + 11] > 0 && board.pieces[i + 11] == board.enPassSquare) {
 					//addPawnCapturingMove(board, i, i + 11, 0, WHITE);
 				}
 
@@ -207,19 +207,19 @@ void MoveListGenerator::generatePawnMoves(BoardStructure board) {
 				}
 
 				//Pawn capturing
-				if (board.getPieceColor(board.pieces[i - 9]) == WHITE) {
+				if (board.pieces[i - 9] > 0 && board.getPieceColor(board.pieces[i - 9]) == WHITE) {
 					addPawnCapturingMove(board, i, i - 9, board.pieces[i - 9], BLACK);
 				}
 
-				if (board.getPieceColor(board.pieces[i - 11]) == WHITE) {
+				if (board.pieces[i - 11] > 0 && board.getPieceColor(board.pieces[i - 11]) == WHITE) {
 					addPawnCapturingMove(board, i, i - 11, board.pieces[i - 11], BLACK);
 				}
 
 				//En passant 
-				if (board.pieces[i - 9] == board.enPassSquare) {
+				if (board.pieces[i - 9] > 0 && board.pieces[i - 9] == board.enPassSquare) {
 					//	addPawnCapturingMove(board, i, i - 9, 0, BLACK);
 				}
-				if (board.pieces[i - 11] == board.enPassSquare) {
+				if (board.pieces[i - 11] > 0 && board.pieces[i - 11] == board.enPassSquare) {
 					//addPawnCapturingMove(board, i, i - 11, 0, BLACK);
 				}
 			}
@@ -307,10 +307,11 @@ void MoveListGenerator::generateNonSliderMoves(BoardStructure board) {
 						//If tempSquare has a piece opposite in color to the piece on square i
 						//BLACK ^ 1 == WHITE, WHITE ^ 1 == BLACK (^ is the XOR operator)
 						if (board.getPieceColor(board.pieces[tempSquare]) == (board.sideToMove ^ 1)) {
+							cout << "board.getPieceColor(board.pieces[tempSquare])" << board.getPieceColor(board.pieces[tempSquare]) << "\n";
+							cout << "board.sideToMove:" << board.sideToMove << "\n";
+
 							moves[numberOfMoves].move = MOVE(i, tempSquare, board.pieces[tempSquare], 0, 0); 
 							numberOfMoves++;
-
-
 
 							//If king is attacked by the other side when this move is made
 							//if (board.isSquareAttacked(board.kingSquare[board.sideToMove], board.sideToMove ^ 1)) {
