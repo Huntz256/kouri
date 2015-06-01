@@ -191,6 +191,7 @@ int BoardStructure::getPieceColor(int pieceNum) {
 	case W_PAWN: case W_BISHOP: case W_KNIGHT: case W_ROOK: case W_QUEEN: case W_KING:
 		return WHITE; break;
 	default:
+		cout << "ERROR: INVALID PIECE COLOR. pieceNum: " << pieceNum << "\n";
 		return -42; break;
 	}
 }
@@ -435,11 +436,11 @@ void BoardStructure::undoMove() {
 
 	ply--; historyPly--;
 
-	//Get move in last non-blank element of history[] and revert castlePerms and enPassSquare
 	int move, from, to, captured, promoted, castling;
 
 	///cout << "undoMove(): history[" << historyPly << "].move is:" << history[historyPly].move << "\n";
 
+	//Get move in last non-blank element of history[]
 	move = history[historyPly].move;
 
 	//Revert castlePerms and enPassSquare
@@ -511,7 +512,7 @@ void BoardStructure::undoMove() {
 			}
 			else {
 				pieces[to] = 0;
-	}
+			}
 
 			///cout << "undoMove(): undid a regular move\n";
 }
@@ -519,7 +520,7 @@ void BoardStructure::undoMove() {
 		//Revert king square if the king moved
 		if (to == kingSquare[sideToMove]) {
 			kingSquare[sideToMove] = from;
-	}
+		}
 }
 
 
