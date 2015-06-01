@@ -385,10 +385,10 @@ void MoveListGenerator::generateMoveList(BoardStructure board) {
 	numberOfMoves = 0; numberOfMovesLegal = 0;
 
 	//Clear move arrays
-	for (int i = 0; i < numberOfMoves; i++) {
+	for (int i = 0; i <= numberOfMoves; i++) {
 		moves[i].move = 0;
 	}
-	for (int i = 0; i < numberOfMovesLegal; i++) {
+	for (int i = 0; i <= numberOfMovesLegal; i++) {
 		movesLegal[i].move = 0;
 	}
 

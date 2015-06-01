@@ -377,6 +377,61 @@ void testFunction22(){
 	getline(cin, x);
 }
 
+//Used for testing makeMove() and undoMove()
+void testFunction70() {
+	//Init board
+	string x; board.init(true);
+	board.displayBoard();
+
+	//Make a move, display board, pause
+	Move m; m.move = MOVE(35, 55, 0, 0, 0); board.makeMove(m); cout << "MOVE MADE.\n";
+	board.displayBoard(); getline(cin, x);
+
+	//Undo move, display board, pause
+	board.undoMove();  cout << "MOVE UNDONE.\n";
+	board.displayBoard(); getline(cin, x);
+
+	//Make and undo more moves
+	for (int i = 0; i < 30; i++) {
+		movelist.generateMoveList(board); int moveNum = getRandomInteger(0, movelist.numberOfMovesLegal - 1);
+		m.move = movelist.movesLegal[moveNum].move; board.makeMove(m);
+		cout << "i:" << i << "\n";
+		cout << "movelist.numberOfMovesLegal:" << movelist.numberOfMovesLegal << "\n";
+		cout << "moveNum:" << moveNum << "\n";
+	}
+	board.displayBoard(); getline(cin, x);
+	for (int i = 0; i < 15; i++) {
+		board.undoMove();  cout << "board.ply: " << board.ply << ". MOVE UNDONE.\n";
+	}
+
+	board.displayBoard(); getline(cin, x);
+
+	for (int i = 0; i < 15; i++) {
+		board.undoMove(); cout << "board.ply: " << board.ply << ". MOVE UNDONE.\n";
+	}
+
+	board.displayBoard(); getline(cin, x);
+
+	//Make and undo more moves
+	for (int i = 0; i < 50; i++) {
+		cout << "i:" << i << "\n";
+		
+		int moveNum = getRandomInteger(0, movelist.numberOfMovesLegal - 1);
+		cout << "moveNum:" << moveNum << "\n";
+		movelist.generateMoveList(board); 
+		cout << "movelist.numberOfMovesLegal:" << movelist.numberOfMovesLegal << "\n";
+		m.move = movelist.movesLegal[moveNum].move; board.makeMove(m);
+		
+	}
+	for (int i = 0; i < 50; i++) {
+		board.undoMove();
+	}
+	cout << "MOVESSS UNDONE.\n";
+
+	board.displayBoard(); getline(cin, x);
+
+}
+
 //Program execution starts here
 int main() {
 	cout << "Hello. My name is " << NAME << ".\n";
@@ -395,15 +450,18 @@ int main() {
 	else if (in.compare("2") == 0) {
 		testFunction3();
 	}
-	else if (in.compare("3") == 0){
+	else if (in.compare("3") == 0) {
 		testFunction2();
 	}
-	else if (in.compare("4") == 0){
+	else if (in.compare("4") == 0) {
 		testFunction1();
 	}
-	else if (in.compare("5") == 0){
+	else if (in.compare("5") == 0) {
 		//testFunction5();
 		testFunction22();
+	} 
+	else if (in.compare("6") == 0) {
+		testFunction70();
 	}
 
 	return 0;
