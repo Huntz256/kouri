@@ -59,10 +59,10 @@ void testIsSquareAttacked(int side, BoardStructure board) {
 }
 
 int Move::getFromSquare() {
-	return move & 0x7F; 
+	return move & 0x7F;
 }
 int Move::getToSquare() {
-	return (move >> 7) & 0x7F; 
+	return (move >> 7) & 0x7F;
 }
 int Move::getCapturedPiece() {
 	return (move >> 14) & 0xF;
@@ -75,6 +75,13 @@ int Move::getCastling() {
 }
 
 void MoveListGenerator::addPawnCapturingMove(BoardStructure board, int fromSquare, int toSquare, int capture, int side) {
+	if (FILES[fromSquare] == -1) {
+		throw "ERROR3";
+	}
+	if (FILES[toSquare] == -1) {
+		throw "ERROR4";
+	}
+	
 	if (side == WHITE) {
 		if (RANKS[fromSquare] == RANK_7) {
 			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, capture, W_QUEEN, 0); numberOfMoves++;
@@ -99,6 +106,14 @@ void MoveListGenerator::addPawnCapturingMove(BoardStructure board, int fromSquar
 	}
 }
 void MoveListGenerator::addPawnMove(BoardStructure board, int fromSquare, int toSquare, int side) {
+
+	if (FILES[fromSquare] == -1) {
+		throw "ERROR1";
+	}
+	if (FILES[toSquare] == -1) {
+		throw "ERROR2";
+	}
+
 	//White----
 	if (side == WHITE) {
 		//Promotions
@@ -298,9 +313,9 @@ void MoveListGenerator::generateNonSliderMoves(BoardStructure board) {
 
 
 							//If king is attacked by the other side when this move is made
-							if (board.isSquareAttacked(board.kingSquare[board.sideToMove], board.sideToMove ^ 1)) {
-								board.undoMove();
-							}
+							//if (board.isSquareAttacked(board.kingSquare[board.sideToMove], board.sideToMove ^ 1)) {
+								//board.undoMove();
+							//}
 						}
 					}
 
@@ -428,4 +443,17 @@ void MoveListGenerator::printMoveList(BoardStructure board) {
 	}
 
 	cout << "# of moves: " << numberOfMovesLegal << "\n";
+}
+void MoveListGenerator::uciPrintMove(BoardStructure board, int moveNum) {
+	const char PIECE_NUM_TO_CHAR[13] = { ' ', ' ', ' ', 'B', 'B', 'N', 'N', 'R', 'R', 'Q', 'Q', 'K', 'K' };
+
+	int fromSquare = moves[moveNum].getFromSquare();
+	int toSquare = moves[moveNum].getToSquare();
+
+	printSquare(fromSquare);
+
+	printSquare(toSquare);
+
+	cout << "\n";
+
 }

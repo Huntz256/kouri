@@ -167,6 +167,7 @@ class MoveListGenerator {
 		void addPawnCapturingMove(BoardStructure board, int fromSquare, int toSquare, int capture, int side);
 		void addPawnMove(BoardStructure board, int fromSquare, int toSquare, int side);
 		void printMoveList(BoardStructure board);
+		void uciPrintMove(BoardStructure board, int moveNum);
 };
 
 /*************** AI Stuff ******************/
