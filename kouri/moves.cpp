@@ -310,8 +310,6 @@ void MoveListGenerator::generateNonSliderMoves(BoardStructure board) {
 							moves[numberOfMoves].move = MOVE(i, tempSquare, board.pieces[tempSquare], 0, 0); 
 							numberOfMoves++;
 
-
-
 							//If king is attacked by the other side when this move is made
 							//if (board.isSquareAttacked(board.kingSquare[board.sideToMove], board.sideToMove ^ 1)) {
 								//board.undoMove();
@@ -324,7 +322,6 @@ void MoveListGenerator::generateNonSliderMoves(BoardStructure board) {
 						moves[numberOfMoves].move = MOVE(i, tempSquare, 0, 0, 0);
 						numberOfMoves++;
 					}
-
 				}
 			}
 		}
@@ -421,7 +418,8 @@ void MoveListGenerator::printMoveList(BoardStructure board) {
 		int capPiece = movesLegal[i].getCapturedPiece();
 		int promPiece = movesLegal[i].getPromoted();
 
-		cout << "Move " << i << " Found: "; cout << "(piece num: " << board.pieces[fromSquare] << ")";
+		cout << "Move " << i << " Found: "; cout << "(piece num: " << board.pieces[movesLegal[i].getFromSquare()] << ")";
+		//cout << "Move " << i << " Found: "; cout << "(piece num: " << board.pieces[fromSquare] << ")";
 
 		if ((movesLegal[i].getCastling() == 1) || (movesLegal[i].getCastling() == 3)) {
 			cout << "O-O\n";
@@ -430,10 +428,12 @@ void MoveListGenerator::printMoveList(BoardStructure board) {
 			cout << "O-O-O\n";
 		}
 		else {
-			 cout << PIECE_NUM_TO_CHAR[board.pieces[fromSquare]];
+			 cout << PIECE_NUM_TO_CHAR[board.pieces[movesLegal[i].getFromSquare()]];
+			 //cout << PIECE_NUM_TO_CHAR[board.pieces[fromSquare]];
 
 			 if (movesLegal[i].getCapturedPiece() != 0) {
-				cout << FILES_TO_CHAR[FILES[fromSquare]] << "x";
+				 cout << FILES_TO_CHAR[FILES[movesLegal[i].getFromSquare()]] << "x";
+				//cout << FILES_TO_CHAR[FILES[fromSquare]] << "x";
 			}
 
 			printSquare(toSquare);

@@ -59,7 +59,7 @@ void BoardStructure::displayFullBoard(bool dispPieces){
 void BoardStructure::displayBoard() {
 
 	//Display the board with white on bottom
-	cout << "\n\n";
+	cout << "\n";
 	for (int rank = RANK_8; rank >= RANK_1; rank--) {
 		cout << rank + 1 << " ";
 		for (int file = FILE_A; file <= FILE_H; file++) {
@@ -366,14 +366,11 @@ bool BoardStructure::makeMove(Move m) {
 		}
 	}
 
-
 	//Update castling permissions
 	//If a piece moves from a8, a1, e1, or e8, update castling permissions as needed
 	castlePerms &= CASTLE_PERMISSIONS[m.getFromSquare()];
 
 	//If a piece moves to a8, a1, e1, or e8, update castling permissions as needed
-
-
 	if (m.getCastling() != 0) {
 		switch (m.getCastling()) { //Take care of castling
 		case 1: //white king side
@@ -416,8 +413,6 @@ bool BoardStructure::makeMove(Move m) {
 
 	//Flip side to move
 	sideToMove ^= 1;
-
-	
 
 	//Undo move if needed
 	///cout << "otherSideToMove:" << otherSideToMove << "\n";

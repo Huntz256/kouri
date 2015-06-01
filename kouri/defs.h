@@ -171,8 +171,9 @@ class MoveListGenerator {
 };
 
 /*************** AI Stuff ******************/
-int evaluate(BoardStructure board); //Does a basic evaluation of a board based on piece counts from WHITE's perspective
-int negaMax(BoardStructure board, int depth, int a, int b); //nega-max algorithm with alpha-beta pruning
+int evaluate(BoardStructure &board); //Does a basic evaluation of a board based on piece counts from WHITE's perspective
+int negaMax(BoardStructure &board, int depth, int a, int b); //nega-max algorithm with alpha-beta pruning
 Move findBestMove(BoardStructure board, int depth); //Uses nega-max to find best move
+BoardStructure applyMove(BoardStructure board, Move m);
 
 #endif
