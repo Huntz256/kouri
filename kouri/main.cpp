@@ -19,8 +19,8 @@ void playerMove() {
 	do {
 		cout << "\n\nIt's your turn. Choose a move from the list above and enter the move number:";
 		cin >> x;
-		board.makeMove(movelist.moves[x]);
-	} while ((x < 0) || (x >= movelist.numberOfMoves));
+		board.makeMove(movelist.movesLegal[x]);
+	} while ((x < 0) || (x >= movelist.numberOfMovesLegal));
 }
 
 //Assumes input is a move command. Returns move integer if valid, else returns -1
@@ -45,7 +45,7 @@ int translateMoveCommand(string com){
 
 //Checks if a move integer is contained in the generated movelist
 bool isMoveValid(int move){
-	for (int i = 0; i < movelist.numberOfMoves; i++){
+	for (int i = 0; i < movelist.numberOfMovesLegal; i++){
 		if (move == movelist.moves[i].move) return true;
 	}
 	return false;
@@ -168,8 +168,10 @@ void testFunction3() {
 
 	while (42 == 42) {
 		movelist.generateMoveList(board);
-		int moveNum = getRandomInteger(0, movelist.numberOfMoves - 1);
-		board.makeMove(movelist.moves[moveNum]);
+		int moveNum = getRandomInteger(0, movelist.numberOfMovesLegal - 1);
+		while (!board.makeMove(movelist.movesLegal[moveNum])) {
+			moveNum = getRandomInteger(0, movelist.numberOfMovesLegal - 1);
+		}
 
 		board.displayBoard();
 		movelist.printMoveList(board);
@@ -192,17 +194,20 @@ void testFunction4() {
 		movelist.printMoveList(board);
 
 		playerMove();
-		board.sideToMove = board.sideToMove ^ 1;
 
 		movelist.generateMoveList(board);
-		int moveNum = getRandomInteger(0, movelist.numberOfMoves - 1);
-		board.makeMove(movelist.moves[moveNum]);
+		int moveNum = getRandomInteger(0, movelist.numberOfMovesLegal - 1);
+		
+		while (!board.makeMove(movelist.movesLegal[moveNum])) {
+			moveNum = getRandomInteger(0, movelist.numberOfMovesLegal - 1);
+			///cout << "testFunction4(): Getting another moveNum: " << moveNum;
+		}
 
 		board.displayBoard();
 		movelist.printMoveList(board);
+		
 
 		cout << "\n\nI, " << NAME << ", have decided to make move " << moveNum << ".";
-		board.sideToMove = board.sideToMove ^ 1;
 
 	}
 }
@@ -241,18 +246,23 @@ void testFunction5() {
 		if (x.compare("f") == 0) break; //exit game loop
 
 		m.move = translateMoveCommand(x);
-		board.makeMove(m);
-		board.sideToMove = board.sideToMove ^ 1;
+
+		while ( !board.makeMove(m) ) {
+			m.move = translateMoveCommand(x);
+		}
+	
 
 		movelist.generateMoveList(board);
-		int moveNum = getRandomInteger(0, movelist.numberOfMoves - 1);
-		board.makeMove(movelist.moves[moveNum]);
+		int moveNum = getRandomInteger(0, movelist.numberOfMovesLegal - 1);
+
+		while (!board.makeMove(movelist.movesLegal[moveNum])) {
+			moveNum = getRandomInteger(0, movelist.numberOfMovesLegal - 1);
+		}
 
 		board.displayBoard();
 		movelist.printMoveList(board);
 
 		cout << "\n\nI, " << NAME << ", have decided to make move " << moveNum << ".";
-		board.sideToMove = board.sideToMove ^ 1;
 
 	}
 }
