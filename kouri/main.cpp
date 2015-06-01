@@ -176,7 +176,7 @@ void testFunction3() {
 		movelist.printMoveList(board);
 		
 		cout << "\n\n" << NAME << " has decided to make move " << moveNum << "!";
-		board.sideToMove = board.sideToMove ^ 1;
+		//board.sideToMove = board.sideToMove ^ 1;
 		
 		getline(cin, x);
 	}
@@ -197,12 +197,13 @@ void testFunction4() {
 		movelist.generateMoveList(board);
 		int moveNum = getRandomInteger(0, movelist.numberOfMovesLegal - 1);
 		
+		board.displayBoard();
 		while (!board.makeMove(movelist.movesLegal[moveNum])) {
 			moveNum = getRandomInteger(0, movelist.numberOfMovesLegal - 1);
 			///cout << "testFunction4(): Getting another moveNum: " << moveNum;
 		}
 
-		board.displayBoard();
+		
 		movelist.printMoveList(board);
 		
 
@@ -250,15 +251,15 @@ void testFunction5() {
 			m.move = translateMoveCommand(x);
 		}
 	
-
+		board.displayBoard();
 		movelist.generateMoveList(board);
 		int moveNum = getRandomInteger(0, movelist.numberOfMovesLegal - 1);
 
+		
 		while (!board.makeMove(movelist.movesLegal[moveNum])) {
 			moveNum = getRandomInteger(0, movelist.numberOfMovesLegal - 1);
 		}
-
-		board.displayBoard();
+	
 		movelist.printMoveList(board);
 
 		cout << "\n\nI, " << NAME << ", have decided to make move " << moveNum << ".";
@@ -360,9 +361,10 @@ void testFunction22(){
 
 		movelist.generateMoveList(board);
 		int moveNum = getRandomInteger(0, movelist.numberOfMovesLegal - 1);
+		board.displayBoard();
 		board.makeMove(movelist.movesLegal[moveNum]);
 
-		board.displayBoard();
+		
 
 		movelist.printMoveList(board);
 		cout << "\n\nI, " << NAME << ", have decided to make move " << moveNum << ".";
@@ -378,7 +380,7 @@ void testFunction22(){
 //Program execution starts here
 int main() {
 	cout << "Hello. My name is " << NAME << ".\n";
-	cout << "\nI have been created by Hunter and Minh for a CS class project";
+	cout << "\nI have been created by Minter (Hunter and Minh) for a CS class project";
 	cout << "\n\nCurrently, I understand some rules of chess.";
 	cout << "\nEnough to generate and make most legal moves.";
 	cout << "\nHowever, I do not know at all what makes one move better than another.\n\n";
