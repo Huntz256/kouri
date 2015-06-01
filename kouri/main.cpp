@@ -185,6 +185,7 @@ void testFunction3() {
 //Play against kouri by selecting from movelist
 void testFunction4() {
 	string x; board.init(true);
+	//board.setUpBoardUsingFEN("rnbqkbnr/ppp2ppp/3p4/4p2Q/4P3/8/PPPP1PPP/RNB1KBNR w KQkq - 0 1 ");
 
 	while (42 == 42) {
 		movelist.generateMoveList(board);
