@@ -77,6 +77,7 @@ class MoveHistory {
 	public:
 		int move; //Represents a move
 		int castlePerms; //Describes what types of castling were allowed right before the move was made
+		int enPassSquare;//The square that en pass can be done on right before the move was made
 };
 
 //Move class represents a move
@@ -105,6 +106,12 @@ class BoardStructure {
 
 		//Describes what types of castling is allowed on this board
 		//This is an integer from 0000 (no castling is allowed) to 1111 (all castling is allowed)
+		//0001 = white kingside castling allowed
+		//0010 = white queenside castling allowed
+		//0100 = black kingside castling allowed
+		//1000 = black queenside castling allowed
+		//Example: 1010 means queenside castling is allowed for both sides.
+		//Note that this integer is DIFFERENT from that used in Move
 		int castlePerms; 
 
 		//The square that en pass can be done on
@@ -117,6 +124,12 @@ class BoardStructure {
 		//pawn = 1 point, knight = bishop = 3 points, rook = 5 points, queen = 9 points
 		int material[2]; 
 
+		//The square that the king is on; kingSquare[0] is for white, kingSquare[1] is for black
+		int kingSquare[2];
+
+		//The half-turn we are on
+		int ply, historyPly;
+
 		//Contains the number of pieces. Piece index corresponds with previously defined enums
 		//Ex: pieceCount[1] returns the number of black pawns since B_PAWN has been previously defined as 1
 		int pieceCount[13];
@@ -126,13 +139,15 @@ class BoardStructure {
 		void init(bool goFirst); //Sets up pieces for a standard chess match
 		void resetBoardToEmpty(); //Resets the board
 		int setUpBoardUsingFEN(char* fen); //Sets up pieces given a FEN string. Returns 0 if successful.
-		void makeMove(Move move); //Assuming the move passed in is valid, modifies the board and stores the move in history[]
+		bool makeMove(Move move); //Modifies the board and stores the move in history[]. Return true if successful.
+		void undoMove(); //Undoes the last move
 		int getPieceColor(int pieceNumber); //Retrieves the piece color of a piece
 		void displayHistory(); //Displays all the moves so far as move integers
+		bool isSquareAttacked(int square, int attackingSide); //Returns true if square square is being attacked by a piece from the side attackingSide
 		void countPieces(); //Counts all the pieces on the board and records them in the pieceCount[] array
 };
 
-void testIsSquareAttacked(int side, BoardStructure board);
+void testIsSquareAttacked(int side, BoardStructure board); //Used only for testing isSquareAttacked()
 char numToPieceChar(int num); //Converts integer to char representing a piece
 void printSquare(int square); //Prints square in alg. notation
 int charToPieceInt(char c); //Converts char like 'p' or 'Q' to the corresponding integer
@@ -141,8 +156,8 @@ bool isMoveValid(int move); //Checks if a move integer is contained in the gener
 //Contains all move generation functions
 class MoveListGenerator {
 	public:
-		Move moves[512];
-		int numberOfMoves;
+		Move moves[512], movesLegal[512];
+		int numberOfMoves, numberOfMovesLegal;
 		void generateMoveList(BoardStructure board);
 		void generatePawnMoves(BoardStructure board);
 		void generateSliderMoves(BoardStructure board);

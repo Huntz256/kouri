@@ -36,101 +36,6 @@ const int PIECE_MOVEMENTS[13][8] = {
 	{ -10, -9, 1, 11, 10, 9, -1, -11 }
 };
 
-/*
- * Returns true if square square is being attacked by a piece from the side attackingSide for board board.
- * Returns false otherwise.
- */
-bool isSquareAttacked(int square, int attackingSide, BoardStructure board) {
-
-	//Make sure arguments of this function are valid first
-	if (board.pieces[square] == -1) {
-		throw "EXCEPTION: INVALID SQUARE ARGUMENT"; 
-	}
-
-	//Check if square square is being attacked by attackingSide by any pawns...
-	if (attackingSide == WHITE) {
-
-		//If square square is being attacked by a white pawn, return true
-		if (board.pieces[square - 11] == 2 || board.pieces[square - 9] == 2) {
-			return true;
-		}
-
-	}
-	else {
-		//If square square is being attacked by a black pawn, return true
-		if (board.pieces[square + 11] == 1 || board.pieces[square + 9] == 1) {
-			return true;
-		}
-	}
-
-	//Check if square square is being attacked by attackingSide by any knights...
-	for (int i = 0; i < 8; i++) {
-
-		//If square square is being attacked by a white knight, return true
-		if (attackingSide == WHITE && board.pieces[square + KNIGHT_MOVEMENTS[i]] == 6) {
-			return true;
-		}
-		else{
-			//If square square is being attacked by a black knight, return true
-			if (board.pieces[square + KNIGHT_MOVEMENTS[i]] == 5) {
-				return true;
-			}
-		}
-	}
-
-	//Check if square square is being attacked by attackingSide by any rooks or queens...
-	int tempSquare = 0;
-	for (int i = 0; i < 4; i++) {
-		tempSquare = square + ROOK_MOVEMENTS[i];
-		while (board.pieces[tempSquare] != -1) {
-			if (board.pieces[tempSquare] != 0) {
-				if ( ((board.pieces[tempSquare] == 8) || (board.pieces[tempSquare] == 10)) && attackingSide == WHITE ) {
-					return true;
-				}
-				if ( ((board.pieces[tempSquare] == 7) || (board.pieces[tempSquare] == 9)) && attackingSide == BLACK ) {
-					return true;
-				}
-				break;
-			 }
-			tempSquare += ROOK_MOVEMENTS[i];
-		}
-	}
-
-	//Check if square square is being attacked by attackingSide by any bishops or queens...
-	tempSquare = 0;
-	for (int i = 0; i < 4; i++) {
-		tempSquare = square + BISHOP_MOVEMENTS[i];
-		while (board.pieces[tempSquare] != -1) {
-			if (board.pieces[tempSquare] != 0) {
-				if (((board.pieces[tempSquare] == 4) || (board.pieces[tempSquare] == 10)) && attackingSide == WHITE) {
-					return true;
-				}
-				if (((board.pieces[tempSquare] == 3) || (board.pieces[tempSquare] == 9)) && attackingSide == BLACK) {
-					return true;
-				}
-				break;
-			}
-			tempSquare += BISHOP_MOVEMENTS[i];
-		}
-	}
-
-	//Check if square square is being attacked by attackingSide by any kings (with the courage to attack)...
-	for (int i = 0; i < 8; i++) {
-
-		//If square square is being attacked by a white knight, return true
-		if (attackingSide == WHITE && board.pieces[square + KING_MOVEMENTS[i]] == 12) {
-			return true;
-		}
-		else{
-			//If square square is being attacked by a black knight, return true
-			if (board.pieces[square + KING_MOVEMENTS[i]] == 11 && attackingSide == BLACK) {
-				return true;
-			}
-		}
-	}
-
-	return false;
-}
 
 //Used for debugging the function isSquareAttacked()
 void testIsSquareAttacked(int side, BoardStructure board) {
@@ -141,7 +46,7 @@ void testIsSquareAttacked(int side, BoardStructure board) {
 	for (int rank = RANK_8; rank >= RANK_1; rank--) {
 		cout << rank + 1 << " ";
 		for (int file = FILE_A; file <= FILE_H; file++) {
-			if (isSquareAttacked(squareID120[rank * 8 + file], side, board)) {
+			if (board.isSquareAttacked(squareID120[rank * 8 + file], side)) {
 				cout << " X|";
 			}
 			else {
@@ -368,6 +273,10 @@ void MoveListGenerator::generateNonSliderMoves(BoardStructure board) {
 			//If there is a piece on square i that is a non slider piece...
 			if (board.pieces[i] == piece) {
 
+				if (piece == 0) {
+					break;
+				}
+
 				//For each direction...
 				for (int j = 0; j < NUMBER_OF_DIRECTIONS[piece]; j++) {
 					int tempSquare = i + PIECE_MOVEMENTS[piece][j];
@@ -385,6 +294,13 @@ void MoveListGenerator::generateNonSliderMoves(BoardStructure board) {
 						if (board.getPieceColor(board.pieces[tempSquare]) == (board.sideToMove ^ 1)) {
 							moves[numberOfMoves].move = MOVE(i, tempSquare, board.pieces[tempSquare], 0, 0); 
 							numberOfMoves++;
+
+
+
+							//If king is attacked by the other side when this move is made
+							if (board.isSquareAttacked(board.kingSquare[board.sideToMove], board.sideToMove ^ 1)) {
+								board.undoMove();
+							}
 						}
 					}
 
@@ -408,7 +324,7 @@ void MoveListGenerator::generateCastlingMoves(BoardStructure board) {
 		//White Kingside Castling
 		if (board.castlePerms & 1) {
 			if (board.pieces[26] == 0 && board.pieces[27] == 0) {
-				if (!isSquareAttacked(25, BLACK, board) && !isSquareAttacked(26, BLACK, board) && !isSquareAttacked(27, BLACK, board)) {
+				if (!board.isSquareAttacked(25, BLACK) && !board.isSquareAttacked(26, BLACK) && !board.isSquareAttacked(27, BLACK)) {
 					moves[numberOfMoves].move = MOVE(25, 27, 0, 0, 1);
 					numberOfMoves++;
 				}
@@ -418,7 +334,7 @@ void MoveListGenerator::generateCastlingMoves(BoardStructure board) {
 		//White Queenside Castling
 		if (board.castlePerms & 2) {
 			if (board.pieces[22] == 0 && board.pieces[23] == 0 && board.pieces[24] == 0) {
-				if (!isSquareAttacked(23, BLACK, board) && !isSquareAttacked(24, BLACK, board) && !isSquareAttacked(25, BLACK, board)) {
+				if (!board.isSquareAttacked(23, BLACK) && !board.isSquareAttacked(24, BLACK) && !board.isSquareAttacked(25, BLACK)) {
 					moves[numberOfMoves].move = MOVE(25, 23, 0, 0, 2);
 					numberOfMoves++;
 				}
@@ -429,7 +345,7 @@ void MoveListGenerator::generateCastlingMoves(BoardStructure board) {
 		//Black Kingside Castling
 		if (board.castlePerms & 4) {
 			if (board.pieces[96] == 0 && board.pieces[97] == 0) {
-				if (!isSquareAttacked(95, WHITE, board) && !isSquareAttacked(96, WHITE, board) && !isSquareAttacked(97, WHITE, board)) {
+				if (!board.isSquareAttacked(95, WHITE) && !board.isSquareAttacked(96, WHITE) && !board.isSquareAttacked(97, WHITE)) {
 					moves[numberOfMoves].move = MOVE(95, 97, 0, 0, 3);
 					numberOfMoves++;
 				}
@@ -440,7 +356,7 @@ void MoveListGenerator::generateCastlingMoves(BoardStructure board) {
 		//Black Queenside Castling
 		if (board.castlePerms & 8) {
 			if (board.pieces[92] == 0 && board.pieces[93] == 0 && board.pieces[94] == 0) {
-				if (!isSquareAttacked(93, WHITE, board) && !isSquareAttacked(94, WHITE, board) && !isSquareAttacked(95, WHITE, board)) {
+				if (!board.isSquareAttacked(93, WHITE) && !board.isSquareAttacked(94, WHITE) && !board.isSquareAttacked(95, WHITE)) {
 					moves[numberOfMoves].move = MOVE(95, 93, 0, 0, 4);
 					numberOfMoves++;
 				}
@@ -450,11 +366,33 @@ void MoveListGenerator::generateCastlingMoves(BoardStructure board) {
 	}
 }
 void MoveListGenerator::generateMoveList(BoardStructure board) {
-	numberOfMoves = 0;
+	///cout << "generateMoveList(): hello\n";
+	numberOfMoves = 0; numberOfMovesLegal = 0;
+
+	//Clear move arrays
+	for (int i = 0; i < numberOfMoves; i++) {
+		moves[i].move = 0;
+	}
+	for (int i = 0; i < numberOfMovesLegal; i++) {
+		movesLegal[i].move = 0;
+	}
+
+	//Generate psuedo-legal moves
 	generatePawnMoves(board);
 	generateSliderMoves(board);
 	generateNonSliderMoves(board);
 	generateCastlingMoves(board);
+
+	//Get legal moves
+	numberOfMovesLegal = 0;
+	for (int i = 0; i < numberOfMoves; i++) {
+		if ( !board.makeMove(moves[i]) ) {
+			continue;
+		}
+		movesLegal[numberOfMovesLegal] = moves[i];
+		numberOfMovesLegal++;
+	}
+
 }
 
 //Prints all of the moves in our move list in algebraic notation
@@ -462,24 +400,24 @@ void MoveListGenerator::printMoveList(BoardStructure board) {
 
 	const char PIECE_NUM_TO_CHAR[13] = { ' ', ' ', ' ', 'B', 'B', 'N', 'N', 'R', 'R', 'Q', 'Q', 'K', 'K' };
 	
-	for (int i = 0; i < numberOfMoves; i++) {	
-		int fromSquare = moves[i].getFromSquare();
-		int toSquare = moves[i].getToSquare();
-		int capPiece = moves[i].getCapturedPiece();
-		int promPiece = moves[i].getPromoted();
+	for (int i = 0; i < numberOfMovesLegal; i++) {
+		int fromSquare = movesLegal[i].getFromSquare();
+		int toSquare = movesLegal[i].getToSquare();
+		int capPiece = movesLegal[i].getCapturedPiece();
+		int promPiece = movesLegal[i].getPromoted();
 
-		cout << "Move " << i << " Found: ";
+		cout << "Move " << i << " Found: "; cout << "(piece num: " << board.pieces[fromSquare] << ")";
 
-		if ((moves[i].getCastling() == 1) || (moves[i].getCastling() == 3)) {
+		if ((movesLegal[i].getCastling() == 1) || (movesLegal[i].getCastling() == 3)) {
 			cout << "O-O\n";
 		}
-		else if ((moves[i].getCastling() == 2) || (moves[i].getCastling() == 4)) {
+		else if ((movesLegal[i].getCastling() == 2) || (movesLegal[i].getCastling() == 4)) {
 			cout << "O-O-O\n";
 		}
 		else {
 			 cout << PIECE_NUM_TO_CHAR[board.pieces[fromSquare]];
 
-			if (moves[i].getCapturedPiece() != 0) {
+			 if (movesLegal[i].getCapturedPiece() != 0) {
 				cout << FILES_TO_CHAR[FILES[fromSquare]] << "x";
 			}
 
@@ -489,5 +427,5 @@ void MoveListGenerator::printMoveList(BoardStructure board) {
 		}
 	}
 
-	cout << "# of moves: " << numberOfMoves << "\n";
+	cout << "# of moves: " << numberOfMovesLegal << "\n";
 }
