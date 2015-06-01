@@ -191,7 +191,6 @@ int BoardStructure::getPieceColor(int pieceNum) {
 	case W_PAWN: case W_BISHOP: case W_KNIGHT: case W_ROOK: case W_QUEEN: case W_KING:
 		return WHITE; break;
 	default:
-		cout << "ERROR: INVALID PIECE COLOR. pieceNum: " << pieceNum << "\n";
 		return -42; break;
 	}
 }
