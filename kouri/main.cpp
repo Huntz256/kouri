@@ -7,7 +7,6 @@ using namespace std;
 
 BoardStructure board; MoveListGenerator movelist;
 
-
 int getRandomInteger(int min, int max) {
 	srand(time(NULL)); 
 	return rand() % (max - min + 1) + min;
@@ -257,6 +256,115 @@ void testFunction5() {
 	}
 }
 
+//Does a small promotion test
+void testFunction20(){
+	board.setUpBoardUsingFEN("rnbqk2r/ppppppPp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+	board.displayBoard();
+	Move m; m.move = MOVE(87, 98, B_ROOK, W_QUEEN, 0);
+	board.makeMove(m);
+	board.displayBoard();
+
+	string x; getline(cin, x);
+}
+
+//Board evaluation tests
+void testFunction21(){
+	string x;
+	board.setUpBoardUsingFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+	board.displayBoard();
+	cout << "White: " << evaluate(board) << "\n";
+	cout << "Black: " << evaluate(board) << "\n";
+	getline(cin, x);
+
+	board.setUpBoardUsingFEN("rnbqk2r/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+	board.displayBoard();
+	cout << "White: " << evaluate(board) << "\n";
+	cout << "Black: " << evaluate(board) << "\n";
+	getline(cin, x);
+
+	board.setUpBoardUsingFEN("rnbqkbnr/8/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+	board.displayBoard();
+	cout << "White: " << evaluate(board) << "\n";
+	cout << "Black: " << evaluate(board) << "\n";
+	getline(cin, x);
+
+	board.setUpBoardUsingFEN("8/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+	board.displayBoard();
+	cout << "White: " << evaluate(board) << "\n";
+	cout << "Black: " << evaluate(board) << "\n";
+	getline(cin, x);
+
+	board.setUpBoardUsingFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNB1KBNR w KQkq - 0 1");
+	board.displayBoard();
+	cout << "White: " << evaluate(board) << "\n";
+	cout << "Black: " << evaluate(board) << "\n";
+	getline(cin, x);
+}
+
+//Play against AI-enabled kouri
+void testFunction22(){
+	string x; string choice; Move m;
+
+	string help = "To make a move, type a command in the form: a1 to b2 \nPawn promotions are done as such: a1 to b2=Q \nCastling is done using: O-O or O-O-O \nFor a movelist, type: hint \nTo forfeit, type: f ";
+
+	do {
+		cout << "Do you want to go first? (y/n)\n>> ";
+		getline(cin, choice);
+	} while (choice.compare("y") != 0 && choice.compare("n") != 0);
+
+	if (choice.compare("y") == 0) board.init(true);
+	else board.init(false);
+	
+	board.countPieces();
+	
+	//While the other side hasn't lost yet
+	while ((choice == "y" && board.pieceCount[B_KING] > 0) || (choice == "n" && board.pieceCount[W_KING] > 0)) {
+		movelist.generateMoveList(board);
+
+		board.displayBoard();
+
+		cout << "For a list of commands, type: help \nEnter your command: ";
+		getline(cin, x);
+
+		//While user command is not valid
+		while (!(isMoveValid(translateMoveCommand(x)) || x.compare("f") == 0) || x.compare("hint") == 0 || x.compare("help") == 0) {
+			if (x.compare("help") != 0 && x.compare("hint") != 0){
+				cout << "\n\nThat is not a valid move or command. For a list of commands, type: help \n";
+			}
+
+			board.displayBoard();
+
+			if (x.compare("hint") == 0) movelist.printMoveList(board);
+			else if (x.compare("f") == 0) break;
+			else if (x.compare("help") == 0) cout << help << "\n";
+
+			cout << "Enter your command: ";
+			getline(cin, x);
+		}
+
+		if (x.compare("f") == 0) break; //exit game loop
+
+		m.move = translateMoveCommand(x);
+		board.makeMove(m);
+		board.sideToMove = board.sideToMove ^ 1;
+
+		movelist.generateMoveList(board);
+		int moveNum = getRandomInteger(0, movelist.numberOfMoves - 1);
+		board.makeMove(movelist.moves[moveNum]);
+
+		board.displayBoard();
+
+		movelist.printMoveList(board);
+		cout << "\n\nI, " << NAME << ", have decided to make move " << moveNum << ".";
+
+		board.sideToMove = board.sideToMove ^ 1;
+		board.countPieces();
+	}
+
+	cout << "\n\nGame Over\nPress enter to exit: ";
+	getline(cin, x);
+}
+
 //Program execution starts here
 int main() {
 	cout << "Hello. My name is " << NAME << ".\n";
@@ -282,7 +390,8 @@ int main() {
 		testFunction1();
 	}
 	else if (in.compare("5") == 0){
-		testFunction5();
+		//testFunction5();
+		testFunction22();
 	}
 
 	return 0;

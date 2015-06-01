@@ -58,8 +58,8 @@ void BoardStructure::displayFullBoard(bool dispPieces){
 }
 void BoardStructure::displayBoard() {
 
-	//Display the board
-	cout << "\n\n\n";
+	//Display the board with white on bottom
+	cout << "\n\n";
 	for (int rank = RANK_8; rank >= RANK_1; rank--) {
 		cout << rank + 1 << " ";
 		for (int file = FILE_A; file <= FILE_H; file++) {
@@ -73,14 +73,16 @@ void BoardStructure::displayBoard() {
 	cout << "Side to move: " << (sideToMove == 0 ? "White" : "Black");
 	cout << "\nCastling permissions: " << castlePerms << '\n';
 }
+
 void BoardStructure::init(bool goFirst) {
 	if (goFirst) {
 		setUpBoardUsingFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	}
 	else {
-		setUpBoardUsingFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1");
+		setUpBoardUsingFEN("RNBQKBNR/PPPPPPPP/8/8/8/8/pppppppp/rnbqkbnr b KQkq - 0 1");
 	}
 }
+
 void BoardStructure::resetBoardToEmpty() {
 	//Set all squares on the board to the value -1 representing off board squares
 	for (int i = 0; i < BOARD_SQUARE_COUNT; i++) {
@@ -228,4 +230,30 @@ void BoardStructure::displayHistory(){
 //Prints a square. For example, printSquare(55) prints "e4"
 void printSquare(int square) {
 	cout << FILES_TO_CHAR[FILES[square]] << (1 + RANKS[square]);
+}
+
+void BoardStructure::countPieces(){
+	//Initialize pieceCount[] array
+	for (int i = 0; i < 13; i++){
+		pieceCount[i] = 0;
+	}
+
+	//Loop through the entire board
+	for (int i = 0; i < BOARD_SQUARE_COUNT; i++){
+		switch (pieces[i]){
+		case EMPTY: pieceCount[EMPTY]++; break;
+		case B_PAWN: pieceCount[B_PAWN]++; break;
+		case W_PAWN: pieceCount[W_PAWN]++; break;
+		case B_BISHOP: pieceCount[B_BISHOP]++; break;
+		case W_BISHOP: pieceCount[W_BISHOP]++; break;
+		case B_KNIGHT: pieceCount[B_KNIGHT]++; break;
+		case W_KNIGHT: pieceCount[W_KNIGHT]++; break;
+		case B_ROOK: pieceCount[B_ROOK]++; break;
+		case W_ROOK: pieceCount[W_ROOK]++; break;
+		case B_QUEEN: pieceCount[B_QUEEN]++; break;
+		case W_QUEEN: pieceCount[W_QUEEN]++; break;
+		case B_KING: pieceCount[B_KING]++; break;
+		case W_KING: pieceCount[W_KING]++; break;
+		}
+	}
 }

@@ -117,6 +117,10 @@ class BoardStructure {
 		//pawn = 1 point, knight = bishop = 3 points, rook = 5 points, queen = 9 points
 		int material[2]; 
 
+		//Contains the number of pieces. Piece index corresponds with previously defined enums
+		//Ex: pieceCount[1] returns the number of black pawns since B_PAWN has been previously defined as 1
+		int pieceCount[13];
+
 		void displayFullBoard(bool dispPieces = true); //Outputs full 10x12 board to console
 		void displayBoard(); //Outputs 8x8 board to console
 		void init(bool goFirst); //Sets up pieces for a standard chess match
@@ -125,6 +129,7 @@ class BoardStructure {
 		void makeMove(Move move); //Assuming the move passed in is valid, modifies the board and stores the move in history[]
 		int getPieceColor(int pieceNumber); //Retrieves the piece color of a piece
 		void displayHistory(); //Displays all the moves so far as move integers
+		void countPieces(); //Counts all the pieces on the board and records them in the pieceCount[] array
 };
 
 void testIsSquareAttacked(int side, BoardStructure board);
@@ -149,5 +154,9 @@ class MoveListGenerator {
 		void printMoveList(BoardStructure board);
 };
 
+/*************** AI Stuff ******************/
+int evaluate(BoardStructure board); //Does a basic evaluation of a board based on piece counts from WHITE's perspective
+int negaMax(BoardStructure board, int depth, int a, int b); //nega-max algorithm with alpha-beta pruning
+Move findBestMove(BoardStructure board, int depth); //Uses nega-max to find best move
 
 #endif
