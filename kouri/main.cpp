@@ -45,7 +45,7 @@ int translateMoveCommand(string com){
 //Checks if a move integer is contained in the generated movelist
 bool isMoveValid(int move){
 	for (int i = 0; i < movelist.numberOfMovesLegal; i++){
-		if (move == movelist.moves[i].move) return true;
+		if (move == movelist.movesLegal[i].move) return true;
 	}
 	return false;
 }
@@ -356,18 +356,18 @@ void testFunction22(){
 
 		m.move = translateMoveCommand(x);
 		board.makeMove(m);
-		board.sideToMove = board.sideToMove ^ 1;
+		//board.sideToMove = board.sideToMove ^ 1;
 
 		movelist.generateMoveList(board);
-		int moveNum = getRandomInteger(0, movelist.numberOfMoves - 1);
-		board.makeMove(movelist.moves[moveNum]);
+		int moveNum = getRandomInteger(0, movelist.numberOfMovesLegal - 1);
+		board.makeMove(movelist.movesLegal[moveNum]);
 
 		board.displayBoard();
 
 		movelist.printMoveList(board);
 		cout << "\n\nI, " << NAME << ", have decided to make move " << moveNum << ".";
 
-		board.sideToMove = board.sideToMove ^ 1;
+		//board.sideToMove = board.sideToMove ^ 1;
 		board.countPieces();
 	}
 
