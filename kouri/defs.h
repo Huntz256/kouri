@@ -94,8 +94,8 @@ class Move {
 //Board structure class represents a board
 class BoardStructure {
 	public:
-		//Represents previous moves that have been played on this board. Assumes that amount of half moves < 1028.
-		MoveHistory history[1028]; 
+		//Represents previous moves that have been played on this board. Assumes that amount of half moves < 2048.
+		MoveHistory history[2048]; 
 
 		//Represents every piece in a position using the 10x12 board representation.
 		//E.g. pieces[21] represents the square a1, pieces[98] represents the square h8.
@@ -156,7 +156,7 @@ bool isMoveValid(int move); //Checks if a move integer is contained in the gener
 //Contains all move generation functions
 class MoveListGenerator {
 	public:
-		Move moves[512], movesLegal[512];
+		Move moves[2048], movesLegal[2048];
 		int numberOfMoves, numberOfMovesLegal;
 		void generateMoveList(BoardStructure board);
 		void generatePawnMoves(BoardStructure board);
@@ -167,11 +167,13 @@ class MoveListGenerator {
 		void addPawnCapturingMove(BoardStructure board, int fromSquare, int toSquare, int capture, int side);
 		void addPawnMove(BoardStructure board, int fromSquare, int toSquare, int side);
 		void printMoveList(BoardStructure board);
+		void uciPrintMove(BoardStructure board, int moveNum);
 };
 
 /*************** AI Stuff ******************/
-int evaluate(BoardStructure board); //Does a basic evaluation of a board based on piece counts from WHITE's perspective
-int negaMax(BoardStructure board, int depth, int a, int b); //nega-max algorithm with alpha-beta pruning
+int evaluate(BoardStructure &board); //Does a basic evaluation of a board based on piece counts from WHITE's perspective
+int negaMax(BoardStructure &board, int depth, int a, int b); //nega-max algorithm with alpha-beta pruning
 Move findBestMove(BoardStructure board, int depth); //Uses nega-max to find best move
+BoardStructure applyMove(BoardStructure board, Move m);
 
 #endif

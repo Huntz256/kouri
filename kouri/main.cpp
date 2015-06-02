@@ -5,10 +5,10 @@
 #include <ctime>
 using namespace std;
 
-BoardStructure board; MoveListGenerator movelist;
+BoardStructure board; MoveListGenerator movelist; //BoardStructure* boardpt;
 
 int getRandomInteger(int min, int max) {
-	srand(time(NULL)); 
+	srand((int)time(NULL)); 
 	return rand() % (max - min + 1) + min;
 }
 
@@ -176,7 +176,7 @@ void testFunction3() {
 		movelist.printMoveList(board);
 		
 		cout << "\n\n" << NAME << " has decided to make move " << moveNum << "!";
-		board.sideToMove = board.sideToMove ^ 1;
+		//board.sideToMove = board.sideToMove ^ 1;
 		
 		getline(cin, x);
 	}
@@ -185,6 +185,7 @@ void testFunction3() {
 //Play against kouri by selecting from movelist
 void testFunction4() {
 	string x; board.init(true);
+	//board.setUpBoardUsingFEN("rnbqkbnr/ppp2ppp/3p4/4p2Q/4P3/8/PPPP1PPP/RNB1KBNR w KQkq - 0 1 ");
 
 	while (42 == 42) {
 		movelist.generateMoveList(board);
@@ -197,17 +198,15 @@ void testFunction4() {
 		movelist.generateMoveList(board);
 		int moveNum = getRandomInteger(0, movelist.numberOfMovesLegal - 1);
 		
+		board.displayBoard();
 		while (!board.makeMove(movelist.movesLegal[moveNum])) {
 			moveNum = getRandomInteger(0, movelist.numberOfMovesLegal - 1);
 			///cout << "testFunction4(): Getting another moveNum: " << moveNum;
 		}
 
-		board.displayBoard();
 		movelist.printMoveList(board);
 		
-
 		cout << "\n\nI, " << NAME << ", have decided to make move " << moveNum << ".";
-
 	}
 }
 
@@ -250,15 +249,15 @@ void testFunction5() {
 			m.move = translateMoveCommand(x);
 		}
 	
-
+		board.displayBoard();
 		movelist.generateMoveList(board);
 		int moveNum = getRandomInteger(0, movelist.numberOfMovesLegal - 1);
 
+		
 		while (!board.makeMove(movelist.movesLegal[moveNum])) {
 			moveNum = getRandomInteger(0, movelist.numberOfMovesLegal - 1);
 		}
-
-		board.displayBoard();
+	
 		movelist.printMoveList(board);
 
 		cout << "\n\nI, " << NAME << ", have decided to make move " << moveNum << ".";
@@ -360,9 +359,10 @@ void testFunction22(){
 
 		movelist.generateMoveList(board);
 		int moveNum = getRandomInteger(0, movelist.numberOfMovesLegal - 1);
+		board.displayBoard();
 		board.makeMove(movelist.movesLegal[moveNum]);
 
-		board.displayBoard();
+		
 
 		movelist.printMoveList(board);
 		cout << "\n\nI, " << NAME << ", have decided to make move " << moveNum << ".";
@@ -375,16 +375,134 @@ void testFunction22(){
 	getline(cin, x);
 }
 
+//Used for testing makeMove() and undoMove()
+void testFunction70() {
+	//Init board
+	string x; board.init(true);
+	board.displayBoard();
+
+	//Make a move, display board, pause
+	Move m; m.move = MOVE(35, 55, 0, 0, 0); board.makeMove(m); cout << "MOVE MADE.\n";
+	board.displayBoard(); getline(cin, x);
+
+	//Undo move, display board, pause
+	board.undoMove();  cout << "MOVE UNDONE.\n";
+	board.displayBoard(); getline(cin, x);
+
+	//Make and undo more moves
+	for (int i = 0; i < 30; i++) {
+		movelist.generateMoveList(board); int moveNum = getRandomInteger(0, movelist.numberOfMovesLegal - 1);
+		m.move = movelist.movesLegal[moveNum].move; board.makeMove(m);
+		cout << "i:" << i << "\n";
+		cout << "movelist.numberOfMovesLegal:" << movelist.numberOfMovesLegal << "\n";
+		cout << "moveNum:" << moveNum << "\n";
+	}
+	board.displayBoard(); getline(cin, x);
+	for (int i = 0; i < 15; i++) {
+		board.undoMove();  cout << "board.ply: " << board.ply << ". MOVE UNDONE.\n";
+	}
+
+	board.displayBoard(); getline(cin, x);
+
+	for (int i = 0; i < 15; i++) {
+		board.undoMove(); cout << "board.ply: " << board.ply << ". MOVE UNDONE.\n";
+	}
+
+	board.displayBoard(); getline(cin, x);
+
+	//Make and undo more moves
+	for (int i = 0; i < 50; i++) {
+		cout << "i:" << i << "\n";
+		
+		int moveNum = getRandomInteger(0, movelist.numberOfMovesLegal - 1);
+		cout << "moveNum:" << moveNum << "\n";
+		movelist.generateMoveList(board); 
+		cout << "movelist.numberOfMovesLegal:" << movelist.numberOfMovesLegal << "\n";
+		m.move = movelist.movesLegal[moveNum].move; board.makeMove(m);
+		
+	}
+	for (int i = 0; i < 50; i++) {
+		board.undoMove();
+	}
+	cout << "MOVESSS UNDONE.\n";
+
+	board.displayBoard(); getline(cin, x);
+
+}
+
+
+void testFunction23() {
+	string x; board.init(true); Move m; 
+	int depth = 3; bool minhisthebest = true;
+
+	while (minhisthebest == true) {
+		movelist.generateMoveList(board);
+
+		board.displayBoard();
+		movelist.printMoveList(board);
+
+		playerMove();
+
+		movelist.generateMoveList(board);
+		//int moveNum = getRandomInteger(0, movelist.numberOfMovesLegal - 1);
+
+		board.displayBoard();
+		//while (!board.makeMove(movelist.movesLegal[moveNum])) {
+			//moveNum = getRandomInteger(0, movelist.numberOfMovesLegal - 1);
+			///cout << "testFunction4(): Getting another moveNum: " << moveNum;
+		//}
+
+		//BoardStructure* boardpt;
+		movelist.printMoveList(board);
+
+		m = findBestMove(board, depth);
+		if (!board.makeMove(m)){
+			cout << "Error occurred while making move\n";
+			break;
+		}
+
+		//cout << "\n\nI, " << NAME << ", have decided to make move " << moveNum << ".";
+		cout << "\nI, " << NAME << ", have found a move after searching to depth " << depth << ".\n"; 
+	}
+	cout << "\nGame Over\n";
+	cout << "Press enter to continue: ";
+	getline(cin, x); //This getline() function doesn't seem to register
+	getline(cin, x); //Need two for it to work properly
+}
+
 //Program execution starts here
 int main() {
 	cout << "Hello. My name is " << NAME << ".\n";
-	cout << "\nI have been created by Hunter and Minh for a CS class project";
+	cout << "\nI have been created by Minter (Hunter and Minh) for a CS class project";
 	cout << "\n\nCurrently, I understand some rules of chess.";
 	cout << "\nEnough to generate and make most legal moves.";
 	cout << "\nHowever, I do not know at all what makes one move better than another.\n\n";
 
+	/**************** Testing sandbox ******************/
+
+	/*string x;
+	board.init(true);
+
+	board.displayBoard();
+	getline(cin, x);
+
+	Move m; m.move = MOVE(82, 62, 0, 0, 0);
+	board.makeMove(m);
+	board.displayBoard();
+	getline(cin, x);
+
+	m.move = MOVE(62, 52, 0, 0, 0);
+	BoardStructure bd = applyMove(board, m);
+	board.displayBoard();
+	bd.displayBoard();
+	getline(cin, x);
+
+	return 0;*/
+
+	/***************** End of Sandbox *********************/
+
 	string in; cout << "Choose one:\n \"1\" to play against me with a movelist\n \"2\" to have me play against myself\n \"3\" to do castling testing\n "
-		<< "\"4\" to parse a FEN string\n \"5\" to play against me without a movelist\n>> ";
+		<< "\"4\" to parse a FEN string\n \"5\" to play against me without a movelist\n \"6\" to play against my AI\n>> ";
 	getline(cin, in);
 
 	if (in.compare("1") == 0) {
@@ -393,15 +511,18 @@ int main() {
 	else if (in.compare("2") == 0) {
 		testFunction3();
 	}
-	else if (in.compare("3") == 0){
+	else if (in.compare("3") == 0) {
 		testFunction2();
 	}
-	else if (in.compare("4") == 0){
+	else if (in.compare("4") == 0) {
 		testFunction1();
 	}
-	else if (in.compare("5") == 0){
+	else if (in.compare("5") == 0) {
 		//testFunction5();
 		testFunction22();
+	}
+	if (in.compare("6") == 0) {
+		testFunction23();
 	}
 
 	return 0;

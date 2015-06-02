@@ -59,10 +59,10 @@ void testIsSquareAttacked(int side, BoardStructure board) {
 }
 
 int Move::getFromSquare() {
-	return move & 0x7F; 
+	return move & 0x7F;
 }
 int Move::getToSquare() {
-	return (move >> 7) & 0x7F; 
+	return (move >> 7) & 0x7F;
 }
 int Move::getCapturedPiece() {
 	return (move >> 14) & 0xF;
@@ -75,6 +75,13 @@ int Move::getCastling() {
 }
 
 void MoveListGenerator::addPawnCapturingMove(BoardStructure board, int fromSquare, int toSquare, int capture, int side) {
+	if (FILES[fromSquare] == -1) {
+		throw "ERROR3";
+	}
+	if (FILES[toSquare] == -1) {
+		throw "ERROR4";
+	}
+	
 	if (side == WHITE) {
 		if (RANKS[fromSquare] == RANK_7) {
 			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, capture, W_QUEEN, 0); numberOfMoves++;
@@ -99,6 +106,14 @@ void MoveListGenerator::addPawnCapturingMove(BoardStructure board, int fromSquar
 	}
 }
 void MoveListGenerator::addPawnMove(BoardStructure board, int fromSquare, int toSquare, int side) {
+
+	if (FILES[fromSquare] == -1) {
+		throw "ERROR1";
+	}
+	if (FILES[toSquare] == -1) {
+		throw "ERROR2";
+	}
+
 	//White----
 	if (side == WHITE) {
 		//Promotions
@@ -152,19 +167,19 @@ void MoveListGenerator::generatePawnMoves(BoardStructure board) {
 				}
 
 				//Pawn capturing
-				if (board.getPieceColor(board.pieces[i + 9]) == BLACK) {
+				if (board.pieces[i + 9] > 0 && board.getPieceColor(board.pieces[i + 9]) == BLACK) {
 					addPawnCapturingMove(board, i, i + 9, board.pieces[i + 9], WHITE);
 				}
 
-				if (board.getPieceColor(board.pieces[i + 11]) == BLACK) {
+				if (board.pieces[i + 11] > 0 && board.getPieceColor(board.pieces[i + 11]) == BLACK) {
 					addPawnCapturingMove(board, i, i + 11, board.pieces[i + 11], WHITE);
 				}
 
 				//En passant 
-				if (board.pieces[i + 9] == board.enPassSquare) {
+				if (board.pieces[i + 9] > 0 && board.pieces[i + 9] == board.enPassSquare) {
 					//addPawnCapturingMove(board, i, i + 9, 0, WHITE);
 				}
-				if (board.pieces[i + 11] == board.enPassSquare) {
+				if (board.pieces[i + 11] > 0 && board.pieces[i + 11] == board.enPassSquare) {
 					//addPawnCapturingMove(board, i, i + 11, 0, WHITE);
 				}
 
@@ -192,19 +207,19 @@ void MoveListGenerator::generatePawnMoves(BoardStructure board) {
 				}
 
 				//Pawn capturing
-				if (board.getPieceColor(board.pieces[i - 9]) == WHITE) {
+				if (board.pieces[i - 9] > 0 && board.getPieceColor(board.pieces[i - 9]) == WHITE) {
 					addPawnCapturingMove(board, i, i - 9, board.pieces[i - 9], BLACK);
 				}
 
-				if (board.getPieceColor(board.pieces[i - 11]) == WHITE) {
+				if (board.pieces[i - 11] > 0 && board.getPieceColor(board.pieces[i - 11]) == WHITE) {
 					addPawnCapturingMove(board, i, i - 11, board.pieces[i - 11], BLACK);
 				}
 
 				//En passant 
-				if (board.pieces[i - 9] == board.enPassSquare) {
+				if (board.pieces[i - 9] > 0 && board.pieces[i - 9] == board.enPassSquare) {
 					//	addPawnCapturingMove(board, i, i - 9, 0, BLACK);
 				}
-				if (board.pieces[i - 11] == board.enPassSquare) {
+				if (board.pieces[i - 11] > 0 && board.pieces[i - 11] == board.enPassSquare) {
 					//addPawnCapturingMove(board, i, i - 11, 0, BLACK);
 				}
 			}
@@ -292,15 +307,16 @@ void MoveListGenerator::generateNonSliderMoves(BoardStructure board) {
 						//If tempSquare has a piece opposite in color to the piece on square i
 						//BLACK ^ 1 == WHITE, WHITE ^ 1 == BLACK (^ is the XOR operator)
 						if (board.getPieceColor(board.pieces[tempSquare]) == (board.sideToMove ^ 1)) {
+							cout << "board.getPieceColor(board.pieces[tempSquare])" << board.getPieceColor(board.pieces[tempSquare]) << "\n";
+							cout << "board.sideToMove:" << board.sideToMove << "\n";
+
 							moves[numberOfMoves].move = MOVE(i, tempSquare, board.pieces[tempSquare], 0, 0); 
 							numberOfMoves++;
 
-
-
 							//If king is attacked by the other side when this move is made
-							if (board.isSquareAttacked(board.kingSquare[board.sideToMove], board.sideToMove ^ 1)) {
-								board.undoMove();
-							}
+							//if (board.isSquareAttacked(board.kingSquare[board.sideToMove], board.sideToMove ^ 1)) {
+								//board.undoMove();
+							//}
 						}
 					}
 
@@ -309,7 +325,6 @@ void MoveListGenerator::generateNonSliderMoves(BoardStructure board) {
 						moves[numberOfMoves].move = MOVE(i, tempSquare, 0, 0, 0);
 						numberOfMoves++;
 					}
-
 				}
 			}
 		}
@@ -370,10 +385,10 @@ void MoveListGenerator::generateMoveList(BoardStructure board) {
 	numberOfMoves = 0; numberOfMovesLegal = 0;
 
 	//Clear move arrays
-	for (int i = 0; i < numberOfMoves; i++) {
+	for (int i = 0; i <= numberOfMoves; i++) {
 		moves[i].move = 0;
 	}
-	for (int i = 0; i < numberOfMovesLegal; i++) {
+	for (int i = 0; i <= numberOfMovesLegal; i++) {
 		movesLegal[i].move = 0;
 	}
 
@@ -406,7 +421,8 @@ void MoveListGenerator::printMoveList(BoardStructure board) {
 		int capPiece = movesLegal[i].getCapturedPiece();
 		int promPiece = movesLegal[i].getPromoted();
 
-		cout << "Move " << i << " Found: "; cout << "(piece num: " << board.pieces[fromSquare] << ")";
+		cout << "Move " << i << " Found: "; cout << "(piece num: " << board.pieces[movesLegal[i].getFromSquare()] << ")";
+		//cout << "Move " << i << " Found: "; cout << "(piece num: " << board.pieces[fromSquare] << ")";
 
 		if ((movesLegal[i].getCastling() == 1) || (movesLegal[i].getCastling() == 3)) {
 			cout << "O-O\n";
@@ -415,10 +431,12 @@ void MoveListGenerator::printMoveList(BoardStructure board) {
 			cout << "O-O-O\n";
 		}
 		else {
-			 cout << PIECE_NUM_TO_CHAR[board.pieces[fromSquare]];
+			 cout << PIECE_NUM_TO_CHAR[board.pieces[movesLegal[i].getFromSquare()]];
+			 //cout << PIECE_NUM_TO_CHAR[board.pieces[fromSquare]];
 
 			 if (movesLegal[i].getCapturedPiece() != 0) {
-				cout << FILES_TO_CHAR[FILES[fromSquare]] << "x";
+				 cout << FILES_TO_CHAR[FILES[movesLegal[i].getFromSquare()]] << "x";
+				//cout << FILES_TO_CHAR[FILES[fromSquare]] << "x";
 			}
 
 			printSquare(toSquare);
@@ -428,4 +446,17 @@ void MoveListGenerator::printMoveList(BoardStructure board) {
 	}
 
 	cout << "# of moves: " << numberOfMovesLegal << "\n";
+}
+void MoveListGenerator::uciPrintMove(BoardStructure board, int moveNum) {
+	const char PIECE_NUM_TO_CHAR[13] = { ' ', ' ', ' ', 'B', 'B', 'N', 'N', 'R', 'R', 'Q', 'Q', 'K', 'K' };
+
+	int fromSquare = moves[moveNum].getFromSquare();
+	int toSquare = moves[moveNum].getToSquare();
+
+	printSquare(fromSquare);
+
+	printSquare(toSquare);
+
+	cout << "\n";
+
 }

@@ -14,7 +14,7 @@ char numToPieceChar(int num) {
 		pieceMap[B_KNIGHT] = 'n';  pieceMap[W_KNIGHT] = 'N';
 		pieceMap[B_ROOK] = 'r';  pieceMap[W_ROOK] = 'R'; 
 		pieceMap[B_QUEEN] = 'q';  pieceMap[W_QUEEN] = 'Q';
-		pieceMap[B_KING] = 001; pieceMap[W_KING] = 002; // smiley faces
+		pieceMap[B_KING] = 002; pieceMap[W_KING] = 001; // smiley faces
 
 		return pieceMap[num];
 	}
@@ -56,24 +56,18 @@ void BoardStructure::displayFullBoard(bool dispPieces){
 	cout << "Side to move: " << (sideToMove == 0 ? "White" : "Black");
 	cout << "\nCastling permissions: " << castlePerms << '\n';
 }
-void BoardStructure::displayBoard(bool flipped) {
-	if (!flipped){
-		//Display the board with white on bottom
-		cout << "\n\n";
-		for (int rank = RANK_8; rank >= RANK_1; rank--) {
-			cout << rank + 1 << " ";
-			for (int file = FILE_A; file <= FILE_H; file++) {
-				cout << " " << numToPieceChar(pieces[squareID120[rank * 8 + file]]) << "|";
-			}
-			cout << "\n  ------------------------\n";
+void BoardStructure::displayBoard() {
+
+	//Display the board with white on bottom
+	cout << "\n";
+	for (int rank = RANK_8; rank >= RANK_1; rank--) {
+		cout << rank + 1 << " ";
+		for (int file = FILE_A; file <= FILE_H; file++) {
+			cout << " " << numToPieceChar(pieces[squareID120[rank * 8 + file]]) << "|";
 		}
-		cout << "   a  b  c  d  e  f  g  h\n\n";
+		cout << "\n  ------------------------\n";
 	}
-	else {
-		//Display board with white on top
-		/* To be implemented */
-	}
-	
+	cout << "   a  b  c  d  e  f  g  h\n\n";
 
 	//Also display some more infomation
 	cout << "Side to move: " << (sideToMove == 0 ? "White" : "Black");
@@ -197,6 +191,7 @@ int BoardStructure::getPieceColor(int pieceNum) {
 	case W_PAWN: case W_BISHOP: case W_KNIGHT: case W_ROOK: case W_QUEEN: case W_KING:
 		return WHITE; break;
 	default:
+		cout << "ERROR: INVALID PIECE COLOR. pieceNum: " << pieceNum << "\n";
 		return -42; break;
 	}
 }
@@ -372,14 +367,11 @@ bool BoardStructure::makeMove(Move m) {
 		}
 	}
 
-
 	//Update castling permissions
 	//If a piece moves from a8, a1, e1, or e8, update castling permissions as needed
 	castlePerms &= CASTLE_PERMISSIONS[m.getFromSquare()];
 
 	//If a piece moves to a8, a1, e1, or e8, update castling permissions as needed
-
-
 	if (m.getCastling() != 0) {
 		switch (m.getCastling()) { //Take care of castling
 		case 1: //white king side
@@ -436,18 +428,19 @@ bool BoardStructure::makeMove(Move m) {
 		return false;
 	}
 
-	return true;
-}
+	
 
+	return true;
+	}
 void BoardStructure::undoMove() {
 
 	ply--; historyPly--;
 
-	//Get move in last non-blank element of history[] and revert castlePerms and enPassSquare
 	int move, from, to, captured, promoted, castling;
 
 	///cout << "undoMove(): history[" << historyPly << "].move is:" << history[historyPly].move << "\n";
 
+	//Get move in last non-blank element of history[]
 	move = history[historyPly].move;
 
 	//Revert castlePerms and enPassSquare
@@ -519,7 +512,7 @@ void BoardStructure::undoMove() {
 			}
 			else {
 				pieces[to] = 0;
-	}
+			}
 
 			///cout << "undoMove(): undid a regular move\n";
 }
@@ -527,7 +520,7 @@ void BoardStructure::undoMove() {
 		//Revert king square if the king moved
 		if (to == kingSquare[sideToMove]) {
 			kingSquare[sideToMove] = from;
-	}
+		}
 }
 
 
