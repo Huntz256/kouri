@@ -14,7 +14,7 @@ char numToPieceChar(int num) {
 		pieceMap[B_KNIGHT] = 'n';  pieceMap[W_KNIGHT] = 'N';
 		pieceMap[B_ROOK] = 'r';  pieceMap[W_ROOK] = 'R'; 
 		pieceMap[B_QUEEN] = 'q';  pieceMap[W_QUEEN] = 'Q';
-		pieceMap[B_KING] = 002; pieceMap[W_KING] = 001; // smiley faces
+		pieceMap[B_KING] = 001; pieceMap[W_KING] = 002; // smiley faces
 
 		return pieceMap[num];
 	}
@@ -56,18 +56,24 @@ void BoardStructure::displayFullBoard(bool dispPieces){
 	cout << "Side to move: " << (sideToMove == 0 ? "White" : "Black");
 	cout << "\nCastling permissions: " << castlePerms << '\n';
 }
-void BoardStructure::displayBoard() {
-
-	//Display the board with white on bottom
-	cout << "\n\n";
-	for (int rank = RANK_8; rank >= RANK_1; rank--) {
-		cout << rank + 1 << " ";
-		for (int file = FILE_A; file <= FILE_H; file++) {
-			cout << " " << numToPieceChar(pieces[squareID120[rank * 8 + file]]) << "|";
+void BoardStructure::displayBoard(bool flipped) {
+	if (!flipped){
+		//Display the board with white on bottom
+		cout << "\n\n";
+		for (int rank = RANK_8; rank >= RANK_1; rank--) {
+			cout << rank + 1 << " ";
+			for (int file = FILE_A; file <= FILE_H; file++) {
+				cout << " " << numToPieceChar(pieces[squareID120[rank * 8 + file]]) << "|";
+			}
+			cout << "\n  ------------------------\n";
 		}
-		cout << "\n  ------------------------\n";
+		cout << "   a  b  c  d  e  f  g  h\n\n";
 	}
-	cout << "   a  b  c  d  e  f  g  h\n\n";
+	else {
+		//Display board with white on top
+		/* To be implemented */
+	}
+	
 
 	//Also display some more infomation
 	cout << "Side to move: " << (sideToMove == 0 ? "White" : "Black");
@@ -417,8 +423,6 @@ bool BoardStructure::makeMove(Move m) {
 	//Flip side to move
 	sideToMove ^= 1;
 
-	
-
 	//Undo move if needed
 	///cout << "otherSideToMove:" << otherSideToMove << "\n";
 	///cout << "currentSideToMove:" << currentSideToMove << "\n";
@@ -432,10 +436,9 @@ bool BoardStructure::makeMove(Move m) {
 		return false;
 	}
 
-	
-
 	return true;
-	}
+}
+
 void BoardStructure::undoMove() {
 
 	ply--; historyPly--;
