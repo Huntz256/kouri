@@ -433,7 +433,13 @@ void testFunction70() {
 
 void testFunction23() {
 	string x; board.init(true); Move m; 
-	int depth = 3; bool minhisthebest = true;
+	bool minhisthebest = true;
+
+	/****** Depth Setting *******/
+
+	int depth = 1;
+	
+	/****************************/
 
 	while (minhisthebest == true) {
 		movelist.generateMoveList(board);
@@ -462,7 +468,7 @@ void testFunction23() {
 		}
 
 		//cout << "\n\nI, " << NAME << ", have decided to make move " << moveNum << ".";
-		cout << "\nI, " << NAME << ", have found a move after searching to depth " << depth << ".\n"; 
+		cout << "I, " << NAME << ", have found a move after searching to depth " << depth << ".\n"; 
 	}
 	cout << "\nGame Over\n";
 	cout << "Press enter to continue: ";
@@ -521,7 +527,7 @@ int main() {
 		//testFunction5();
 		testFunction22();
 	}
-	if (in.compare("6") == 0) {
+	else if (in.compare("6") == 0) {
 		testFunction23();
 	}
 

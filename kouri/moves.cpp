@@ -307,8 +307,8 @@ void MoveListGenerator::generateNonSliderMoves(BoardStructure board) {
 						//If tempSquare has a piece opposite in color to the piece on square i
 						//BLACK ^ 1 == WHITE, WHITE ^ 1 == BLACK (^ is the XOR operator)
 						if (board.getPieceColor(board.pieces[tempSquare]) == (board.sideToMove ^ 1)) {
-							cout << "board.getPieceColor(board.pieces[tempSquare])" << board.getPieceColor(board.pieces[tempSquare]) << "\n";
-							cout << "board.sideToMove:" << board.sideToMove << "\n";
+							//cout << "board.getPieceColor(board.pieces[tempSquare])" << board.getPieceColor(board.pieces[tempSquare]) << "\n";
+							//cout << "board.sideToMove:" << board.sideToMove << "\n";
 
 							moves[numberOfMoves].move = MOVE(i, tempSquare, board.pieces[tempSquare], 0, 0); 
 							numberOfMoves++;
@@ -445,7 +445,7 @@ void MoveListGenerator::printMoveList(BoardStructure board) {
 		}
 	}
 
-	cout << "# of moves: " << numberOfMovesLegal << "\n";
+	cout << "# of moves: " << numberOfMovesLegal << "\n\n";
 }
 void MoveListGenerator::uciPrintMove(BoardStructure board, int moveNum) {
 	const char PIECE_NUM_TO_CHAR[13] = { ' ', ' ', ' ', 'B', 'B', 'N', 'N', 'R', 'R', 'Q', 'Q', 'K', 'K' };

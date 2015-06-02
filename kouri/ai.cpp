@@ -5,28 +5,33 @@
 #include <string>
 using namespace std;
 
+MoveListGenerator movechooser;
 MoveListGenerator movegen;
-int numEvaluatedMoves;
+int numEvaluatedMoves; int numEvalsPerMove;
 string x;
 
 //Returns the best move found by the nega-max function
 Move findBestMove(BoardStructure board, int depth){
-	movegen.generateMoveList(board);
-	Move bestMove = movegen.movesLegal[0]; int bestMoveNum = 0;
+	movechooser.generateMoveList(board);
+	Move bestMove = movechooser.movesLegal[0]; int bestMoveNum = 0;
 	numEvaluatedMoves = 0;
 
 	int a = -numeric_limits<int>::max(); //largest negative int possible
 	int b = numeric_limits<int>::max(); //largest positive int possible
-	for (int i = 0; i < movegen.numberOfMovesLegal; i++){
+
+	for (int i = 0; i < movechooser.numberOfMovesLegal; i++){
+		numEvalsPerMove = 0;
 		//cout << "findBestMove() calling negaMax(). iteration: " << i << "\n";
 		int value = -1 * negaMax(board, depth, a, b); //Positive: from WHITE's perspective, Negative: from BLACK's perspective
+		cout << "\nmove #" << i << " final eval: " << value << "\n";
+		cout << "num of evals: " << numEvalsPerMove << "\n\n";
 		if (value > a){
 			a = value;
-			bestMove = movegen.movesLegal[i];
+			bestMove = movechooser.movesLegal[i];
 			bestMoveNum = i;
 		}
 	}
-	cout << numEvaluatedMoves << " moves evaluated this turn\n";
+	cout << "\n" << numEvaluatedMoves << " moves evaluated this turn\n";
 	cout << "Best move determined to be: " << bestMoveNum << "\n";
 	return bestMove;
 }
@@ -37,20 +42,18 @@ int negaMax(BoardStructure &board, int depth, int a, int b)
 	//board.displayBoard();
 	//cout << "nega-max called with d: " << depth << "\n";
 	if (depth <= 0){
-		cout << "move number " << numEvaluatedMoves << " evaluated to " << evaluate(board) << "\n";
+		int e = evaluate(board);
+		cout << e << " ";
 		numEvaluatedMoves++;
+		numEvalsPerMove++;
 		//board.displayBoard();
-		return evaluate(board);
+		return e;
 	}
 
 	movegen.generateMoveList(board);
-	//cout << "depth: " << depth << "   num moves generated: " << movegen.numberOfMovesLegal << "\n\n";
-	//getline(cin, x);
-
 	for (int i = 0; i < movegen.numberOfMovesLegal; i++) {
-		//cout << "move ID: " << movegen.movesLegal[i].move << "\n";
 		board.makeMove(movegen.movesLegal[i]);
-		a = max(a, -1 * negaMax(board, depth - 1, -a, -b));
+		a = max(a, -1 * negaMax(board, depth - 1, -b, -a));
 		board.undoMove();
 		if (b <= a){
 			return b;
@@ -64,13 +67,15 @@ int evaluate(BoardStructure &board){
 	//bd = *board;
 	//board.displayBoard();
 	board.countPieces();
-	int materialScore = 200 * (board.pieceCount[W_KING] - board.pieceCount[B_KING])
-		+ 9 * (board.pieceCount[W_QUEEN] - board.pieceCount[B_QUEEN])
-		+ 5 * (board.pieceCount[W_ROOK] - board.pieceCount[B_ROOK])
-		+ 3 * (board.pieceCount[W_BISHOP] - board.pieceCount[B_BISHOP] + board.pieceCount[W_KNIGHT] - board.pieceCount[B_KNIGHT])
-		+ 1 * (board.pieceCount[W_PAWN] - board.pieceCount[B_PAWN]);
+	int materialScore = 2000 * (board.pieceCount[W_KING] - board.pieceCount[B_KING])
+		+ 90 * (board.pieceCount[W_QUEEN] - board.pieceCount[B_QUEEN])
+		+ 50 * (board.pieceCount[W_ROOK] - board.pieceCount[B_ROOK])
+		+ 30 * (board.pieceCount[W_BISHOP] - board.pieceCount[B_BISHOP] + board.pieceCount[W_KNIGHT] - board.pieceCount[B_KNIGHT])
+		+ 10 * (board.pieceCount[W_PAWN] - board.pieceCount[B_PAWN]);
 	//int mobilityScore = 
-	return (board.sideToMove == WHITE) ? materialScore : -materialScore;
+	
+	//return (board.sideToMove == WHITE) ? materialScore : -materialScore;
+	return materialScore;
 }
 
 //Takes a board and a move, and returns a board with the move applied

@@ -135,7 +135,7 @@ class BoardStructure {
 		int pieceCount[13];
 
 		void displayFullBoard(bool dispPieces = true); //Outputs full 10x12 board to console
-		void displayBoard(bool flipped=false); //Outputs 8x8 board to console
+		void displayBoard(); //Outputs 8x8 board to console
 		void init(bool goFirst); //Sets up pieces for a standard chess match
 		void resetBoardToEmpty(); //Resets the board
 		int setUpBoardUsingFEN(char* fen); //Sets up pieces given a FEN string. Returns 0 if successful.
