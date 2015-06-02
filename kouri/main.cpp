@@ -437,7 +437,7 @@ void testFunction23() {
 
 	/****** Depth Setting *******/
 
-	int depth = 1;
+	int depth = 3;
 	
 	/****************************/
 
@@ -470,8 +470,8 @@ void testFunction23() {
 		//cout << "\n\nI, " << NAME << ", have decided to make move " << moveNum << ".";
 		cout << "I, " << NAME << ", have found a move after searching to depth " << depth << ".\n"; 
 	}
-	cout << "\nGame Over\n";
-	cout << "Press enter to continue: ";
+	cout << "\nGAME OVER\n";
+	cout << "Press enter to exit: ";
 	getline(cin, x); //This getline() function doesn't seem to register
 	getline(cin, x); //Need two for it to work properly
 }

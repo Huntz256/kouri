@@ -23,11 +23,15 @@ Move findBestMove(BoardStructure board, int depth){
 		numEvalsPerMove = 0;
 		//cout << "findBestMove() calling negaMax(). iteration: " << i << "\n";
 		int value = -1 * negaMax(board, depth, a, b); //Positive: from WHITE's perspective, Negative: from BLACK's perspective
+		//int value = negaMax(board, depth, a, b); //Positive: from WHITE's perspective, Negative: from BLACK's perspective
+
 		cout << "\nmove #" << i << " final eval: " << value << "\n";
-		cout << "num of evals: " << numEvalsPerMove << "\n\n";
-		if (value > a){
-			a = value;
-			bestMove = movechooser.movesLegal[i];
+		cout << "num of evals: " << numEvalsPerMove << "\n";
+		cout << "b: " << b << " best move: " << bestMove.move << "\n\n";
+		//if (value > a){
+		if (value < b){
+			b = value;
+			bestMove = movechooser.movesLegal[i+1];
 			bestMoveNum = i;
 		}
 	}
