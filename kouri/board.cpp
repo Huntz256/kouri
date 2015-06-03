@@ -72,6 +72,7 @@ void BoardStructure::displayBoard() {
 	//Also display some more infomation
 	cout << "Side to move: " << (sideToMove == 0 ? "White" : "Black");
 	cout << "\nCastling permissions: " << castlePerms << '\n';
+	cout << "Enpass. square: " << enPassSquare << '\n';
 }
 
 void BoardStructure::init(bool goFirst) {
@@ -431,7 +432,7 @@ bool BoardStructure::makeMove(Move m) {
 	
 
 	return true;
-	}
+}
 void BoardStructure::undoMove() {
 
 	ply--; historyPly--;

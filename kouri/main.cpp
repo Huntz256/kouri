@@ -24,27 +24,31 @@ void playerMove() {
 
 //Assumes input is a move command. Returns move integer if valid, else returns -1
 int translateMoveCommand(string com){
-	//castling
+	//Castling
 	if (com.length() == 3 && board.sideToMove == WHITE && com.compare("O-O") == 0) return MOVE(25, 27, 0, 0, 1);
 	if (com.length() == 5 && board.sideToMove == WHITE && com.compare("O-O-O") == 0) return MOVE(25, 23, 0, 0, 2);
 	if (com.length() == 3 && board.sideToMove == BLACK && com.compare("O-O") == 0) return MOVE(95, 97, 0, 0, 3);
 	if (com.length() == 5 && board.sideToMove == BLACK && com.compare("O-O-O") == 0) return MOVE(95, 93, 0, 0, 4);
-	
-	//regular move with possible promotion
-	if (com.length() >= 8 && (com[0] - 'a' >= 0 && com[0] - 'a' <= 7) && (com[6] - 'a' >= 0 && com[6] - 'a' <= 7) && (com[1] >= '1' && com[1] <= '8') && 
-		(com[7] >= '1' && com[7] <= '8') && (com.substr(2,4).compare(" to ") == 0)){
-		int from = (com[0] - 'a' + 1) + (com[1] - '1' + 2) * 10;
-		int to = (com[6] - 'a' + 1) + (com[7] - '1' + 2) * 10;
-		int prom = (com.length() == 10) ? charToPieceInt(com[9]) : 0;
-		return MOVE(from, to, board.pieces[to], prom, 0);
-	}
-	
-	return -1;
+
+	//Make sure com is valid 
+	if (com.length() < 4) { return -1; }
+	if ((com[0] - 'a' < 0) || (com[0] - 'a' > 7)) { return -1; }
+	if ((com[2] - 'a' < 0) || (com[2] - 'a' > 7)) { return -1; }
+	if ((com[1] < '1') || (com[1] > '8')) { return -1; }
+	if ((com[3] < '1') || (com[3] > '8')) { return -1; }
+
+	//Regular move with possible promotion
+	int from = (com[0] - 'a' + 1) + (com[1] - '1' + 2) * 10;
+	int to = (com[2] - 'a' + 1) + (com[3] - '1' + 2) * 10;
+	int prom = (com.length() == 5) ? charToPieceInt(com[4]) : 0;
+
+	cout << "Attempting to make non-castling move:" << from << " " << to << " " << board.pieces[to] << " " << prom;
+	return MOVE(from, to, board.pieces[to], prom, 0);
 }
 
 //Checks if a move integer is contained in the generated movelist
-bool isMoveValid(int move){
-	for (int i = 0; i < movelist.numberOfMovesLegal; i++){
+bool isMoveValid(int move) {
+	for (int i = 0; i < movelist.numberOfMovesLegal; i++) {
 		if (move == movelist.movesLegal[i].move) return true;
 	}
 	return false;
@@ -215,7 +219,7 @@ void testFunction5() {
 	string x; Move m;
 	board.init(true);
 
-	string help = "To make a move, type a command in the form: a1 to b2 \nPawn promotions are done as such: a1 to b2=Q \nCastling is done using: O-O or O-O-O \nFor a movelist, type: hint \nTo forfeit, type: f ";
+	string help = "To make a move, type a command in the form: e2e4 \nPawn promotions are done as such: a1b2Q \nCastling is done using: O-O or O-O-O \nFor a movelist, type: hint \nTo forfeit, type: f ";
 
 	while (true) {
 		movelist.generateMoveList(board);
