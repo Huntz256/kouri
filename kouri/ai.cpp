@@ -13,13 +13,13 @@ string x;
 //Returns the best move found by the nega-max function
 Move findBestMove(BoardStructure board, int depth){
 	movechooser.generateMoveList(board);
-	Move bestMove = movechooser.movesLegal[0]; int bestMoveNum = 0;
+	Move bestMove = movechooser.moves[0]; int bestMoveNum = 0;
 	numEvaluatedMoves = 0;
 
 	int a = -numeric_limits<int>::max(); //largest negative int possible
 	int b = numeric_limits<int>::max(); //largest positive int possible
 
-	for (int i = 0; i < movechooser.numberOfMovesLegal; i++){
+	for (int i = 0; i < movechooser.numberOfMoves; i++){
 		numEvalsPerMove = 0;
 		//cout << "findBestMove() calling negaMax(). iteration: " << i << "\n";
 		int value = -1 * negaMax(board, depth, a, b); //Positive: from WHITE's perspective, Negative: from BLACK's perspective
@@ -31,7 +31,7 @@ Move findBestMove(BoardStructure board, int depth){
 		//if (value > a){
 		if (value < b){
 			b = value;
-			bestMove = movechooser.movesLegal[i+1];
+			bestMove = movechooser.moves[i+1];
 			bestMoveNum = i;
 		}
 	}
@@ -55,8 +55,8 @@ int negaMax(BoardStructure &board, int depth, int a, int b)
 	}
 
 	movegen.generateMoveList(board);
-	for (int i = 0; i < movegen.numberOfMovesLegal; i++) {
-		board.makeMove(movegen.movesLegal[i]);
+	for (int i = 0; i < movegen.numberOfMoves; i++) {
+		board.makeMove(movegen.moves[i]);
 		a = max(a, -1 * negaMax(board, depth - 1, -b, -a));
 		board.undoMove();
 		if (b <= a){
@@ -68,18 +68,7 @@ int negaMax(BoardStructure &board, int depth, int a, int b)
 
 //Evaluates board from WHITE's perspective
 int evaluate(BoardStructure &board){
-	//bd = *board;
-	//board.displayBoard();
-	board.countPieces();
-	int materialScore = 2000 * (board.pieceCount[W_KING] - board.pieceCount[B_KING])
-		+ 90 * (board.pieceCount[W_QUEEN] - board.pieceCount[B_QUEEN])
-		+ 50 * (board.pieceCount[W_ROOK] - board.pieceCount[B_ROOK])
-		+ 30 * (board.pieceCount[W_BISHOP] - board.pieceCount[B_BISHOP] + board.pieceCount[W_KNIGHT] - board.pieceCount[B_KNIGHT])
-		+ 10 * (board.pieceCount[W_PAWN] - board.pieceCount[B_PAWN]);
-	//int mobilityScore = 
-	
-	//return (board.sideToMove == WHITE) ? materialScore : -materialScore;
-	return materialScore;
+	return board.material[WHITE] - board.material[BLACK];
 }
 
 //Takes a board and a move, and returns a board with the move applied

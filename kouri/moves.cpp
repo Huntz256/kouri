@@ -175,12 +175,14 @@ void MoveListGenerator::generatePawnMoves(BoardStructure board) {
 					addPawnCapturingMove(board, i, i + 11, board.pieces[i + 11], WHITE);
 				}
 
-				//En passant 
-				if (board.pieces[i + 9] > 0 && board.pieces[i + 9] == board.enPassSquare) {
-					//addPawnCapturingMove(board, i, i + 9, 0, WHITE);
-				}
-				if (board.pieces[i + 11] > 0 && board.pieces[i + 11] == board.enPassSquare) {
-					//addPawnCapturingMove(board, i, i + 11, 0, WHITE);
+				if (board.enPassSquare != 0) {
+					//En passant 
+					if (board.pieces[i + 9] > 0 && board.pieces[i + 9] == board.enPassSquare) {
+						//addPawnCapturingMove(board, i, i + 9, 0, WHITE);
+					}
+					if (board.pieces[i + 11] > 0 && board.pieces[i + 11] == board.enPassSquare) {
+						//addPawnCapturingMove(board, i, i + 11, 0, WHITE);
+					}
 				}
 
 			}
@@ -215,12 +217,14 @@ void MoveListGenerator::generatePawnMoves(BoardStructure board) {
 					addPawnCapturingMove(board, i, i - 11, board.pieces[i - 11], BLACK);
 				}
 
-				//En passant 
-				if (board.pieces[i - 9] > 0 && board.pieces[i - 9] == board.enPassSquare) {
-					//	addPawnCapturingMove(board, i, i - 9, 0, BLACK);
-				}
-				if (board.pieces[i - 11] > 0 && board.pieces[i - 11] == board.enPassSquare) {
-					//addPawnCapturingMove(board, i, i - 11, 0, BLACK);
+				if (board.enPassSquare != 0) {
+					//En passant 
+					if (board.pieces[i - 9] > 0 && board.pieces[i - 9] == board.enPassSquare) {
+						//	addPawnCapturingMove(board, i, i - 9, 0, BLACK);
+					}
+					if (board.pieces[i - 11] > 0 && board.pieces[i - 11] == board.enPassSquare) {
+						//addPawnCapturingMove(board, i, i - 11, 0, BLACK);
+					}
 				}
 			}
 			
@@ -381,15 +385,11 @@ void MoveListGenerator::generateCastlingMoves(BoardStructure board) {
 	}
 }
 void MoveListGenerator::generateMoveList(BoardStructure board) {
-	///cout << "generateMoveList(): hello\n";
-	numberOfMoves = 0; numberOfMovesLegal = 0;
+	numberOfMoves = 0;
 
 	//Clear move arrays
 	for (int i = 0; i <= numberOfMoves; i++) {
 		moves[i].move = 0;
-	}
-	for (int i = 0; i <= numberOfMovesLegal; i++) {
-		movesLegal[i].move = 0;
 	}
 
 	//Generate psuedo-legal moves
@@ -398,15 +398,8 @@ void MoveListGenerator::generateMoveList(BoardStructure board) {
 	generateNonSliderMoves(board);
 	generateCastlingMoves(board);
 
-	//Get legal moves
-	numberOfMovesLegal = 0;
-	for (int i = 0; i < numberOfMoves; i++) {
-		if ( !board.makeMove(moves[i]) ) {
-			continue;
-		}
-		movesLegal[numberOfMovesLegal] = moves[i];
-		numberOfMovesLegal++;
-	}
+	//Regenerate position key
+	board.positionID = board.generateAndGetPositionID();
 
 }
 
@@ -415,27 +408,27 @@ void MoveListGenerator::printMoveList(BoardStructure board) {
 
 	const char PIECE_NUM_TO_CHAR[13] = { ' ', ' ', ' ', 'B', 'B', 'N', 'N', 'R', 'R', 'Q', 'Q', 'K', 'K' };
 	
-	for (int i = 0; i < numberOfMovesLegal; i++) {
-		int fromSquare = movesLegal[i].getFromSquare();
-		int toSquare = movesLegal[i].getToSquare();
-		int capPiece = movesLegal[i].getCapturedPiece();
-		int promPiece = movesLegal[i].getPromoted();
+	for (int i = 0; i < numberOfMoves; i++) {
+		int fromSquare = moves[i].getFromSquare();
+		int toSquare = moves[i].getToSquare();
+		int capPiece = moves[i].getCapturedPiece();
+		int promPiece = moves[i].getPromoted();
 
-		cout << "Move " << i << " Found: "; cout << "(piece num: " << board.pieces[movesLegal[i].getFromSquare()] << ")";
+		cout << "Move " << i << " Found: "; cout << "(piece num: " << board.pieces[moves[i].getFromSquare()] << ")";
 		//cout << "Move " << i << " Found: "; cout << "(piece num: " << board.pieces[fromSquare] << ")";
 
-		if ((movesLegal[i].getCastling() == 1) || (movesLegal[i].getCastling() == 3)) {
+		if ((moves[i].getCastling() == 1) || (moves[i].getCastling() == 3)) {
 			cout << "O-O\n";
 		}
-		else if ((movesLegal[i].getCastling() == 2) || (movesLegal[i].getCastling() == 4)) {
+		else if ((moves[i].getCastling() == 2) || (moves[i].getCastling() == 4)) {
 			cout << "O-O-O\n";
 		}
 		else {
-			 cout << PIECE_NUM_TO_CHAR[board.pieces[movesLegal[i].getFromSquare()]];
+			 cout << PIECE_NUM_TO_CHAR[board.pieces[moves[i].getFromSquare()]];
 			 //cout << PIECE_NUM_TO_CHAR[board.pieces[fromSquare]];
 
-			 if (movesLegal[i].getCapturedPiece() != 0) {
-				 cout << FILES_TO_CHAR[FILES[movesLegal[i].getFromSquare()]] << "x";
+			 if (moves[i].getCapturedPiece() != 0) {
+				 cout << FILES_TO_CHAR[FILES[moves[i].getFromSquare()]] << "x";
 				//cout << FILES_TO_CHAR[FILES[fromSquare]] << "x";
 			}
 
@@ -445,7 +438,7 @@ void MoveListGenerator::printMoveList(BoardStructure board) {
 		}
 	}
 
-	cout << "# of moves: " << numberOfMovesLegal << "\n\n";
+	cout << "# of moves: " << numberOfMoves << "\n\n";
 }
 void MoveListGenerator::uciPrintMove(BoardStructure board, int moveNum) {
 	const char PIECE_NUM_TO_CHAR[13] = { ' ', ' ', ' ', 'B', 'B', 'N', 'N', 'R', 'R', 'Q', 'Q', 'K', 'K' };

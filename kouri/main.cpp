@@ -6,10 +6,25 @@
 using namespace std;
 
 BoardStructure board; MoveListGenerator movelist; //BoardStructure* boardpt;
+U64 pieceSquareKey[13][BOARD_SQUARE_COUNT], sideKey, castlePermKey[16];
+
 
 int getRandomInteger(int min, int max) {
 	srand((int)time(NULL)); 
 	return rand() % (max - min + 1) + min;
+}
+U64 getRandom64BitInteger() {
+	//rand() gives a 15 bit random number. Let's say that this random number is 101010101010101
+	//We want a 64 bit random number such as 0000 000000000000000 000000000000000 000000000000000 000000000000000
+
+	//(U64) rand() = 0000 000000000000000 000000000000000 000000000000000 101010101010101
+	//(U64) rand() << 15 = 0000 000000000000000 000000000000000 101010101010101 000000000000000 
+	//(U64) rand() << 30 = 0000 000000000000000 101010101010101 000000000000000 000000000000000
+	//(U64) rand() << 45 = 0000 101010101010101 000000000000000 000000000000000 000000000000000
+	//( (U64) rand() & 0xf ) << 60 = 1010 000000000000000 000000000000000 000000000000000 000000000000000
+
+	//So, if we add the above values up, we should get a 64 bit random number!
+	return ((U64)rand()) + ((U64)rand() << 15) + ((U64)rand() << 30) + ((U64)rand() << 45) + (((U64)rand() & 0xf) << 60);
 }
 
 //Make a move from the move list using user input
@@ -18,8 +33,8 @@ void playerMove() {
 	do {
 		cout << "\n\nIt's your turn. Choose a move from the list above and enter the move number:";
 		cin >> x;
-		board.makeMove(movelist.movesLegal[x]);
-	} while ((x < 0) || (x >= movelist.numberOfMovesLegal));
+		board.makeMove(movelist.moves[x]);
+	} while ((x < 0) || (x >= movelist.numberOfMoves));
 }
 
 //Assumes input is a move command. Returns move integer if valid, else returns -1
@@ -48,8 +63,8 @@ int translateMoveCommand(string com){
 
 //Checks if a move integer is contained in the generated movelist
 bool isMoveValid(int move) {
-	for (int i = 0; i < movelist.numberOfMovesLegal; i++) {
-		if (move == movelist.movesLegal[i].move) return true;
+	for (int i = 0; i < movelist.numberOfMoves; i++) {
+		if (move == movelist.moves[i].move) return true;
 	}
 	return false;
 }
@@ -171,9 +186,9 @@ void testFunction3() {
 
 	while (42 == 42) {
 		movelist.generateMoveList(board);
-		int moveNum = getRandomInteger(0, movelist.numberOfMovesLegal - 1);
-		while (!board.makeMove(movelist.movesLegal[moveNum])) {
-			moveNum = getRandomInteger(0, movelist.numberOfMovesLegal - 1);
+		int moveNum = getRandomInteger(0, movelist.numberOfMoves - 1);
+		while (!board.makeMove(movelist.moves[moveNum])) {
+			moveNum = getRandomInteger(0, movelist.numberOfMoves - 1);
 		}
 
 		board.displayBoard();
@@ -200,12 +215,11 @@ void testFunction4() {
 		playerMove();
 
 		movelist.generateMoveList(board);
-		int moveNum = getRandomInteger(0, movelist.numberOfMovesLegal - 1);
+		int moveNum = getRandomInteger(0, movelist.numberOfMoves - 1);
 		
 		board.displayBoard();
-		while (!board.makeMove(movelist.movesLegal[moveNum])) {
-			moveNum = getRandomInteger(0, movelist.numberOfMovesLegal - 1);
-			///cout << "testFunction4(): Getting another moveNum: " << moveNum;
+		while (!board.makeMove(movelist.moves[moveNum])) {
+			moveNum = getRandomInteger(0, movelist.numberOfMoves - 1);
 		}
 
 		movelist.printMoveList(board);
@@ -255,11 +269,11 @@ void testFunction5() {
 	
 		board.displayBoard();
 		movelist.generateMoveList(board);
-		int moveNum = getRandomInteger(0, movelist.numberOfMovesLegal - 1);
+		int moveNum = getRandomInteger(0, movelist.numberOfMoves - 1);
 
 		
-		while (!board.makeMove(movelist.movesLegal[moveNum])) {
-			moveNum = getRandomInteger(0, movelist.numberOfMovesLegal - 1);
+		while (!board.makeMove(movelist.moves[moveNum])) {
+			moveNum = getRandomInteger(0, movelist.numberOfMoves - 1);
 		}
 	
 		movelist.printMoveList(board);
@@ -362,9 +376,9 @@ void testFunction22(){
 		//board.sideToMove = board.sideToMove ^ 1;
 
 		movelist.generateMoveList(board);
-		int moveNum = getRandomInteger(0, movelist.numberOfMovesLegal - 1);
+		int moveNum = getRandomInteger(0, movelist.numberOfMoves - 1);
 		board.displayBoard();
-		board.makeMove(movelist.movesLegal[moveNum]);
+		board.makeMove(movelist.moves[moveNum]);
 
 		
 
@@ -395,10 +409,10 @@ void testFunction70() {
 
 	//Make and undo more moves
 	for (int i = 0; i < 30; i++) {
-		movelist.generateMoveList(board); int moveNum = getRandomInteger(0, movelist.numberOfMovesLegal - 1);
-		m.move = movelist.movesLegal[moveNum].move; board.makeMove(m);
+		movelist.generateMoveList(board); int moveNum = getRandomInteger(0, movelist.numberOfMoves - 1);
+		m.move = movelist.moves[moveNum].move; board.makeMove(m);
 		cout << "i:" << i << "\n";
-		cout << "movelist.numberOfMovesLegal:" << movelist.numberOfMovesLegal << "\n";
+		cout << "movelist.numberOfMoves:" << movelist.numberOfMoves << "\n";
 		cout << "moveNum:" << moveNum << "\n";
 	}
 	board.displayBoard(); getline(cin, x);
@@ -418,11 +432,11 @@ void testFunction70() {
 	for (int i = 0; i < 50; i++) {
 		cout << "i:" << i << "\n";
 		
-		int moveNum = getRandomInteger(0, movelist.numberOfMovesLegal - 1);
+		int moveNum = getRandomInteger(0, movelist.numberOfMoves - 1);
 		cout << "moveNum:" << moveNum << "\n";
 		movelist.generateMoveList(board); 
-		cout << "movelist.numberOfMovesLegal:" << movelist.numberOfMovesLegal << "\n";
-		m.move = movelist.movesLegal[moveNum].move; board.makeMove(m);
+		cout << "movelist.numberOfMoves:" << movelist.numberOfMoves << "\n";
+		m.move = movelist.moves[moveNum].move; board.makeMove(m);
 		
 	}
 	for (int i = 0; i < 50; i++) {
@@ -454,11 +468,11 @@ void testFunction23() {
 		playerMove();
 
 		movelist.generateMoveList(board);
-		//int moveNum = getRandomInteger(0, movelist.numberOfMovesLegal - 1);
+		//int moveNum = getRandomInteger(0, movelist.numberOfMoves - 1);
 
 		board.displayBoard();
-		//while (!board.makeMove(movelist.movesLegal[moveNum])) {
-			//moveNum = getRandomInteger(0, movelist.numberOfMovesLegal - 1);
+		//while (!board.makeMove(movelist.moves[moveNum])) {
+			//moveNum = getRandomInteger(0, movelist.numberOfMoves - 1);
 			///cout << "testFunction4(): Getting another moveNum: " << moveNum;
 		//}
 
@@ -480,8 +494,28 @@ void testFunction23() {
 	getline(cin, x); //Need two for it to work properly
 }
 
+//Init pieceSquareKey[][] with random 64 bit integers. 
+//Used to generate position ids for the threefold repetition rule
+void initKeys() {
+
+	for (int i = 0; i < 13; i++) {
+		for (int j = 0; j < 120; j++) {
+			pieceSquareKey[i][j] = getRandom64BitInteger();
+		}
+	}
+
+	sideKey = getRandom64BitInteger();
+
+	for (int i = 0; i < 16; i++) {
+		castlePermKey[i] = getRandom64BitInteger();
+	}
+}
+
 //Program execution starts here
 int main() {
+
+	initKeys(); 
+
 	cout << "Hello. My name is " << NAME << ".\n";
 	cout << "\nI have been created by Minter (Hunter and Minh) for a CS class project";
 	cout << "\n\nCurrently, I understand some rules of chess.";
