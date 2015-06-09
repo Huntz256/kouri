@@ -404,6 +404,7 @@ void MoveListGenerator::generateMoveList(BoardStructure board) {
 }
 
 //Prints all of the moves in our move list in algebraic notation
+//MUST be called immediately after generateMoveList() for piece num printing to be accuarate
 void MoveListGenerator::printMoveList(BoardStructure board) {
 
 	const char PIECE_NUM_TO_CHAR[13] = { ' ', ' ', ' ', 'B', 'B', 'N', 'N', 'R', 'R', 'Q', 'Q', 'K', 'K' };
@@ -414,7 +415,7 @@ void MoveListGenerator::printMoveList(BoardStructure board) {
 		int capPiece = moves[i].getCapturedPiece();
 		int promPiece = moves[i].getPromoted();
 
-		cout << "Move " << i << " Found: "; cout << "(piece num: " << board.pieces[moves[i].getFromSquare()] << ")";
+		cout << "Move " << i << " Found: "; cout << "(piece num: " << board.pieces[fromSquare] << ")";
 		//cout << "Move " << i << " Found: "; cout << "(piece num: " << board.pieces[fromSquare] << ")";
 
 		if ((moves[i].getCastling() == 1) || (moves[i].getCastling() == 3)) {
@@ -440,7 +441,9 @@ void MoveListGenerator::printMoveList(BoardStructure board) {
 
 	cout << "# of moves: " << numberOfMoves << "\n\n";
 }
-void MoveListGenerator::uciPrintMove(BoardStructure board, int moveNum) {
+
+//Prints a move in UCI format given a move number on a move list. E.g. uciPrintMove(board, 4)
+void MoveListGenerator::uciPrintMoveGivenMoveListNumber(BoardStructure board, int moveNum) {
 	const char PIECE_NUM_TO_CHAR[13] = { ' ', ' ', ' ', 'B', 'B', 'N', 'N', 'R', 'R', 'Q', 'Q', 'K', 'K' };
 
 	int fromSquare = moves[moveNum].getFromSquare();
@@ -452,4 +455,49 @@ void MoveListGenerator::uciPrintMove(BoardStructure board, int moveNum) {
 
 	cout << "\n";
 
+}
+
+//Prints a move in UCI format given a move. E.g. uciPrintMove(board, m)
+void MoveListGenerator::uciPrintMoveGivenMove(BoardStructure board, Move m) {
+	const char PIECE_NUM_TO_CHAR[13] = { ' ', ' ', ' ', 'B', 'B', 'N', 'N', 'R', 'R', 'Q', 'Q', 'K', 'K' };
+
+	int fromSquare = m.getFromSquare();
+	int toSquare = m.getToSquare();
+
+	printSquare(fromSquare);
+
+	printSquare(toSquare);
+
+	cout << "\n";
+
+}
+
+//Checks if a move integer is contained in the generated movelist and is valid
+bool MoveListGenerator::isMoveValid(BoardStructure board, int move) {
+
+	int fromSquare = move & 0x7F;
+	int toSquare = (move >> 7) & 0x7F;
+
+	if (fromSquare < 21 || fromSquare > 98) {
+		return false;
+	}
+	if (toSquare < 21 || toSquare > 98) {
+		return false;
+	}
+	if (board.pieces[fromSquare] == 0) {
+		return false;
+	}
+	
+	generateMoveList(board);
+
+	for (int i = 0; i < numberOfMoves; i++) {
+		if (!board.makeMove(moves[i])) {
+			continue;
+		}
+		board.undoMove();
+		if (moves[i].move == move) {
+			return true;
+		}
+	}
+	return false;
 }

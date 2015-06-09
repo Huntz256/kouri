@@ -154,6 +154,9 @@ class BoardStructure {
 		//Ex: pieceCount[1] returns the number of black pawns since B_PAWN has been previously defined as 1
 		int pieceCount[13];
 
+		//A principal variation array
+		int pvArray[64];
+
 		void displayFullBoard(bool dispPieces = true); //Outputs full 10x12 board to console
 		void displayBoard(); //Outputs 8x8 board to console
 		void init(bool goFirst); //Sets up pieces for a standard chess match
@@ -173,11 +176,36 @@ class BoardStructure {
 		bool isBoardValid(); //Looks at some aspects of the board and returns false if there is something wrong with the current board
 };
 
+//Principal variation entity
+class PVEntity {
+public:
+	int move;
+	U64 positionID;
+};
+
+//Principal variation table: contains many pv entities
+class PVTable {
+public:
+	//Note that this is a pointer! We could use an array instead.
+	//Read up on pointers if you are confused.
+	PVEntity *pvTable;
+	int numOfEntries;
+
+	void initPVTable();
+	void clearPVTable();
+	void storePVMove(BoardStructure board, int move);
+	int getPVMove(BoardStructure board);
+	int getPVLine(BoardStructure board, int depth);
+
+};
+
+extern PVTable table;
+
+
 void testIsSquareAttacked(int side, BoardStructure board); //Used only for testing isSquareAttacked()
 char numToPieceChar(int num); //Converts integer to char representing a piece
 void printSquare(int square); //Prints square in alg. notation
 int charToPieceInt(char c); //Converts char like 'p' or 'Q' to the corresponding integer
-bool isMoveValid(int move); //Checks if a move integer is contained in the generated movelist
 
 //Contains all move generation functions
 class MoveListGenerator {
@@ -193,13 +221,20 @@ class MoveListGenerator {
 		void addPawnCapturingMove(BoardStructure board, int fromSquare, int toSquare, int capture, int side);
 		void addPawnMove(BoardStructure board, int fromSquare, int toSquare, int side);
 		void printMoveList(BoardStructure board);
-		void uciPrintMove(BoardStructure board, int moveNum);
+		void uciPrintMoveGivenMoveListNumber(BoardStructure board, int moveNum);
+		void uciPrintMoveGivenMove(BoardStructure board, Move m);
+
+		bool isMoveValid(BoardStructure board, int move);
 };
 
-/*************** AI Stuff ******************/
+extern MoveListGenerator movelist;
+
+// AI Stuff------------------------
 int evaluate(BoardStructure &board); //Does a basic evaluation of a board based on piece counts from WHITE's perspective
 int negaMax(BoardStructure &board, int depth, int a, int b); //nega-max algorithm with alpha-beta pruning
 Move findBestMove(BoardStructure board, int depth); //Uses nega-max to find best move
 BoardStructure applyMove(BoardStructure board, Move m);
+
+
 
 #endif

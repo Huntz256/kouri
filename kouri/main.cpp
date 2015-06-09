@@ -5,8 +5,10 @@
 #include <ctime>
 using namespace std;
 
-BoardStructure board; MoveListGenerator movelist; //BoardStructure* boardpt;
+BoardStructure board; //BoardStructure* boardpt;
 U64 pieceSquareKey[13][BOARD_SQUARE_COUNT], sideKey, castlePermKey[16];
+MoveListGenerator movelist;
+PVTable table;
 
 
 int getRandomInteger(int min, int max) {
@@ -57,16 +59,8 @@ int translateMoveCommand(string com){
 	int to = (com[2] - 'a' + 1) + (com[3] - '1' + 2) * 10;
 	int prom = (com.length() == 5) ? charToPieceInt(com[4]) : 0;
 
-	cout << "Attempting to make non-castling move:" << from << " " << to << " " << board.pieces[to] << " " << prom;
+	cout << "Attempting to make non-castling move:" << from << " " << to << " " << board.pieces[to] << " " << prom << "\n";
 	return MOVE(from, to, board.pieces[to], prom, 0);
-}
-
-//Checks if a move integer is contained in the generated movelist
-bool isMoveValid(int move) {
-	for (int i = 0; i < movelist.numberOfMoves; i++) {
-		if (move == movelist.moves[i].move) return true;
-	}
-	return false;
 }
 
 //Parse an FEN string
@@ -185,14 +179,12 @@ void testFunction3() {
 	string x; board.init(true);
 
 	while (42 == 42) {
-		movelist.generateMoveList(board);
+		board.displayBoard();
+		movelist.generateMoveList(board); movelist.printMoveList(board);
 		int moveNum = getRandomInteger(0, movelist.numberOfMoves - 1);
 		while (!board.makeMove(movelist.moves[moveNum])) {
 			moveNum = getRandomInteger(0, movelist.numberOfMoves - 1);
-		}
-
-		board.displayBoard();
-		movelist.printMoveList(board);
+		}		
 		
 		cout << "\n\n" << NAME << " has decided to make move " << moveNum << "!";
 		//board.sideToMove = board.sideToMove ^ 1;
@@ -207,23 +199,19 @@ void testFunction4() {
 	//board.setUpBoardUsingFEN("rnbqkbnr/ppp2ppp/3p4/4p2Q/4P3/8/PPPP1PPP/RNB1KBNR w KQkq - 0 1 ");
 
 	while (42 == 42) {
-		movelist.generateMoveList(board);
-
 		board.displayBoard();
-		movelist.printMoveList(board);
+		movelist.generateMoveList(board); movelist.printMoveList(board);
 
 		playerMove();
 
-		movelist.generateMoveList(board);
+		board.displayBoard();
+		movelist.generateMoveList(board); movelist.printMoveList(board);
 		int moveNum = getRandomInteger(0, movelist.numberOfMoves - 1);
 		
-		board.displayBoard();
 		while (!board.makeMove(movelist.moves[moveNum])) {
 			moveNum = getRandomInteger(0, movelist.numberOfMoves - 1);
 		}
 
-		movelist.printMoveList(board);
-		
 		cout << "\n\nI, " << NAME << ", have decided to make move " << moveNum << ".";
 	}
 }
@@ -244,11 +232,11 @@ void testFunction5() {
 		getline(cin, x);
 
 		//While user command is not valid
-		while (!(isMoveValid(translateMoveCommand(x)) || x.compare("f") == 0) || x.compare("hint") == 0 || x.compare("help") == 0) {
-			if (x.compare("help") != 0 && x.compare("hint") != 0){
+		while ( x.compare("f") == 0 || x.compare("hint") == 0 || x.compare("help") == 0 || !(movelist.isMoveValid(board, translateMoveCommand(x))) ) {
+			if (x.compare("help") != 0 && x.compare("hint") != 0) {
+				
 				cout << "\n\nThat is not a valid move or command. For a list of commands, type: help \n";
 			}
-
 			board.displayBoard();
 
 			if (x.compare("hint") == 0) movelist.printMoveList(board);
@@ -268,7 +256,8 @@ void testFunction5() {
 		}
 	
 		board.displayBoard();
-		movelist.generateMoveList(board);
+		movelist.generateMoveList(board); movelist.printMoveList(board);
+
 		int moveNum = getRandomInteger(0, movelist.numberOfMoves - 1);
 
 		
@@ -276,8 +265,6 @@ void testFunction5() {
 			moveNum = getRandomInteger(0, movelist.numberOfMoves - 1);
 		}
 	
-		movelist.printMoveList(board);
-
 		cout << "\n\nI, " << NAME << ", have decided to make move " << moveNum << ".";
 
 	}
@@ -354,7 +341,7 @@ void testFunction22(){
 		getline(cin, x);
 
 		//While user command is not valid
-		while (!(isMoveValid(translateMoveCommand(x)) || x.compare("f") == 0) || x.compare("hint") == 0 || x.compare("help") == 0) {
+		while (!(movelist.isMoveValid(board, translateMoveCommand(x)) || x.compare("f") == 0) || x.compare("hint") == 0 || x.compare("help") == 0) {
 			if (x.compare("help") != 0 && x.compare("hint") != 0){
 				cout << "\n\nThat is not a valid move or command. For a list of commands, type: help \n";
 			}
@@ -448,7 +435,7 @@ void testFunction70() {
 
 }
 
-
+//Play against AI-enabled kouri, 2
 void testFunction23() {
 	string x; board.init(true); Move m; 
 	bool minhisthebest = true;
@@ -460,26 +447,18 @@ void testFunction23() {
 	/****************************/
 
 	while (minhisthebest == true) {
-		movelist.generateMoveList(board);
-
 		board.displayBoard();
+		movelist.generateMoveList(board);
 		movelist.printMoveList(board);
 
 		playerMove();
 
-		movelist.generateMoveList(board);
-		//int moveNum = getRandomInteger(0, movelist.numberOfMoves - 1);
-
 		board.displayBoard();
-		//while (!board.makeMove(movelist.moves[moveNum])) {
-			//moveNum = getRandomInteger(0, movelist.numberOfMoves - 1);
-			///cout << "testFunction4(): Getting another moveNum: " << moveNum;
-		//}
-
-		//BoardStructure* boardpt;
+		movelist.generateMoveList(board);
 		movelist.printMoveList(board);
 
 		m = findBestMove(board, depth);
+
 		if (!board.makeMove(m)){
 			cout << "Error occurred while making move\n";
 			break;
@@ -492,6 +471,56 @@ void testFunction23() {
 	cout << "Press enter to exit: ";
 	getline(cin, x); //This getline() function doesn't seem to register
 	getline(cin, x); //Need two for it to work properly
+}
+
+//Play against yourself; used to test pv table and rep rule
+void testFunction422() {
+	board.init(true);
+	Move m; int pvNum = 0, max = 0; string x;
+
+	while (42 == 42) {
+		board.displayBoard();
+
+		cout << "Enter your command: "; getline(cin, x);
+
+		//While user command is not valid
+		while (!(x.compare("p") == 0 || x.compare("u") == 0 || movelist.isMoveValid(board, translateMoveCommand(x)))) {
+			if (x.compare("p") != 0 && x.compare("u") != 0){
+				cout << "\n\nThat is not a valid move or command. Enter p, u, or a valid move.\n";
+			}
+			board.displayBoard();
+			cout << "Enter your command: "; getline(cin, x);
+		}
+
+		if (x.compare("u") == 0) {
+			board.undoMove();
+		}
+		else if (x.compare("p") == 0) {
+			max = table.getPVLine(board, 4);
+			cout << "max: " << max << "\n";
+			for (int i = 0; i < max; i++) {
+				m.move = board.pvArray[i];
+				movelist.uciPrintMoveGivenMove(board, m);
+			}
+
+		}
+		else {
+			m.move = translateMoveCommand(x);
+
+			if (m.move != 0) {
+				table.storePVMove(board, m.move);
+				board.makeMove(m);
+			}
+			else {
+				cout << "Move not Parsed.\n";
+			}
+		}
+
+		if (board.isRepetition()) {
+			cout << "REP REP REP REP REP REP REP REP. \n";
+		}
+
+	}
 }
 
 //Init pieceSquareKey[][] with random 64 bit integers. 
@@ -545,29 +574,29 @@ int main() {
 
 	/***************** End of Sandbox *********************/
 
-	string in; cout << "Choose one:\n \"1\" to play against me with a movelist\n \"2\" to have me play against myself\n \"3\" to do castling testing\n "
-		<< "\"4\" to parse a FEN string\n \"5\" to play against me without a movelist\n \"6\" to play against my AI\n>> ";
+	string in; cout << "Choose one:\n \"1\" - player vs kouri\n \"2\" - kouri vs kouri\n \"3\" - player vs player\n "
+		<< "\"4\" - castling testing\n \"5\" - parse a FEN string\n \"6\" - player vs kouri (with AI)\n>> ";
 	getline(cin, in);
 
 	if (in.compare("1") == 0) {
-		testFunction4();
+		testFunction5();
 	}
 	else if (in.compare("2") == 0) {
 		testFunction3();
 	}
 	else if (in.compare("3") == 0) {
-		testFunction2();
+		testFunction422();
 	}
 	else if (in.compare("4") == 0) {
-		testFunction1();
+		testFunction2();
 	}
 	else if (in.compare("5") == 0) {
-		//testFunction5();
-		testFunction22();
+		testFunction1();
 	}
 	else if (in.compare("6") == 0) {
 		testFunction23();
 	}
+	
 
 	return 0;
 }

@@ -145,6 +145,9 @@ void BoardStructure::resetBoardToEmpty() {
 
 	//Reset position ID by setting all bits to zero
 	positionID = 0ULL;
+
+	//Init pv table
+	table.initPVTable();
 }
 
 //Sets up pieces given a FEN string. Returns 0 if successful.
@@ -400,31 +403,31 @@ void BoardStructure::movePieceToSquare(int fromSquare, int toSquare) {
 //Returns false if after making the move the side making the move leaves themselves in check
 bool BoardStructure::makeMove(Move m) {
 
-	//Inits and validations before we even attempt to make the move--------------------------------------
-	
+	//Inits and validations before we even attempt to make the move--------------------------------------	
 	int fromSquare = m.getFromSquare();
 	int toSquare = m.getToSquare();
 	int capturedPiece = m.getCapturedPiece();
 	int castling = m.getCastling();
 	int promotedPiece = m.getPromoted();
 	int side = sideToMove;
+	///cout << "Making move " << fromSquare << "-" << toSquare << "-" << capturedPiece << "-" << castling << "-" << promotedPiece << "\n";
 
-	//If board is not valid, stop and throw an exception
+	//If board is not valid, show an error message
 	if (!isBoardValid()) {
-		cout << "ERROR: BOARD NOT VALID.\n"; throw "EXCEPTION";
+		cout << "\nERROR: BOARD NOT VALID.\n";
 	}
 
-	//If piece on fromSquare is not valid, stop and throw an exception.
+	//If piece on fromSquare is not valid, show an error message
 	if ((pieces[fromSquare] < B_PAWN) || (pieces[fromSquare] > W_KING)) {
-		cout << "ERROR: PIECE NUMBER " << pieces[fromSquare] << " ON SQUARE " << fromSquare << " IS NOT VALID.\n"; throw "EXCEPTION";
+		cout << "\nERROR: PIECE NUMBER " << pieces[fromSquare] << " ON SQUARE " << fromSquare << " IS NOT VALID.\n";
 	}
 
-	//If square fromSquare or toSquare is not on the board, stop and throw an exception.
+	//If square fromSquare or toSquare is not on the board, show an error message
 	if (FILES[fromSquare] == -1) {
-		cout << "ERROR: FROMSQUARE " << fromSquare << " IS NOT VALID.\n"; throw "EXCEPTION";
+		cout << "\nERROR: FROMSQUARE " << fromSquare << " IS NOT VALID.\n";
 	}
 	if (FILES[toSquare] == -1) {
-		cout << "ERROR: TOSQUARE " << toSquare << " IS NOT VALID.\n"; throw "EXCEPTION";
+		cout << "\nERROR: TOSQUARE " << toSquare << " IS NOT VALID.\n"; 
 	}
 
 	//End of validations -------------------------------------------------------------------------
@@ -453,7 +456,7 @@ bool BoardStructure::makeMove(Move m) {
 			case 93:
 				movePieceToSquare(91, 94); break;
 			default:
-				cout << "ERROR: INVALID CASTILING TOSQUARE.\n"; throw "EXCEPTION"; break;
+				cout << "\nERROR: INVALID CASTILING TOSQUARE.\n"; break;
 		}
 	}
 
@@ -507,9 +510,9 @@ bool BoardStructure::makeMove(Move m) {
 	//Flip side to move and update positionID
 	sideToMove ^= 1; positionID = generateAndGetPositionID();
 
-	//Another validation. If board is not valid, stop and throw an exception
+	//Another validation. If board is not valid, show an error message
 	if (!isBoardValid()) {
-		cout << "ERROR: BOARD NOT VALID.\n"; throw "EXCEPTION";
+		cout << "\nERROR: BOARD NOT VALID.\n";
 	}
 
 	//If the king is under attack (in check) now, undo the move and return false
@@ -524,9 +527,9 @@ bool BoardStructure::makeMove(Move m) {
 //Undoes the last move
 void BoardStructure::undoMove() {
 
-	//If board is not valid, stop and throw an exception
+	//If board is not valid, show an error message
 	if (!isBoardValid()) {
-		cout << "ERROR: BOARD NOT VALID.\n"; throw "EXCEPTION";
+		cout << "\nERROR: BOARD NOT VALID.\n";
 	}
 
 	//Update ply and historyPly
@@ -540,12 +543,12 @@ void BoardStructure::undoMove() {
 	int promotedPiece = (m >> 18) & 0x7F;
 	int castling = (m >> 22) & 0x7;
 
-	//If square fromSquare or toSquare is not on the board, stop and throw an exception.
+	//If square fromSquare or toSquare is not on the board, output an error message
 	if (FILES[fromSquare] == -1) {
-		cout << "ERROR: FROMSQUARE " << fromSquare << " IS NOT VALID.\n"; throw "EXCEPTION";
+		cout << "\nERROR: FROMSQUARE " << fromSquare << " IS NOT VALID.\n"; 
 	}
 	if (FILES[toSquare] == -1) {
-		cout << "ERROR: TOSQUARE " << toSquare << " IS NOT VALID.\n"; throw "EXCEPTION";
+		cout << "\nERROR: TOSQUARE " << toSquare << " IS NOT VALID.\n";
 	}
 
 	//Revert castlePerms and enPassSquare
@@ -575,7 +578,7 @@ void BoardStructure::undoMove() {
 		case 93:
 			movePieceToSquare(94, 91); break;
 		default:
-			cout << "ERROR: INVALID CASTILING TOSQUARE.\n"; throw "EXCEPTION"; break;
+			cout << "\nERROR: INVALID CASTILING TOSQUARE.\n"; break;
 		}
 	}
 
@@ -601,9 +604,9 @@ void BoardStructure::undoMove() {
 	//Update posiition ID
 	positionID = generateAndGetPositionID();
 
-	//If board is not valid, stop and throw an exception
+	//If board is not valid, show an error message
 	if (!isBoardValid()) {
-		cout << "ERROR: BOARD NOT VALID.\n"; throw "EXCEPTION";
+		cout << "\nERROR: BOARD NOT VALID.\n"; 
 	}
 
 }
@@ -690,17 +693,17 @@ bool BoardStructure::isBoardValid() {
 
 	//Make sure en pass square is valid
 	if (enPassSquare != 0 && RANKS[enPassSquare] != RANK_6 && RANKS[enPassSquare] != RANK_3) {
-		cout << "ERROR: EN PASS SQUARE INVALID\n";
+		cout << "ERROR: EN PASS SQUARE," << enPassSquare << " IS INVALID\n";
 		return false;
 	}
 
 	//Make sure KingSq arrays are valid
 	if (pieces[kingSquare[WHITE]] != W_KING) {
-		cout << "ERROR: KINGSQ ARRAY INVALID\n";
+		cout << "ERROR: pieces[kingSquare[WHITE]] = " << pieces[kingSquare[WHITE]] << " WHICH IS NOT A WHITE KING.\n";
 		return false;
 	}
 	if (pieces[kingSquare[BLACK]] != B_KING) {
-		cout << "ERROR: KINGSQ ARRAY INVALID\n";
+		cout << "ERROR: pieces[kingSquare[BLACK]] = " << pieces[kingSquare[BLACK]] << " WHICH IS NOT A BLACK KING.\n";
 		return false;
 	}
 
