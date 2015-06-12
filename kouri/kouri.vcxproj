@@ -69,6 +69,7 @@
     <ClCompile Include="board.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="moves.cpp" />
+    <ClCompile Include="pvtable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="defs.h" />
