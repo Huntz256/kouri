@@ -3,6 +3,7 @@
 #include <limits>
 #include <algorithm>
 #include <string>
+#include <windows.h>
 using namespace std;
 
 int numEvaluatedMoves; int numEvalsPerMove;
