@@ -97,7 +97,7 @@ void BoardStructure::displayBoard() {
 	cout << "Side to move: " << (sideToMove == 0 ? "White" : "Black");
 	cout << "\nCastling permissions: " << castlePerms << '\n';
 	cout << "Enpass. square: " << enPassSquare << '\n';
-	cout << "evaluate(): " << evaluate(*this) << '\n';
+	cout << "evaluate(): " << ai.evaluate(*this) << '\n';
 }
 
 //Sets up the board for a standard chess match
@@ -240,7 +240,7 @@ int BoardStructure::getPieceColor(int pieceNum) {
 	case W_PAWN: case W_BISHOP: case W_KNIGHT: case W_ROOK: case W_QUEEN: case W_KING:
 		return WHITE; break;
 	default:
-		cout << "ERROR: INVALID PIECE COLOR. pieceNum: " << pieceNum << "\n";
+		///cout << "ERROR: INVALID PIECE COLOR. pieceNum: " << pieceNum << "\n";
 		return -42; break;
 	}
 }
@@ -400,7 +400,8 @@ void BoardStructure::movePieceToSquare(int fromSquare, int toSquare) {
 }
 
 //Modifies the board and stores the move in history[]. 
-//Returns false if after making the move the side making the move leaves themselves in check
+//Returns false if after making the move the side making the move leaves themselves in check,
+//or in other cases when the move is invalid
 bool BoardStructure::makeMove(Move m) {
 
 	//Inits and validations before we even attempt to make the move--------------------------------------	
@@ -414,20 +415,24 @@ bool BoardStructure::makeMove(Move m) {
 
 	//If board is not valid, show an error message
 	if (!isBoardValid()) {
-		cout << "\nERROR: BOARD NOT VALID.\n";
+		///cout << "\nERROR: BOARD NOT VALID.\n";
+		return false;
 	}
 
 	//If piece on fromSquare is not valid, show an error message
 	if ((pieces[fromSquare] < B_PAWN) || (pieces[fromSquare] > W_KING)) {
-		cout << "\nERROR: PIECE NUMBER " << pieces[fromSquare] << " ON SQUARE " << fromSquare << " IS NOT VALID.\n";
+		///cout << "\nERROR: PIECE NUMBER " << pieces[fromSquare] << " ON SQUARE " << fromSquare << " IS NOT VALID.\n";
+		return false;
 	}
 
 	//If square fromSquare or toSquare is not on the board, show an error message
 	if (FILES[fromSquare] == -1) {
 		cout << "\nERROR: FROMSQUARE " << fromSquare << " IS NOT VALID.\n";
+		return false;
 	}
 	if (FILES[toSquare] == -1) {
 		cout << "\nERROR: TOSQUARE " << toSquare << " IS NOT VALID.\n"; 
+		return false;
 	}
 
 	//End of validations -------------------------------------------------------------------------
@@ -503,7 +508,7 @@ bool BoardStructure::makeMove(Move m) {
 	}
 
 	//Update king square if the king moved
-	if (fromSquare == kingSquare[sideToMove]) {
+	if ((fromSquare == W_KING) || (fromSquare == B_KING)) {
 		kingSquare[sideToMove] = toSquare;
 	}
 	
@@ -512,7 +517,7 @@ bool BoardStructure::makeMove(Move m) {
 
 	//Another validation. If board is not valid, show an error message
 	if (!isBoardValid()) {
-		cout << "\nERROR: BOARD NOT VALID.\n";
+		///cout << "\nERROR: BOARD NOT VALID.\n";
 	}
 
 	//If the king is under attack (in check) now, undo the move and return false
@@ -529,7 +534,7 @@ void BoardStructure::undoMove() {
 
 	//If board is not valid, show an error message
 	if (!isBoardValid()) {
-		cout << "\nERROR: BOARD NOT VALID.\n";
+		///cout << "\nERROR: BOARD NOT VALID.\n";
 	}
 
 	//Update ply and historyPly
@@ -586,7 +591,7 @@ void BoardStructure::undoMove() {
 	movePieceToSquare(toSquare, fromSquare);
 
 	//Update KingSq if the king moved
-	if (fromSquare == kingSquare[sideToMove]) {
+	if ((fromSquare == W_KING) || (fromSquare == B_KING)) {
 		kingSquare[sideToMove] = fromSquare;
 	}
 
@@ -606,7 +611,7 @@ void BoardStructure::undoMove() {
 
 	//If board is not valid, show an error message
 	if (!isBoardValid()) {
-		cout << "\nERROR: BOARD NOT VALID.\n"; 
+		///cout << "\nERROR: BOARD NOT VALID.\n"; 
 	}
 
 }
@@ -699,11 +704,11 @@ bool BoardStructure::isBoardValid() {
 
 	//Make sure KingSq arrays are valid
 	if (pieces[kingSquare[WHITE]] != W_KING) {
-		cout << "ERROR: pieces[kingSquare[WHITE]] = " << pieces[kingSquare[WHITE]] << " WHICH IS NOT A WHITE KING.\n";
+		///cout << "ERROR: pieces[kingSquare[WHITE]]  pieces[" << kingSquare[WHITE] << "] = " << pieces[kingSquare[WHITE]] << " WHICH IS NOT A WHITE KING.\n";
 		return false;
 	}
 	if (pieces[kingSquare[BLACK]] != B_KING) {
-		cout << "ERROR: pieces[kingSquare[BLACK]] = " << pieces[kingSquare[BLACK]] << " WHICH IS NOT A BLACK KING.\n";
+		///cout << "ERROR: pieces[kingSquare[BLACK]] = pieces[" << kingSquare[BLACK] << "] = " <<  pieces[kingSquare[BLACK]] << " WHICH IS NOT A BLACK KING.\n";
 		return false;
 	}
 

@@ -9,6 +9,9 @@ BoardStructure board; //BoardStructure* boardpt;
 U64 pieceSquareKey[13][BOARD_SQUARE_COUNT], sideKey, castlePermKey[16];
 MoveListGenerator movelist;
 PVTable table;
+AI ai;
+int pvArray[64];
+
 
 
 int getRandomInteger(int min, int max) {
@@ -286,32 +289,32 @@ void testFunction21(){
 	string x;
 	board.setUpBoardUsingFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	board.displayBoard();
-	cout << "White: " << evaluate(board) << "\n";
-	cout << "Black: " << evaluate(board) << "\n";
+	cout << "White: " << ai.evaluate(board) << "\n";
+	cout << "Black: " << ai.evaluate(board) << "\n";
 	getline(cin, x);
 
 	board.setUpBoardUsingFEN("rnbqk2r/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	board.displayBoard();
-	cout << "White: " << evaluate(board) << "\n";
-	cout << "Black: " << evaluate(board) << "\n";
+	cout << "White: " << ai.evaluate(board) << "\n";
+	cout << "Black: " << ai.evaluate(board) << "\n";
 	getline(cin, x);
 
 	board.setUpBoardUsingFEN("rnbqkbnr/8/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	board.displayBoard();
-	cout << "White: " << evaluate(board) << "\n";
-	cout << "Black: " << evaluate(board) << "\n";
+	cout << "White: " << ai.evaluate(board) << "\n";
+	cout << "Black: " << ai.evaluate(board) << "\n";
 	getline(cin, x);
 
 	board.setUpBoardUsingFEN("8/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	board.displayBoard();
-	cout << "White: " << evaluate(board) << "\n";
-	cout << "Black: " << evaluate(board) << "\n";
+	cout << "White: " << ai.evaluate(board) << "\n";
+	cout << "Black: " << ai.evaluate(board) << "\n";
 	getline(cin, x);
 
 	board.setUpBoardUsingFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNB1KBNR w KQkq - 0 1");
 	board.displayBoard();
-	cout << "White: " << evaluate(board) << "\n";
-	cout << "Black: " << evaluate(board) << "\n";
+	cout << "White: " << ai.evaluate(board) << "\n";
+	cout << "Black: " << ai.evaluate(board) << "\n";
 	getline(cin, x);
 }
 
@@ -438,35 +441,52 @@ void testFunction70() {
 //Play against AI-enabled kouri, 2
 void testFunction23() {
 	string x; board.init(true); Move m; 
+	//board.setUpBoardUsingFEN("");
 	bool minhisthebest = true;
-
-	/****** Depth Setting *******/
-
-	int depth = 3;
-	
-	/****************************/
+	ai.maxDepth = 3;
 
 	while (minhisthebest == true) {
-		board.displayBoard();
 		movelist.generateMoveList(board);
-		movelist.printMoveList(board);
-
-		playerMove();
-
 		board.displayBoard();
-		movelist.generateMoveList(board);
-		movelist.printMoveList(board);
+		///cout << "kingSquare W:" << board.kingSquare[WHITE]; cout << " kingSquare B:" << board.kingSquare[BLACK];
+		///cout << "board.pieces[board.kingSquare[WHITE]]:" << board.pieces[board.kingSquare[WHITE]] << "\n";
+		///cout << "board.pieces[board.kingSquare[BLACK]]:" << board.pieces[board.kingSquare[BLACK]] << "\n";
 
-		m = findBestMove(board, depth);
+		cout << "For a list of commands, type: help \nEnter your command: ";
+		getline(cin, x);
 
-		if (!board.makeMove(m)){
-			cout << "Error occurred while making move\n";
-			break;
+		//While user command is not valid
+		while (x.compare("f") == 0 || x.compare("hint") == 0 || x.compare("help") == 0 || !(movelist.isMoveValid(board, translateMoveCommand(x)))) {
+			if (x.compare("help") != 0 && x.compare("hint") != 0) {
+
+				cout << "\n\nThat is not a valid move or command. For a list of commands, type: help \n";
+			}
+			board.displayBoard();
+	
+			if (x.compare("hint") == 0) movelist.printMoveList(board);
+			else if (x.compare("f") == 0) break;
+
+			cout << "Enter your command: ";
+			getline(cin, x);
 		}
 
-		//cout << "\n\nI, " << NAME << ", have decided to make move " << moveNum << ".";
-		cout << "I, " << NAME << ", have found a move after searching to depth " << depth << ".\n"; 
+		if (x.compare("f") == 0) break; //exit game loop
+
+		m.move = translateMoveCommand(x);
+
+		while (!board.makeMove(m)) {
+			m.move = translateMoveCommand(x);
+		}
+
+		cout << "board.sideToMove:" << board.sideToMove << "\n";
+		m = ai.findBestMove(board, ai.maxDepth);
+		board.makeMove(m);
+
+		cout << "\n\nI, " << NAME << ", have decided to make move "; 
+		movelist.uciPrintMoveGivenMove(board, m);
+		cout << " after searching to depth " << ai.maxDepth << ".\n";
 	}
+
 	cout << "\nGAME OVER\n";
 	cout << "Press enter to exit: ";
 	getline(cin, x); //This getline() function doesn't seem to register
@@ -496,10 +516,10 @@ void testFunction422() {
 			board.undoMove();
 		}
 		else if (x.compare("p") == 0) {
-			max = table.getPVLine(board, 4);
+			///max = table.getPVLine(board, 4);
 			cout << "max: " << max << "\n";
 			for (int i = 0; i < max; i++) {
-				m.move = board.pvArray[i];
+				m.move = pvArray[i];
 				movelist.uciPrintMoveGivenMove(board, m);
 			}
 
@@ -565,7 +585,8 @@ int main() {
 	getline(cin, x);
 
 	m.move = MOVE(62, 52, 0, 0, 0);
-	BoardStructure bd = applyMove(board, m);
+	board.makeMove(m);
+	BoardStructure bd = board;
 	board.displayBoard();
 	bd.displayBoard();
 	getline(cin, x);
