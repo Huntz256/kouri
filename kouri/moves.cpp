@@ -466,7 +466,7 @@ void MoveListGenerator::uciPrintMoveGivenMove(BoardStructure board, Move m) {
 
 	printSquare(fromSquare);
 	printSquare(toSquare);
-	cout << "\n";
+	//cout << "\n";
 }
 
 //Prints a move in UCI format given a move integer. E.g. uciPrintMove(board, m.move)

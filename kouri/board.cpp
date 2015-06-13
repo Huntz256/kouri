@@ -502,13 +502,13 @@ bool BoardStructure::makeMove(Move m) {
 	movePieceToSquare(fromSquare, toSquare);
 
 	//If this is a promotion move, then promote the pawn
-	if (promotedPiece != 0) {
+	if (castling == 0 && promotedPiece != 0) {
 		removePieceFromSquare(toSquare);
 		addPieceToSquare(toSquare, promotedPiece);
 	}
 
 	//Update king square if the king moved
-	if ((fromSquare == W_KING) || (fromSquare == B_KING)) {
+	if ((toSquare == W_KING) || (toSquare == B_KING)) {
 		kingSquare[sideToMove] = toSquare;
 	}
 	
@@ -518,12 +518,17 @@ bool BoardStructure::makeMove(Move m) {
 	//Another validation. If board is not valid, show an error message
 	if (!isBoardValid()) {
 		///cout << "\nERROR: BOARD NOT VALID.\n";
+		return false;
 	}
 
 	//If the king is under attack (in check) now, undo the move and return false
 	if (isSquareAttacked(kingSquare[side], sideToMove) == true) {
 		undoMove();
 		return false;
+	}
+
+	if (castling != 0) {
+		cout << "pieces[" << toSquare << "]=" << pieces[toSquare] << "\n";
 	}
 	
 	return true;

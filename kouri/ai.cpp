@@ -22,27 +22,27 @@ void AI::init(BoardStructure board) {
 
 //Returns the best move found by the nega-max function
 Move AI::findBestMove(BoardStructure board, int depth){
-	movelist.generateMoveList(board);
-	///cout << "bestMove is:"; movelist.uciPrintMoveGivenMove(board, movelist.moves[0]);
-	Move bestMove = movelist.moves[0]; 
+	
+	Move bestMove; bestMove.move = 0;
 	int bestScore = -INFIN, pvMovesCount = 0;
 	
 	init(board);
 
-	//Minimax
-	bestScore = negaMax(board, depth);
+	//Negamax
+	bestScore = negaMax(-INFIN, INFIN, board, depth);
 
 	//Fill pvArray and get number of moves in pv
 	pvMovesCount = table.getPVLine(board, depth);
 
 	//Get the best move from the pvArray
-	//cout << "Z board.pvArray[0]:" << board.pvArray[0] << "\n";
-	//cout << "Z board.pvArray[1]:" << board.pvArray[1] << "\n";
 	bestMove.move = pvArray[0];
-	//bestMove.move = table.getPVMove(board);
 	cout << "bestMove is:"; movelist.uciPrintMoveGivenMove(board, bestMove);
 
-	//Print the pv (princpal variation)
+	//Fill pvArray and get number of moves in pv
+	pvMovesCount = table.getPVLine(board, depth);
+
+	//Print the pv (principal variation)
+	cout << "\nPrincipal variation is:\n";
 	for (int i = 0; i < pvMovesCount; i++) {
 		movelist.uciPrintMoveGivenMoveInt(board, pvArray[i]);
 	}
@@ -51,7 +51,7 @@ Move AI::findBestMove(BoardStructure board, int depth){
 }
 
 //Negamax with alpha-beta pruning
-int AI::negaMax(BoardStructure board, int depth)
+int AI::negaMax(int alpha, int beta, BoardStructure board, int depth)
 {
 	numOfNodes++;
 
@@ -71,24 +71,29 @@ int AI::negaMax(BoardStructure board, int depth)
 	}
 
 	//Generate all moves for this position
-	movelist.generateMoveList(board);
+	MoveListGenerator gen1;
+	gen1.generateMoveList(board);
+	if (depth == maxDepth) {
+		gen1.printMoveList(board);
+	}
 
 	///cout << "haha movelist.moves[0]:"; movelist.uciPrintMoveGivenMove(board, movelist.moves[0]);
 
 	//Go through all of the generated moves
-	Move bestMove; bestMove.move = 0;
-	int numOfLegalMoves = 0, max = -INFIN;
+	Move bestMove = gen1.moves[0];
+	int numOfLegalMoves = 0, score = -INFIN, oldAlpha = alpha;
 
-	for (int i = 0; i < movelist.numberOfMoves; i++) {
+	for (int i = 0; i < gen1.numberOfMoves; i++) {
 
 		//Make move i. If move i is invalid, go to the next move in the move list
-		if (!board.makeMove(movelist.moves[i])) {
+		if (!board.makeMove(gen1.moves[i])) {
 			continue;
 		}
 
-		if (depth == ai.maxDepth) {
-			cout << "d:" << depth << " i:" << i << " Thinking about valid move: ";
-			movelist.uciPrintMoveGivenMove(board, movelist.moves[i]);
+		if (depth == maxDepth) {
+			cout << "d:" << depth << " i:" << i << " Thinking about valid move ";
+			gen1.uciPrintMoveGivenMove(board, gen1.moves[i]); cout << "...";
+			///cout << " (f:" << gen1.moves[i].getFromSquare() << " t:" << gen1.moves[i].getToSquare() << " c:" << gen1.moves[i].getCapturedPiece() << " p: " << gen1.moves[i].getPromoted() << ")\n";
 		}
 
 		//If move i is valid (legal), continue 
@@ -97,28 +102,30 @@ int AI::negaMax(BoardStructure board, int depth)
 		numOfLegalMoves++; 
 
 		//Call negaMax() to get the move's score
-		int score = -negaMax(board, depth - 1);
+		score = -negaMax(-beta, -alpha, board, depth - 1);
 
 		//Undo the move we just made
 		board.undoMove();
 		
-		if (score > max) {
-			max = score;
-			if (depth == ai.maxDepth) {
-				bestMove = movelist.moves[i];
-				table.storePVMove(board, bestMove.move);
+		if (score > alpha) {
+			if (score >= beta) {
+				return beta;
 			}
-		}
-	}
+			alpha = score;
 
-	///cout << "numOfLegalMoves: " << numOfLegalMoves << "\n";
+			//if (depth == maxDepth) {
+				bestMove = gen1.moves[i];
+			//}
+		}
+
+	}
 
 	//What if there are no legal moves found? We must be in checkmate or stalemate!
 	if (numOfLegalMoves == 0) {
-		cout << "No legal moves!";
+		///cout << "No legal moves!";
 		//If our king is attacked, it is checkmate! Game over.
 		if (board.isSquareAttacked(board.kingSquare[board.sideToMove], board.sideToMove ^ 1)) {
-
+			cout << "CHECKMATE FOUND.\n";
 			//Note that adding board.ply means that a mate in 3 is better than a mate in 6
 			return -MATE + board.ply;
 		}
@@ -130,7 +137,12 @@ int AI::negaMax(BoardStructure board, int depth)
 
 	}
 
-	return max;
+	//Store the best move
+	if (alpha != oldAlpha) {
+		table.storePVMove(board, bestMove.move);
+	}
+
+	return alpha;
 } 
 
 //Evaluates board FROM THE PERSECTIVE OF board.sideToMove

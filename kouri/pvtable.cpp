@@ -30,9 +30,9 @@ void PVTable::storePVMove(BoardStructure board, int move) {
 	pvTable[i].move = move;
 	pvTable[i].positionID = board.generateAndGetPositionID();
 
-	cout << "Storing move "; 
-	movelist.uciPrintMoveGivenMoveInt(board, move);
-	cout << " in pvTable[" << i << "]\n";
+	//cout << "Storing move "; 
+	//movelist.uciPrintMoveGivenMoveInt(board, move);
+	//cout << " in pvTable[" << i << "]\n";
 	//cout << "Storing positionID " << board.generateAndGetPositionID() << " in pvTable[" << i << "]\n";
 	///cout << "pvTable[" << i << "].move is now " << pvTable[i].move << "\n";
 	///cout << "pvTable[" << i << "].positionID is now " << pvTable[i].positionID << "\n";
@@ -55,19 +55,19 @@ int PVTable::getPVMove(BoardStructure board) {
 
 
 int PVTable::getPVLine(BoardStructure board, int d)  {
-	Move move;
-	move.move = getPVMove(board);
+	Move move; move.move = getPVMove(board);
 	int count = 0;
 	//cout << "d: " << d << "\n";
 	while (move.move != 0 && count < d) {
 		//If the move returned by getPVMove exists and is valid, make the move, add it to pvArray, and increment count
 	///cout << "Yo\n";
-	///cout << "move is"; movelist.uciPrintMoveGivenMove(board,move);
+	//cout << "move is "; movelist.uciPrintMoveGivenMove(board,move);
 		if (movelist.isMoveValid(board, move.move)) {
 			//cout << "count:" << count << "\n";
 			board.makeMove(move);
-			cout << "Adding move";
-			movelist.uciPrintMoveGivenMove(board, move);
+			//cout << "Adding move";
+			//movelist.uciPrintMoveGivenMove(board, move);
+			//cout << "\n";
 			pvArray[count++] = move.move;	
 
 			///cout << "board.pvArray[0]:" << board.pvArray[0] << "\n";

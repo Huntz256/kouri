@@ -443,7 +443,10 @@ void testFunction23() {
 	string x; board.init(true); Move m; 
 	//board.setUpBoardUsingFEN("");
 	bool minhisthebest = true;
-	ai.maxDepth = 3;
+
+	/////
+	ai.maxDepth = 4;
+	/////
 
 	while (minhisthebest == true) {
 		movelist.generateMoveList(board);

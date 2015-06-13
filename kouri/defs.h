@@ -29,7 +29,7 @@ enum { EMPTY, B_PAWN, W_PAWN, B_BISHOP, W_BISHOP, B_KNIGHT, W_KNIGHT,
 B_ROOK, W_ROOK, B_QUEEN, W_QUEEN, B_KING, W_KING };
 
 //Piece material values, in centipawns
-const int PIECE_VALUE[13] = { 0, 100, 100, 300, 300, 300, 300, 500, 500, 900, 900, 100000, 100000 };
+const int PIECE_VALUE[13] = { 0, 100, 100, 300, 300, 300, 300, 500, 500, 900, 900, 10000, 10000 };
 
 //Square ids for each square on a board
 const int squareID120[64] = {
@@ -55,10 +55,10 @@ extern U64 castlePermKey[16];
 
 //Define infinity
 ///#define INFIN numeric_limits<int>::max()
-#define INFIN 9999999
+#define INFIN 999999
 
 //Define MATE as a large number less than infinity
-#define MATE 2000000
+#define MATE 200000
 
 const int FILES[BOARD_SQUARE_COUNT] = {
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
@@ -243,7 +243,7 @@ public:
 	int maxDepth;
 	void init(BoardStructure board); //Init AI by clearing the PV table and other variables
 	int evaluate(BoardStructure board); //Does a basic evaluation of a board based on piece counts from WHITE's perspective
-	int negaMax(BoardStructure board, int depth); //nega-max algorithm with alpha-beta pruning
+	int negaMax(int alpha, int beta, BoardStructure board, int depth); //nega-max algorithm with alpha-beta pruning
 	Move findBestMove(BoardStructure board, int depth); //Uses nega-max to find best move
 };
 
