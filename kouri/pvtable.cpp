@@ -7,77 +7,71 @@
 #include <iostream>
 using namespace std;
 
-const int PV_TABLE_SIZE = 0x100000 * 4; //4 megabytes
-
 void PVTable::initPVTable() {
-
-	//The number of entries in the table is the size of the table divided by the size of each entity
-	numOfEntries = PV_TABLE_SIZE / sizeof(PVEntity);
-
-	//Make sure that we don't go over the end
-	numOfEntries -= 2;
-
-	//Frees any memory that pvTable is pointing at
-	delete pvTable;
-
-	//Allocate memory to pvTable
-	pvTable = new PVEntity[numOfEntries * sizeof(PVEntity)];
+	//The number of entries in the table
+	numOfEntries = 2048;
 
 	//Set everything in pvTable to zero
 	clearPVTable();
-
-	cout << "numOfEntries: " << numOfEntries << "\n";
 }
 
 void PVTable::clearPVTable() {
-
 	//Set all variables of PVEntities in pvTable to 0 values.
-	for (PVEntity *i = pvTable; i < pvTable + numOfEntries; i++) {
-		(*i).positionID = 0ULL;
-		(*i).move = 0;
+	for (int i = 0; i < numOfEntries; i++) {
+		pvTable[i].positionID = 0ULL;
+		pvTable[i].move = 0;
 	}
 }
 
 void PVTable::storePVMove(BoardStructure board, int move) {
-
 	//Store a move and position ID in the PV table
 	int i = board.generateAndGetPositionID() % numOfEntries;
+	//int i = 0;
 	pvTable[i].move = move;
 	pvTable[i].positionID = board.generateAndGetPositionID();
 
-	cout << "Storing move " << move << " in pvTable[" << i << "]\n";
-	cout << "Storing positionID " << board.generateAndGetPositionID() << " in pvTable[" << i << "]\n";
-	cout << "pvTable[" << i << "].move is now " << pvTable[i].move << "\n";
-	cout << "pvTable[" << i << "].positionID is now " << pvTable[i].positionID << "\n";
+	cout << "Storing move "; 
+	movelist.uciPrintMoveGivenMoveInt(board, move);
+	cout << " in pvTable[" << i << "]\n";
+	//cout << "Storing positionID " << board.generateAndGetPositionID() << " in pvTable[" << i << "]\n";
+	///cout << "pvTable[" << i << "].move is now " << pvTable[i].move << "\n";
+	///cout << "pvTable[" << i << "].positionID is now " << pvTable[i].positionID << "\n";
 }
 
 int PVTable::getPVMove(BoardStructure board) {
 
 	//Get the principal variation move
-	//int i = board.generateAndGetPositionID() % numOfEntries;
-	//cout << "board.positionID:" << board.generateAndGetPositionID() << " numOfEntries: " << numOfEntries << "\n";
-	//cout << "pvTable[i].positionID is " << pvTable[i].positionID << " while board.positionID is " << board.generateAndGetPositionID() << "\n";
-	//if (pvTable[i].positionID == board.generateAndGetPositionID()) {
-	//	cout << "Getting pvTable[" << i << "].move as " << pvTable[i].move << "\n";
-	//	return pvTable[i].move;
-	//}
+	int i = board.generateAndGetPositionID() % numOfEntries;
+	//int i = 0;
+	///cout << "board.positionID:" << board.generateAndGetPositionID() << " numOfEntries: " << numOfEntries << "\n";
+	///cout << "pvTable[i].positionID is " << pvTable[i].positionID << " while board.positionID is " << board.generateAndGetPositionID() << "\n";
+	if (pvTable[i].positionID == board.generateAndGetPositionID()) {
+		///cout << "Getting pvTable[" << i << "].move as " << pvTable[i].move << "\n";
+		//cout << "pvTable[i].move: " << pvTable[i].move <<  "\n";
+		return pvTable[i].move;
+	}
 	return 0;
 }
+
 
 int PVTable::getPVLine(BoardStructure board, int d)  {
 	Move move;
 	move.move = getPVMove(board);
 	int count = 0;
-	cout << "d: " << d << "\n";
+	//cout << "d: " << d << "\n";
 	while (move.move != 0 && count < d) {
 		//If the move returned by getPVMove exists and is valid, make the move, add it to pvArray, and increment count
+	///cout << "Yo\n";
+	///cout << "move is"; movelist.uciPrintMoveGivenMove(board,move);
 		if (movelist.isMoveValid(board, move.move)) {
-			cout << "count:" << count << "\n";
+			//cout << "count:" << count << "\n";
 			board.makeMove(move);
-			board.pvArray[count++] = move.move;	
+			cout << "Adding move";
+			movelist.uciPrintMoveGivenMove(board, move);
+			pvArray[count++] = move.move;	
 
-			cout << "board.pvArray[0]:" << board.pvArray[0] << "\n";
-				cout << "board.pvArray[1]:" << board.pvArray[1] << "\n";
+			///cout << "board.pvArray[0]:" << board.pvArray[0] << "\n";
+			///cout << "board.pvArray[1]:" << board.pvArray[1] << "\n";
 		}
 
 		//If illegal move, stop 
@@ -94,8 +88,9 @@ int PVTable::getPVLine(BoardStructure board, int d)  {
 		board.undoMove();
 	}
 
-	cout << "BBboard.pvArray[0]:" << board.pvArray[0] << "\n";
-	cout << "BBboard.pvArray[1]:" << board.pvArray[1] << "\n";
+///	cout << "L board.pvArray[0]:" << board.pvArray[0] << "\n";
+	///cout << "L board.pvArray[1]:" << board.pvArray[1] << "\n";
 
 	return count;
 }
+

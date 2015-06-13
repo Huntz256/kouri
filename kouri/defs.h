@@ -29,7 +29,7 @@ enum { EMPTY, B_PAWN, W_PAWN, B_BISHOP, W_BISHOP, B_KNIGHT, W_KNIGHT,
 B_ROOK, W_ROOK, B_QUEEN, W_QUEEN, B_KING, W_KING };
 
 //Piece material values, in centipawns
-const int PIECE_VALUE[13] = { 0, 100, 100, 300, 300, 300, 300, 500, 500, 900, 900, 1000000, 1000000 };
+const int PIECE_VALUE[13] = { 0, 100, 100, 300, 300, 300, 300, 500, 500, 900, 900, 100000, 100000 };
 
 //Square ids for each square on a board
 const int squareID120[64] = {
@@ -53,6 +53,12 @@ extern U64 sideKey;
 //A bunch of random numbers, one for each castling perm combination. Initialized in initKeys().
 extern U64 castlePermKey[16];
 
+//Define infinity
+///#define INFIN numeric_limits<int>::max()
+#define INFIN 9999999
+
+//Define MATE as a large number less than infinity
+#define MATE 2000000
 
 const int FILES[BOARD_SQUARE_COUNT] = {
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
@@ -154,9 +160,6 @@ class BoardStructure {
 		//Ex: pieceCount[1] returns the number of black pawns since B_PAWN has been previously defined as 1
 		int pieceCount[13];
 
-		//A principal variation array
-		int pvArray[64];
-
 		void displayFullBoard(bool dispPieces = true); //Outputs full 10x12 board to console
 		void displayBoard(); //Outputs 8x8 board to console
 		void init(bool goFirst); //Sets up pieces for a standard chess match
@@ -186,9 +189,7 @@ public:
 //Principal variation table: contains many pv entities
 class PVTable {
 public:
-	//Note that this is a pointer! We could use an array instead.
-	//Read up on pointers if you are confused.
-	PVEntity *pvTable;
+	PVEntity pvTable[2048];
 	int numOfEntries;
 
 	void initPVTable();
@@ -223,18 +224,30 @@ class MoveListGenerator {
 		void printMoveList(BoardStructure board);
 		void uciPrintMoveGivenMoveListNumber(BoardStructure board, int moveNum);
 		void uciPrintMoveGivenMove(BoardStructure board, Move m);
+		void uciPrintMoveGivenMoveInt(BoardStructure board, int move);
 
 		bool isMoveValid(BoardStructure board, int move);
 };
 
 extern MoveListGenerator movelist;
 
-// AI Stuff------------------------
-int evaluate(BoardStructure &board); //Does a basic evaluation of a board based on piece counts from WHITE's perspective
-int negaMax(BoardStructure &board, int depth, int a, int b); //nega-max algorithm with alpha-beta pruning
-Move findBestMove(BoardStructure board, int depth); //Uses nega-max to find best move
-BoardStructure applyMove(BoardStructure board, Move m);
+//A principal variation array
+extern int pvArray[64];
 
+
+//AI Stuff
+class AI {
+	int numOfNodes; //Number of nodes for a search
+	int startTime, endTime; //The time when a search started, the time when a search ended
+public:
+	int maxDepth;
+	void init(BoardStructure board); //Init AI by clearing the PV table and other variables
+	int evaluate(BoardStructure board); //Does a basic evaluation of a board based on piece counts from WHITE's perspective
+	int negaMax(BoardStructure board, int depth); //nega-max algorithm with alpha-beta pruning
+	Move findBestMove(BoardStructure board, int depth); //Uses nega-max to find best move
+};
+
+extern AI ai;
 
 
 #endif

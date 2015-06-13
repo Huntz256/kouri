@@ -465,11 +465,21 @@ void MoveListGenerator::uciPrintMoveGivenMove(BoardStructure board, Move m) {
 	int toSquare = m.getToSquare();
 
 	printSquare(fromSquare);
-
 	printSquare(toSquare);
-
 	cout << "\n";
+}
 
+//Prints a move in UCI format given a move integer. E.g. uciPrintMove(board, m.move)
+void MoveListGenerator::uciPrintMoveGivenMoveInt(BoardStructure board, int move) {
+	const char PIECE_NUM_TO_CHAR[13] = { ' ', ' ', ' ', 'B', 'B', 'N', 'N', 'R', 'R', 'Q', 'Q', 'K', 'K' };
+
+	Move m; m.move = move;
+	int fromSquare = m.getFromSquare();
+	int toSquare = m.getToSquare();
+
+	printSquare(fromSquare);
+	printSquare(toSquare);
+	cout << "\n";
 }
 
 //Checks if a move integer is contained in the generated movelist and is valid
@@ -484,7 +494,7 @@ bool MoveListGenerator::isMoveValid(BoardStructure board, int move) {
 	if (toSquare < 21 || toSquare > 98) {
 		return false;
 	}
-	if (board.pieces[fromSquare] == 0) {
+	if (board.pieces[fromSquare] <= 0) {
 		return false;
 	}
 	
