@@ -167,7 +167,7 @@ int AI::negaMax(int alpha, int beta, BoardStructure board, int depth)
 		///cout << "No legal moves!";
 		//If our king is attacked, it is checkmate! Game over.
 		if (board.isSquareAttacked(board.kingSquare[board.sideToMove], board.sideToMove ^ 1)) {
-			cout << "CHECKMATE FOUND.\n";
+			///cout << "CHECKMATE FOUND.\n";
 			//Note that adding board.ply means that a mate in 3 is better than a mate in 6
 			return -MATE + board.ply;
 		}

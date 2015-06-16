@@ -445,7 +445,7 @@ void testFunction23() {
 	bool minhisthebest = true;
 
 	/////
-	ai.maxDepth = 4;
+	ai.maxDepth = 5;
 	/////
 
 	while (minhisthebest == true) {
@@ -459,7 +459,7 @@ void testFunction23() {
 		getline(cin, x);
 
 		//While user command is not valid
-		while (x.compare("f") == 0 || x.compare("hint") == 0 || x.compare("help") == 0 || !(movelist.isMoveValid(board, translateMoveCommand(x)))) {
+		while (x.compare("f") == 0 || x.compare("hint") == 0 || x.compare("help") == 0 || !(movelist.isMoveValid2(board, translateMoveCommand(x)))) {
 			if (x.compare("help") != 0 && x.compare("hint") != 0) {
 
 				cout << "\n\nThat is not a valid move or command. For a list of commands, type: help \n";

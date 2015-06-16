@@ -511,3 +511,30 @@ bool MoveListGenerator::isMoveValid(BoardStructure board, int move) {
 	}
 	return false;
 }
+
+//Checks if a move integer is contained in the generated movelist and is valid
+//Less likely to return a false negative than isMoveValid(), but more likely to return a false positive
+bool MoveListGenerator::isMoveValid2(BoardStructure board, int move) {
+
+	int fromSquare = move & 0x7F;
+	int toSquare = (move >> 7) & 0x7F;
+
+	if (fromSquare < 21 || fromSquare > 98) {
+		return false;
+	}
+	if (toSquare < 21 || toSquare > 98) {
+		return false;
+	}
+	if (board.pieces[fromSquare] <= 0) {
+		return false;
+	}
+
+	generateMoveList(board);
+
+	for (int i = 0; i < numberOfMoves; i++) {
+		if (moves[i].move == move) {
+			return true;
+		}
+	}
+	return false;
+}

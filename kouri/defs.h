@@ -229,6 +229,7 @@ class MoveListGenerator {
 		void uciPrintMoveGivenMoveInt(BoardStructure board, int move);
 
 		bool isMoveValid(BoardStructure board, int move);
+		bool isMoveValid2(BoardStructure board, int move);
 };
 
 extern MoveListGenerator movelist;

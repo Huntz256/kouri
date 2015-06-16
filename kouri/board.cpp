@@ -527,10 +527,6 @@ bool BoardStructure::makeMove(Move m) {
 		undoMove();
 		return false;
 	}
-
-	if (castling != 0) {
-		cout << "pieces[" << toSquare << "]=" << pieces[toSquare] << "\n";
-	}
 	
 	return true;
 }
