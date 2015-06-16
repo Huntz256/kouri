@@ -4,10 +4,23 @@
 #include <algorithm>
 #include <string>
 #include <windows.h>
+#include <fstream>
+
 using namespace std;
 
 int numEvaluatedMoves; int numEvalsPerMove;
-string x;
+string x; ofstream out("out.txt", std::ios_base::out | std::ios_base::app);
+
+//Prints a move in UCI format to a file given a move. E.g. uciPrintMove(board, m)
+void uciPrintMoveToFileGivenMove(BoardStructure board, Move m) {
+	const char PIECE_NUM_TO_CHAR[13] = { ' ', ' ', ' ', 'B', 'B', 'N', 'N', 'R', 'R', 'Q', 'Q', 'K', 'K' };
+
+	int fromSquare = m.getFromSquare();
+	int toSquare = m.getToSquare();
+
+	out << FILES_TO_CHAR[FILES[fromSquare]] << (1 + RANKS[fromSquare]);
+	out << FILES_TO_CHAR[FILES[toSquare]] << (1 + RANKS[toSquare]);
+}
 
 //Inits AI. This is called in findBestMove().
 void AI::init(BoardStructure board) {
@@ -73,9 +86,6 @@ int AI::negaMax(int alpha, int beta, BoardStructure board, int depth)
 	//Generate all moves for this position
 	MoveListGenerator gen1;
 	gen1.generateMoveList(board);
-	if (depth == maxDepth) {
-		gen1.printMoveList(board);
-	}
 
 	///cout << "haha movelist.moves[0]:"; movelist.uciPrintMoveGivenMove(board, movelist.moves[0]);
 
@@ -90,10 +100,25 @@ int AI::negaMax(int alpha, int beta, BoardStructure board, int depth)
 			continue;
 		}
 
+		
+		//Outputting stuff to log file debugging purposes
 		if (depth == maxDepth) {
+			if (i == 0) {
+				cout << "Check out out.txt for my full thoughts on this.\n"; 
+			}
 			cout << "d:" << depth << " i:" << i << " Thinking about valid move ";
-			gen1.uciPrintMoveGivenMove(board, gen1.moves[i]); cout << "...";
-			///cout << " (f:" << gen1.moves[i].getFromSquare() << " t:" << gen1.moves[i].getToSquare() << " c:" << gen1.moves[i].getCapturedPiece() << " p: " << gen1.moves[i].getPromoted() << ")\n";
+			gen1.uciPrintMoveGivenMove(board, gen1.moves[i]); out << "...\n";
+			out << "d:" << depth << " i:" << i << " Thinking about valid move ";
+			uciPrintMoveToFileGivenMove(board, gen1.moves[i]); out << "...\n";
+		}
+		if (depth == maxDepth - 1) {
+			out << "    d:" << depth << " i:" << i << " move ";
+			uciPrintMoveToFileGivenMove(board, gen1.moves[i]);  out << "...\n";
+		}
+		if (depth == maxDepth - 2) {
+			out << "       d:" << depth << " i:" << i << " move ";
+			uciPrintMoveToFileGivenMove(board, gen1.moves[i]);
+			out << " has score ";
 		}
 
 		//If move i is valid (legal), continue 
@@ -103,6 +128,23 @@ int AI::negaMax(int alpha, int beta, BoardStructure board, int depth)
 
 		//Call negaMax() to get the move's score
 		score = -negaMax(-beta, -alpha, board, depth - 1);
+
+		//Outputting stuff to log file debugging purposes
+		if (depth == maxDepth - 2) {
+			out << score << "\n";
+		}
+		if (depth == maxDepth - 1) {
+			out << "    Therefore, ";
+			uciPrintMoveToFileGivenMove(board, gen1.moves[i]); out << "...";
+			out << " has score " << score << "\n";
+		}
+		if (depth == maxDepth) {
+			out << "Therefore, ";
+			uciPrintMoveToFileGivenMove(board, gen1.moves[i]); out << "...";
+			out << " has score " << score << "\n";
+			cout << " score: " << score << "\n";
+		}
+
 
 		//Undo the move we just made
 		board.undoMove();
@@ -146,14 +188,19 @@ int AI::negaMax(int alpha, int beta, BoardStructure board, int depth)
 } 
 
 //Evaluates board FROM THE PERSECTIVE OF board.sideToMove
-int AI::evaluate(BoardStructure board) {
-	int score = board.material[WHITE] - board.material[BLACK];
+int AI::evaluate(BoardStructure board){
+	board.countPieces();
+	int materialScore = 20000 * (board.pieceCount[W_KING] - board.pieceCount[B_KING])
+		+ 900 * (board.pieceCount[W_QUEEN] - board.pieceCount[B_QUEEN])
+		+ 500 * (board.pieceCount[W_ROOK] - board.pieceCount[B_ROOK])
+		+ 300 * (board.pieceCount[W_BISHOP] - board.pieceCount[B_BISHOP] + board.pieceCount[W_KNIGHT] - board.pieceCount[B_KNIGHT])
+		+ 100 * (board.pieceCount[W_PAWN] - board.pieceCount[B_PAWN]);
+
 	if (board.sideToMove == WHITE) {
-		//cout << "evaluate() for side " << board.sideToMove << "is " << score;
-		return score;
+		return materialScore;
 	}
 	else {
-		//cout << "evaluate() for side " << board.sideToMove << "is " << (-score);
-		return -score;
+		return -materialScore;
 	}
 }
+

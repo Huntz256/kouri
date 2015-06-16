@@ -5,6 +5,8 @@
 #ifndef DEFS_H
 #define DEFS_H
 
+#include <fstream>
+
 //Define NAME as "kouri"
 #define NAME "kouri"
 
@@ -29,7 +31,7 @@ enum { EMPTY, B_PAWN, W_PAWN, B_BISHOP, W_BISHOP, B_KNIGHT, W_KNIGHT,
 B_ROOK, W_ROOK, B_QUEEN, W_QUEEN, B_KING, W_KING };
 
 //Piece material values, in centipawns
-const int PIECE_VALUE[13] = { 0, 100, 100, 300, 300, 300, 300, 500, 500, 900, 900, 10000, 10000 };
+const int PIECE_VALUE[13] = { 0, 100, 100, 300, 300, 300, 300, 500, 500, 900, 900, 20000, 20000 };
 
 //Square ids for each square on a board
 const int squareID120[64] = {

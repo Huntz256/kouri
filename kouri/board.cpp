@@ -1,6 +1,7 @@
 #include "defs.h"
 #include <iostream>
 #include <unordered_map>
+#include <fstream>
 using namespace std;
 
 const int CASTLE_PERMISSIONS[120] = {
@@ -415,13 +416,13 @@ bool BoardStructure::makeMove(Move m) {
 
 	//If board is not valid, show an error message
 	if (!isBoardValid()) {
-		///cout << "\nERROR: BOARD NOT VALID.\n";
+		cout << "\nERROR: BOARD NOT VALID.\n";
 		return false;
 	}
 
 	//If piece on fromSquare is not valid, show an error message
 	if ((pieces[fromSquare] < B_PAWN) || (pieces[fromSquare] > W_KING)) {
-		///cout << "\nERROR: PIECE NUMBER " << pieces[fromSquare] << " ON SQUARE " << fromSquare << " IS NOT VALID.\n";
+		cout << "\nERROR: PIECE NUMBER " << pieces[fromSquare] << " ON SQUARE " << fromSquare << " IS NOT VALID.\n";
 		return false;
 	}
 
@@ -518,7 +519,7 @@ bool BoardStructure::makeMove(Move m) {
 	//Another validation. If board is not valid, show an error message
 	if (!isBoardValid()) {
 		///cout << "\nERROR: BOARD NOT VALID.\n";
-		return false;
+		//return false;
 	}
 
 	//If the king is under attack (in check) now, undo the move and return false
@@ -709,13 +710,14 @@ bool BoardStructure::isBoardValid() {
 
 	//Make sure KingSq arrays are valid
 	if (pieces[kingSquare[WHITE]] != W_KING) {
-		///cout << "ERROR: pieces[kingSquare[WHITE]]  pieces[" << kingSquare[WHITE] << "] = " << pieces[kingSquare[WHITE]] << " WHICH IS NOT A WHITE KING.\n";
-		return false;
+		//cout << "ERROR: pieces[kingSquare[WHITE]]  pieces[" << kingSquare[WHITE] << "] = " << pieces[kingSquare[WHITE]] << " WHICH IS NOT A WHITE KING.\n";
+		//return false;
 	}
 	if (pieces[kingSquare[BLACK]] != B_KING) {
-		///cout << "ERROR: pieces[kingSquare[BLACK]] = pieces[" << kingSquare[BLACK] << "] = " <<  pieces[kingSquare[BLACK]] << " WHICH IS NOT A BLACK KING.\n";
-		return false;
+		//cout << "ERROR: pieces[kingSquare[BLACK]] = pieces[" << kingSquare[BLACK] << "] = " <<  pieces[kingSquare[BLACK]] << " WHICH IS NOT A BLACK KING.\n";
+		//return false;
 	}
+	
 
 	//Make sure side makes sense
 	if ((sideToMove != WHITE) && (sideToMove != BLACK)) {
