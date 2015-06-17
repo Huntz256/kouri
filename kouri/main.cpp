@@ -62,7 +62,7 @@ int translateMoveCommand(string com){
 	int to = (com[2] - 'a' + 1) + (com[3] - '1' + 2) * 10;
 	int prom = (com.length() == 5) ? charToPieceInt(com[4]) : 0;
 
-	cout << "Attempting to make non-castling move:" << from << " " << to << " " << board.pieces[to] << " " << prom << "\n";
+	///cout << "Attempting to make non-castling move:" << from << " " << to << " " << board.pieces[to] << " " << prom << "\n";
 	return MOVE(from, to, board.pieces[to], prom, 0);
 }
 
@@ -441,7 +441,7 @@ void testFunction70() {
 //Play against AI-enabled kouri, 2
 void testFunction23() {
 	string x; board.init(true); Move m; 
-	//board.setUpBoardUsingFEN("");
+	string help = "\nTo make a move, type a command in the form: a2a4 \nPawn promotions are done as such: a1b2=Q \nCastling is done using: O-O or O-O-O \nFor a movelist, type: hint \nTo forfeit, type: f \n";
 	bool minhisthebest = true;
 
 	/////
@@ -451,9 +451,10 @@ void testFunction23() {
 	while (minhisthebest == true) {
 		movelist.generateMoveList(board);
 		board.displayBoard();
-		///cout << "kingSquare W:" << board.kingSquare[WHITE]; cout << " kingSquare B:" << board.kingSquare[BLACK];
-		///cout << "board.pieces[board.kingSquare[WHITE]]:" << board.pieces[board.kingSquare[WHITE]] << "\n";
-		///cout << "board.pieces[board.kingSquare[BLACK]]:" << board.pieces[board.kingSquare[BLACK]] << "\n";
+
+		if (movelist.numberOfMoves == 0) {
+			minhisthebest = false; break;
+		}
 
 		cout << "For a list of commands, type: help \nEnter your command: ";
 		getline(cin, x);
@@ -468,6 +469,7 @@ void testFunction23() {
 	
 			if (x.compare("hint") == 0) movelist.printMoveList(board);
 			else if (x.compare("f") == 0) break;
+			else if (x.compare("help") == 0) cout << help << "\n";
 
 			cout << "Enter your command: ";
 			getline(cin, x);
@@ -481,13 +483,9 @@ void testFunction23() {
 			m.move = translateMoveCommand(x);
 		}
 
-		cout << "board.sideToMove:" << board.sideToMove << "\n";
+		///cout << "board.sideToMove:" << board.sideToMove << "\n";
 		m = ai.findBestMove(board, ai.maxDepth);
 		board.makeMove(m);
-
-		cout << "\n\nI, " << NAME << ", have decided to make move "; 
-		movelist.uciPrintMoveGivenMove(board, m);
-		cout << " after searching to depth " << ai.maxDepth << ".\n";
 	}
 
 	cout << "\nGAME OVER\n";
@@ -570,9 +568,8 @@ int main() {
 
 	cout << "Hello. My name is " << NAME << ".\n";
 	cout << "\nI have been created by Minter (Hunter and Minh) for a CS class project";
-	cout << "\n\nCurrently, I understand some rules of chess.";
-	cout << "\nEnough to generate and make most legal moves.";
-	cout << "\nHowever, I do not know at all what makes one move better than another.\n\n";
+	cout << "\nCurrently, I understand most rules of chess.";
+	cout << "\nI also have some idea regarding what makes one move better than another.\n\n";
 
 	/**************** Testing sandbox ******************/
 
@@ -598,8 +595,8 @@ int main() {
 
 	/***************** End of Sandbox *********************/
 
-	string in; cout << "Choose one:\n \"1\" - player vs kouri\n \"2\" - kouri vs kouri\n \"3\" - player vs player\n "
-		<< "\"4\" - castling testing\n \"5\" - parse a FEN string\n \"6\" - player vs kouri (with AI)\n>> ";
+	string in; cout << "Choose one:\n \"1\" - player vs kouri (random moves)\n \"2\" - kouri vs kouri\n \"3\" - player vs player\n "
+		<< "\"4\" - castling testing\n \"5\" - parse a FEN string\n \"6\" - player vs kouri (with AI!!)\n>> ";
 	getline(cin, in);
 
 	if (in.compare("1") == 0) {

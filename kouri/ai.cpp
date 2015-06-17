@@ -10,6 +10,7 @@ using namespace std;
 
 int numEvaluatedMoves; int numEvalsPerMove;
 string x; ofstream out("out.txt", std::ios_base::out | std::ios_base::app);
+bool debug = false;
 
 //Prints a move in UCI format to a file given a move. E.g. uciPrintMove(board, m)
 void uciPrintMoveToFileGivenMove(BoardStructure board, Move m) {
@@ -49,10 +50,14 @@ Move AI::findBestMove(BoardStructure board, int depth){
 
 	//Get the best move from the pvArray
 	bestMove.move = pvArray[0];
-	cout << "bestMove is:"; movelist.uciPrintMoveGivenMove(board, bestMove);
+	///cout << "bestMove is:"; movelist.uciPrintMoveGivenMove(board, bestMove);
 
 	//Fill pvArray and get number of moves in pv
 	pvMovesCount = table.getPVLine(board, depth);
+
+	cout << "\n\nI, " << NAME << ", have decided to make move ";
+	movelist.uciPrintMoveGivenMove(board, bestMove);
+	cout << " after searching to depth " << ai.maxDepth << ".\n";
 
 	//Print the pv (principal variation)
 	cout << "\nPrincipal variation is:\n";
@@ -100,25 +105,30 @@ int AI::negaMax(int alpha, int beta, BoardStructure board, int depth)
 			continue;
 		}
 
-		
 		//Outputting stuff to log file debugging purposes
-		if (depth == maxDepth) {
-			if (i == 0) {
-				cout << "Check out out.txt for my full thoughts on this.\n"; 
+		if (debug == true) {
+			if (depth == maxDepth) {
+				if (i == 0) {
+					cout << "Check out out.txt for kouri's full thoughts on this.\n";
+				}
+				out << "d:" << depth << " i:" << i << " Thinking about valid move ";
+				uciPrintMoveToFileGivenMove(board, gen1.moves[i]); out << "...\n";
 			}
-			cout << "d:" << depth << " i:" << i << " Thinking about valid move ";
-			gen1.uciPrintMoveGivenMove(board, gen1.moves[i]); out << "...\n";
-			out << "d:" << depth << " i:" << i << " Thinking about valid move ";
-			uciPrintMoveToFileGivenMove(board, gen1.moves[i]); out << "...\n";
+			if (depth == maxDepth - 1) {
+				out << "    d:" << depth << " i:" << i << " move ";
+				uciPrintMoveToFileGivenMove(board, gen1.moves[i]);  out << "...\n";
+			}
+			if (depth == maxDepth - 2) {
+				out << "       d:" << depth << " i:" << i << " move ";
+				uciPrintMoveToFileGivenMove(board, gen1.moves[i]);
+				out << " has score ";
+			}
 		}
-		if (depth == maxDepth - 1) {
-			out << "    d:" << depth << " i:" << i << " move ";
-			uciPrintMoveToFileGivenMove(board, gen1.moves[i]);  out << "...\n";
-		}
-		if (depth == maxDepth - 2) {
-			out << "       d:" << depth << " i:" << i << " move ";
-			uciPrintMoveToFileGivenMove(board, gen1.moves[i]);
-			out << " has score ";
+
+		//Print what kouri is thinking about
+		if (depth == maxDepth) {
+			cout << "\ni:" << i << " thinking about valid move ";
+			gen1.uciPrintMoveGivenMove(board, gen1.moves[i]); cout << "...";
 		}
 
 		//If move i is valid (legal), continue 
@@ -129,22 +139,26 @@ int AI::negaMax(int alpha, int beta, BoardStructure board, int depth)
 		//Call negaMax() to get the move's score
 		score = -negaMax(-beta, -alpha, board, depth - 1);
 
-		//Outputting stuff to log file debugging purposes
-		if (depth == maxDepth - 2) {
-			out << score << "\n";
-		}
-		if (depth == maxDepth - 1) {
-			out << "    Therefore, ";
-			uciPrintMoveToFileGivenMove(board, gen1.moves[i]); out << "...";
-			out << " has score " << score << "\n";
-		}
 		if (depth == maxDepth) {
-			out << "Therefore, ";
-			uciPrintMoveToFileGivenMove(board, gen1.moves[i]); out << "...";
-			out << " has score " << score << "\n";
-			cout << " score: " << score << "\n";
+			cout << " score: " << score;
 		}
 
+		//Outputting stuff to log file debugging purposes
+		if (debug == true) {
+			if (depth == maxDepth - 2) {
+				out << score << "\n";
+			}
+			if (depth == maxDepth - 1) {
+				out << "    Therefore, ";
+				uciPrintMoveToFileGivenMove(board, gen1.moves[i]); out << "...";
+				out << " has score " << score << "\n";
+			}
+			if (depth == maxDepth) {
+				out << "Therefore, ";
+				uciPrintMoveToFileGivenMove(board, gen1.moves[i]); out << "...";
+				out << " has score " << score << "\n";
+			}
+		}
 
 		//Undo the move we just made
 		board.undoMove();

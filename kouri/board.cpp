@@ -97,7 +97,7 @@ void BoardStructure::displayBoard() {
 	//Also display some more infomation
 	cout << "Side to move: " << (sideToMove == 0 ? "White" : "Black");
 	cout << "\nCastling permissions: " << castlePerms << '\n';
-	cout << "Enpass. square: " << enPassSquare << '\n';
+	///cout << "Enpass. square: " << enPassSquare << '\n';
 	cout << "evaluate(): " << ai.evaluate(*this) << '\n';
 }
 
