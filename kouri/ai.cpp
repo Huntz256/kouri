@@ -95,7 +95,7 @@ int AI::negaMax(int alpha, int beta, BoardStructure board, int depth)
 	///cout << "haha movelist.moves[0]:"; movelist.uciPrintMoveGivenMove(board, movelist.moves[0]);
 
 	//Go through all of the generated moves
-	Move bestMove = gen1.moves[0];
+	Move bestMove; bestMove.move = 0; 
 	int numOfLegalMoves = 0, score = -INFIN, oldAlpha = alpha;
 
 	for (int i = 0; i < gen1.numberOfMoves; i++) {
@@ -204,11 +204,11 @@ int AI::negaMax(int alpha, int beta, BoardStructure board, int depth)
 //Evaluates board FROM THE PERSECTIVE OF board.sideToMove
 int AI::evaluate(BoardStructure board){
 	board.countPieces();
-	int materialScore = 20000 * (board.pieceCount[W_KING] - board.pieceCount[B_KING])
-		+ 900 * (board.pieceCount[W_QUEEN] - board.pieceCount[B_QUEEN])
-		+ 500 * (board.pieceCount[W_ROOK] - board.pieceCount[B_ROOK])
-		+ 300 * (board.pieceCount[W_BISHOP] - board.pieceCount[B_BISHOP] + board.pieceCount[W_KNIGHT] - board.pieceCount[B_KNIGHT])
-		+ 100 * (board.pieceCount[W_PAWN] - board.pieceCount[B_PAWN]);
+	int materialScore = PIECE_VALUE[12] * (board.pieceCount[W_KING] - board.pieceCount[B_KING])
+		+ PIECE_VALUE[10] * (board.pieceCount[W_QUEEN] - board.pieceCount[B_QUEEN])
+		+ PIECE_VALUE[8] * (board.pieceCount[W_ROOK] - board.pieceCount[B_ROOK])
+		+ PIECE_VALUE[6] * (board.pieceCount[W_BISHOP] - board.pieceCount[B_BISHOP] + board.pieceCount[W_KNIGHT] - board.pieceCount[B_KNIGHT])
+		+ PIECE_VALUE[2] * (board.pieceCount[W_PAWN] - board.pieceCount[B_PAWN]);
 
 	if (board.sideToMove == WHITE) {
 		return materialScore;
