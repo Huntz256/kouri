@@ -12,6 +12,61 @@ int numEvaluatedMoves; int numEvalsPerMove;
 string x; ofstream out("out.txt", std::ios_base::out | std::ios_base::app);
 bool debug = false;
 
+const int PAWN_TABLE[64] = {
+	0, 0, 0, 0, 0, 0, 0, 0,
+	10, 10, 0, -10, -10, 0, 10, 10,
+	5, 0, 0, 5, 5, 0, 0, 5,
+	0, 0, 10, 20, 20, 10, 0, 0,
+	5, 5, 5, 10, 10, 5, 5, 5,
+	10, 10, 10, 20, 20, 10, 10, 10,
+	20, 20, 20, 30, 30, 20, 20, 20,
+	0, 0, 0, 0, 0, 0, 0, 0
+};
+
+const int KNIGHT_TABLE[64] = {
+	0, -10, 0, 0, 0, 0, -10, 0,
+	0, 0, 0, 5, 5, 0, 0, 0,
+	0, 0, 10, 10, 10, 10, 0, 0,
+	0, 0, 10, 20, 20, 10, 5, 0,
+	5, 10, 15, 20, 20, 15, 10, 5,
+	5, 10, 10, 20, 20, 10, 10, 5,
+	0, 0, 5, 10, 10, 5, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0
+};
+
+const int BISHOP_TABLE[64] = {
+	0, 0, -10, 0, 0, -10, 0, 0,
+	0, 0, 0, 10, 10, 0, 0, 0,
+	0, 0, 10, 15, 15, 10, 0, 0,
+	0, 10, 15, 20, 20, 15, 10, 0,
+	0, 10, 15, 20, 20, 15, 10, 0,
+	0, 0, 10, 15, 15, 10, 0, 0,
+	0, 0, 0, 10, 10, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0
+};
+
+const int ROOK_TABLE[64] = {
+	0, 0, 5, 10, 10, 5, 0, 0,
+	0, 0, 5, 10, 10, 5, 0, 0,
+	0, 0, 5, 10, 10, 5, 0, 0,
+	0, 0, 5, 10, 10, 5, 0, 0,
+	0, 0, 5, 10, 10, 5, 0, 0,
+	0, 0, 5, 10, 10, 5, 0, 0,
+	25, 25, 25, 25, 25, 25, 25, 25,
+	0, 0, 5, 10, 10, 5, 0, 0
+};
+
+const int MIRROR_64[64] = {
+	56, 57, 58, 59, 60, 61, 62, 63,
+	48, 49, 50, 51, 52, 53, 54, 55,
+	40, 41, 42, 43, 44, 45, 46, 47,
+	32, 33, 34, 35, 36, 37, 38, 39,
+	24, 25, 26, 27, 28, 29, 30, 31,
+	16, 17, 18, 19, 20, 21, 22, 23,
+	8, 9, 10, 11, 12, 13, 14, 15,
+	0, 1, 2, 3, 4, 5, 6, 7
+};
+
 //Prints a move in UCI format to a file given a move. E.g. uciPrintMove(board, m)
 void uciPrintMoveToFileGivenMove(BoardStructure board, Move m) {
 	const char PIECE_NUM_TO_CHAR[13] = { ' ', ' ', ' ', 'B', 'B', 'N', 'N', 'R', 'R', 'Q', 'Q', 'K', 'K' };
@@ -203,6 +258,7 @@ int AI::negaMax(int alpha, int beta, BoardStructure board, int depth)
 
 //Evaluates board FROM THE PERSECTIVE OF board.sideToMove
 int AI::evaluate(BoardStructure board){
+	//Evaluate material
 	board.countPieces();
 	int materialScore = PIECE_VALUE[12] * (board.pieceCount[W_KING] - board.pieceCount[B_KING])
 		+ PIECE_VALUE[10] * (board.pieceCount[W_QUEEN] - board.pieceCount[B_QUEEN])
@@ -210,11 +266,42 @@ int AI::evaluate(BoardStructure board){
 		+ PIECE_VALUE[6] * (board.pieceCount[W_BISHOP] - board.pieceCount[B_BISHOP] + board.pieceCount[W_KNIGHT] - board.pieceCount[B_KNIGHT])
 		+ PIECE_VALUE[2] * (board.pieceCount[W_PAWN] - board.pieceCount[B_PAWN]);
 
+	//Evaluate position
+	int positionalScore = 0;
+	for (int i = 21; i < 98; i++) {
+		if (RANKS[i] != -1) {
+			if (board.pieces[i] == W_PAWN) {
+				positionalScore += PAWN_TABLE[squareID64[i]];
+			}
+			else if (board.pieces[i] == B_PAWN) {
+				positionalScore -= PAWN_TABLE[MIRROR_64[squareID64[i]]];
+			}
+			else if (board.pieces[i] == W_KNIGHT) {
+				positionalScore += KNIGHT_TABLE[squareID64[i]];
+			}
+			else if (board.pieces[i] == B_KNIGHT) {
+				positionalScore -= KNIGHT_TABLE[MIRROR_64[squareID64[i]]];
+			}
+			else if (board.pieces[i] == W_BISHOP) {
+				positionalScore += BISHOP_TABLE[squareID64[i]];
+			}
+			else if (board.pieces[i] == B_BISHOP) {
+				positionalScore -= BISHOP_TABLE[MIRROR_64[squareID64[i]]];
+			}
+			else if (board.pieces[i] == W_ROOK) {
+				positionalScore += ROOK_TABLE[squareID64[i]];
+			}
+			else if (board.pieces[i] == B_ROOK) {
+				positionalScore -= ROOK_TABLE[MIRROR_64[squareID64[i]]];
+			}
+		}
+	}
+
 	if (board.sideToMove == WHITE) {
-		return materialScore;
+		return (materialScore + positionalScore);
 	}
 	else {
-		return -materialScore;
+		return -(materialScore + positionalScore);
 	}
 }
 
