@@ -111,89 +111,89 @@ const char FILES_TO_CHAR[8] = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' };
 
 //An array of these represent a move history 
 class MoveHistory {
-	public:
-		int move; //Represents a move
-		int castlePerms; //Describes what types of castling were allowed right before the move was made
-		int enPassSquare;//The square that en pass can be done on right before the move was made
-		U64 positionID; //Used for threefold repeition detection. The position (how the pieces are arranged) right before the move was made. 
+public:
+	int move; //Represents a move
+	int castlePerms; //Describes what types of castling were allowed right before the move was made
+	int enPassSquare;//The square that en pass can be done on right before the move was made
+	U64 positionID; //Used for threefold repeition detection. The position (how the pieces are arranged) right before the move was made. 
 };
 
 //Move class represents a move
 class Move {
-	public:
-		int move; //Stores all infomation regarding a single move
-		int getFromSquare();
-		int getToSquare();
-		int getCapturedPiece();
-		int getPromoted();
-		int getCastling();
+public:
+	int move; //Stores all infomation regarding a single move
+	int getFromSquare();
+	int getToSquare();
+	int getCapturedPiece();
+	int getPromoted();
+	int getCastling();
 };
 
 //Board structure class represents a board
 class BoardStructure {
-	public:
-		//Represents previous moves that have been played on this board. Assumes that amount of half moves < 2048.
-		MoveHistory history[2048]; 
+public:
+	//Represents previous moves that have been played on this board. Assumes that amount of half moves < 2048.
+	MoveHistory history[2048]; 
 
-		//Represents every piece in a position using the 10x12 board representation.
-		//E.g. pieces[21] represents the square a1, pieces[98] represents the square h8.
-		int pieces[BOARD_SQUARE_COUNT];
+	//Represents every piece in a position using the 10x12 board representation.
+	//E.g. pieces[21] represents the square a1, pieces[98] represents the square h8.
+	int pieces[BOARD_SQUARE_COUNT];
 
-		//The current side to move on this board - 0 (White) or 1 (Black)
-		int sideToMove; 
+	//The current side to move on this board - 0 (White) or 1 (Black)
+	int sideToMove; 
 
-		//Describes what types of castling is allowed on this board
-		//This is an integer from 0000 (no castling is allowed) to 1111 (all castling is allowed)
-		//0001 = white kingside castling allowed
-		//0010 = white queenside castling allowed
-		//0100 = black kingside castling allowed
-		//1000 = black queenside castling allowed
-		//Example: 1010 means queenside castling is allowed for both sides.
-		//Note that this integer is DIFFERENT from that used in Move
-		int castlePerms; 
+	//Describes what types of castling is allowed on this board
+	//This is an integer from 0000 (no castling is allowed) to 1111 (all castling is allowed)
+	//0001 = white kingside castling allowed
+	//0010 = white queenside castling allowed
+	//0100 = black kingside castling allowed
+	//1000 = black queenside castling allowed
+	//Example: 1010 means queenside castling is allowed for both sides.
+	//Note that this integer is DIFFERENT from that used in Move
+	int castlePerms; 
 
-		//The square that en pass can be done on
-		int enPassSquare; 
+	//The square that en pass can be done on
+	int enPassSquare; 
 
-		//pawns[0] represents all white pawns on this board, pawns[1] is the same for black
-		U64 pawns[2]; 
+	//pawns[0] represents all white pawns on this board, pawns[1] is the same for black
+	U64 pawns[2]; 
 
-		//material[0] represents white material, material[1] represents black material
-		//pawn = 1 point, knight = bishop = 3 points, rook = 5 points, queen = 9 points
-		int material[2]; 
+	//material[0] represents white material, material[1] represents black material
+	//pawn = 1 point, knight = bishop = 3 points, rook = 5 points, queen = 9 points
+	int material[2]; 
 
-		//The square that the king is on; kingSquare[0] is for white, kingSquare[1] is for black
-		int kingSquare[2];
+	//The square that the king is on; kingSquare[0] is for white, kingSquare[1] is for black
+	int kingSquare[2];
 
-		//The half-turn we are on
-		int ply, historyPly;
+	//The half-turn we are on
+	int ply, historyPly;
 
-		//Each position (how the pieces are arranged on a board) has a unique identifier.
-		//This is like an fen string, but it is easier to generate. 
-		//It is used to detect repetition for the threefold repetition rule.
-		U64 positionID;
+	//Each position (how the pieces are arranged on a board) has a unique identifier.
+	//This is like an fen string, but it is easier to generate. 
+	//It is used to detect repetition for the threefold repetition rule.
+	U64 positionID;
 
-		//Contains the number of pieces. Piece index corresponds with previously defined enums
-		//Ex: pieceCount[1] returns the number of black pawns since B_PAWN has been previously defined as 1
-		int pieceCount[13];
+	//Contains the number of pieces. Piece index corresponds with previously defined enums
+	//Ex: pieceCount[1] returns the number of black pawns since B_PAWN has been previously defined as 1
+	int pieceCount[13];
 
-		void displayFullBoard(bool dispPieces = true); //Outputs full 10x12 board to console
-		void displayBoard(); //Outputs 8x8 board to console
-		void init(bool goFirst); //Sets up pieces for a standard chess match
-		void resetBoardToEmpty(); //Resets the board
-		int setUpBoardUsingFEN(char* fen); //Sets up the board given a FEN string. Returns 0 if successful.
-		void removePieceFromSquare(int square);
-		void addPieceToSquare(int square, int piece);
-		void movePieceToSquare(int fromSquare, int toSquare);
-		bool makeMove(Move move); //Modifies the board and stores the move in history[]. Return true if successful.
-		void undoMove(); //Undoes the last move
-		int getPieceColor(int pieceNumber); //Retrieves the color of a piece
-		void displayHistory(); //Displays all the moves so far as move integers
-		bool isSquareAttacked(int square, int attackingSide); //Returns true if square square is being attacked by a piece from the side attackingSide
-		void countPieces(); //Counts all the pieces on the board and records them in the pieceCount[] array
-		bool isRepetition(); //Has this position occured before in the game? If yes, return true.  Used for checking threefold repetition.
-		U64 generateAndGetPositionID(); //Generate and return a position id representing this board's position. Used for checking threefold repetition.
-		bool isBoardValid(); //Looks at some aspects of the board and returns false if there is something wrong with the current board
+	void displayFullBoard(bool dispPieces = true); //Outputs full 10x12 board to console
+	void displayBoard(); //Outputs 8x8 board to console
+	void init(bool goFirst); //Sets up pieces for a standard chess match
+	void resetBoardToEmpty(); //Resets the board
+	int setUpBoardUsingFEN(char* fen); //Sets up the board given a FEN string. Returns 0 if successful.
+	void removePieceFromSquare(int square);
+	void addPieceToSquare(int square, int piece);
+	void movePieceToSquare(int fromSquare, int toSquare);
+	bool makeMove(Move move); //Modifies the board and stores the move in history[]. Return true if successful.
+	void undoMove(); //Undoes the last move
+	int getPieceColor(int pieceNumber); //Retrieves the color of a piece
+	void displayHistory(); //Displays all the moves so far as move integers
+	bool isSquareAttacked(int square, int attackingSide); //Returns true if square square is being attacked by a piece from the side attackingSide
+	void countPieces(); //Counts all the pieces on the board and records them in the pieceCount[] array
+	bool isRepetition(); //Has this position occured before in the game? If yes, return true.  Used for checking threefold repetition.
+	U64 generateAndGetPositionID(); //Generate and return a position id representing this board's position. Used for checking threefold repetition.
+	bool isBoardValid(); //Looks at some aspects of the board and returns false if there is something wrong with the current board
 };
 
 //Principal variation entity
@@ -227,31 +227,30 @@ int charToPieceInt(char c); //Converts char like 'p' or 'Q' to the corresponding
 
 //Contains all move generation functions
 class MoveListGenerator {
-	public:
-		Move moves[2048];
-		int numberOfMoves;
-		void generateMoveList(BoardStructure board);
-		void generatePawnMoves(BoardStructure board);
-		void generateSliderMoves(BoardStructure board);
-		void generateNonSliderMoves(BoardStructure board);
-		void generateCastlingMoves(BoardStructure board);
+public:
+	Move moves[2048];
+	int numberOfMoves;
+	void generateMoveList(BoardStructure board);
+	void generatePawnMoves(BoardStructure board);
+	void generateSliderMoves(BoardStructure board);
+	void generateNonSliderMoves(BoardStructure board);
+	void generateCastlingMoves(BoardStructure board);
 
-		void addPawnCapturingMove(BoardStructure board, int fromSquare, int toSquare, int capture, int side);
-		void addPawnMove(BoardStructure board, int fromSquare, int toSquare, int side);
-		void printMoveList(BoardStructure board);
-		void uciPrintMoveGivenMoveListNumber(BoardStructure board, int moveNum);
-		void uciPrintMoveGivenMove(BoardStructure board, Move m);
-		void uciPrintMoveGivenMoveInt(BoardStructure board, int move);
+	void addPawnCapturingMove(BoardStructure board, int fromSquare, int toSquare, int capture, int side);
+	void addPawnMove(BoardStructure board, int fromSquare, int toSquare, int side);
+	void printMoveList(BoardStructure board);
+	void uciPrintMoveGivenMoveListNumber(BoardStructure board, int moveNum);
+	void uciPrintMoveGivenMove(BoardStructure board, Move m);
+	void uciPrintMoveGivenMoveInt(BoardStructure board, int move);
 
-		bool isMoveValid(BoardStructure board, int move);
-		bool isMoveValid2(BoardStructure board, int move);
+	bool isMoveValid(BoardStructure board, int move);
+	bool isMoveValid2(BoardStructure board, int move);
 };
 
 extern MoveListGenerator movelist;
 
 //A principal variation array
 extern int pvArray[64];
-
 
 //AI Stuff
 class AI {
@@ -266,6 +265,5 @@ public:
 };
 
 extern AI ai;
-
 
 #endif

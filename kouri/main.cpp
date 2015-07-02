@@ -12,8 +12,6 @@ PVTable table;
 AI ai;
 int pvArray[64];
 
-
-
 int getRandomInteger(int min, int max) {
 	srand((int)time(NULL)); 
 	return rand() % (max - min + 1) + min;
@@ -442,18 +440,18 @@ void testFunction70() {
 void testFunction23() {
 	string x; board.init(true); Move m; 
 	string help = "\nTo make a move, type a command in the form: a2a4 \nPawn promotions are done as such: a1b2=Q \nCastling is done using: O-O or O-O-O \nFor a movelist, type: hint \nTo forfeit, type: f \n";
-	bool minhisthebest = true;
+	bool quit = false;
 
-	/////
+	/***Set depth here***/
 	ai.maxDepth = 5;
-	/////
+	/********************/
 
-	while (minhisthebest == true) {
+	while (!quit) {
 		movelist.generateMoveList(board);
 		board.displayBoard();
 
 		if (movelist.numberOfMoves == 0) {
-			minhisthebest = false; break;
+			quit = true; break;
 		}
 
 		cout << "For a list of commands, type: help \nEnter your command: ";
@@ -488,7 +486,7 @@ void testFunction23() {
 	}
 
 	cout << "\nGAME OVER\n";
-	system("PAUSE"); //Windows-exclusive "Press any key to continue" command
+	system("PAUSE"); //Windows-exclusive "Press any key to continue" command. Used in place of the getline() function
 }
 
 //Play against yourself; used to test pv table and rep rule
@@ -537,7 +535,6 @@ void testFunction422() {
 		if (board.isRepetition()) {
 			cout << "REP REP REP REP REP REP REP REP. \n";
 		}
-
 	}
 }
 
@@ -568,30 +565,6 @@ int main() {
 	cout << "\nCurrently, I understand most rules of chess.";
 	cout << "\nI also have some idea regarding what makes one move better than another.\n\n";
 
-	/**************** Testing sandbox ******************/
-
-	/*string x;
-	board.init(true);
-
-	board.displayBoard();
-	getline(cin, x);
-
-	Move m; m.move = MOVE(82, 62, 0, 0, 0);
-	board.makeMove(m);
-	board.displayBoard();
-	getline(cin, x);
-
-	m.move = MOVE(62, 52, 0, 0, 0);
-	board.makeMove(m);
-	BoardStructure bd = board;
-	board.displayBoard();
-	bd.displayBoard();
-	getline(cin, x);
-
-	return 0;*/
-
-	/***************** End of Sandbox *********************/
-
 	string in; cout << "Choose one:\n \"1\" - player vs kouri (random moves)\n \"2\" - kouri vs kouri\n \"3\" - player vs player\n "
 		<< "\"4\" - castling testing\n \"5\" - parse a FEN string\n \"6\" - player vs kouri (with AI!!)\n>> ";
 	getline(cin, in);
@@ -615,6 +588,5 @@ int main() {
 		testFunction23();
 	}
 	
-
 	return 0;
 }
