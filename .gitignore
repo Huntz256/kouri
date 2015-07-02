@@ -50,4 +50,4 @@ Release/
 Debug/
 
 # User files
-.suo
+*.suo
