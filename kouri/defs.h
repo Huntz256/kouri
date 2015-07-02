@@ -261,7 +261,7 @@ public:
 	int maxDepth;
 	void init(BoardStructure board); //Init AI by clearing the PV table and other variables
 	int evaluate(BoardStructure board); //Does a basic evaluation of a board based on piece counts from WHITE's perspective
-	int negaMax(int alpha, int beta, BoardStructure board, int depth); //nega-max algorithm with alpha-beta pruning
+	int negamax(int alpha, int beta, BoardStructure board, int depth); //nega-max algorithm with alpha-beta pruning
 	Move findBestMove(BoardStructure board, int depth); //Uses nega-max to find best move
 };
 

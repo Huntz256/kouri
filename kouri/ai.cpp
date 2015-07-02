@@ -5,6 +5,7 @@
 #include <string>
 #include <windows.h>
 #include <fstream>
+#include <ctime>
 
 using namespace std;
 
@@ -94,11 +95,14 @@ Move AI::findBestMove(BoardStructure board, int depth){
 	
 	Move bestMove; bestMove.move = 0;
 	int bestScore = -INFIN, pvMovesCount = 0;
-	
+	clock_t timer; //Declare clock object to retrieve system time
+
 	init(board);
 
+	timer = clock(); //Retrieve current system time as a clock_t object
+	
 	//Negamax
-	bestScore = negaMax(-INFIN, INFIN, board, depth);
+	bestScore = negamax(-INFIN, INFIN, board, depth);
 
 	//Fill pvArray and get number of moves in pv
 	pvMovesCount = table.getPVLine(board, depth);
@@ -110,9 +114,12 @@ Move AI::findBestMove(BoardStructure board, int depth){
 	//Fill pvArray and get number of moves in pv
 	pvMovesCount = table.getPVLine(board, depth);
 
+	timer = clock() - timer; //Find time difference between previously retrieved system time and current time
+
 	cout << "\n\nI, " << NAME << ", have decided to make move ";
 	movelist.uciPrintMoveGivenMove(board, bestMove);
 	cout << " after searching to depth " << ai.maxDepth << ".\n";
+	cout << "Total calculation time: " << ((float)timer) / CLOCKS_PER_SEC << " seconds. \n"; //Convert clock_t object to time in seconds and print out
 
 	//Print the pv (principal variation)
 	cout << "\nPrincipal variation is:\n";
@@ -124,7 +131,7 @@ Move AI::findBestMove(BoardStructure board, int depth){
 }
 
 //Negamax with alpha-beta pruning
-int AI::negaMax(int alpha, int beta, BoardStructure board, int depth)
+int AI::negamax(int alpha, int beta, BoardStructure board, int depth)
 {
 	numOfNodes++;
 
@@ -192,7 +199,7 @@ int AI::negaMax(int alpha, int beta, BoardStructure board, int depth)
 		numOfLegalMoves++; 
 
 		//Call negaMax() to get the move's score
-		score = -negaMax(-beta, -alpha, board, depth - 1);
+		score = -negamax(-beta, -alpha, board, depth - 1);
 
 		if (depth == maxDepth) {
 			cout << " score: " << score;

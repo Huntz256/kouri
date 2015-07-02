@@ -489,9 +489,7 @@ void testFunction23() {
 	}
 
 	cout << "\nGAME OVER\n";
-	cout << "Press enter to exit: ";
-	getline(cin, x); //This getline() function doesn't seem to register
-	getline(cin, x); //Need two for it to work properly
+	system("PAUSE"); //Windows-exclusive "Press any key to continue" command
 }
 
 //Play against yourself; used to test pv table and rep rule
