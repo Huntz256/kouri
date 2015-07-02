@@ -255,8 +255,8 @@ extern int pvArray[64];
 
 //AI Stuff
 class AI {
-	int numOfNodes; //Number of nodes for a search
-	int startTime, endTime; //The time when a search started, the time when a search ended
+	int numOfNodes; //Number of nodes scanned for a search
+	int numOfEvals; //Number of evaluations done for a search
 public:
 	int maxDepth;
 	void init(BoardStructure board); //Init AI by clearing the PV table and other variables

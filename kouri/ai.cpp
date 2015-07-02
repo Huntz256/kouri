@@ -86,8 +86,8 @@ void AI::init(BoardStructure board) {
 	board.ply = 0;
 
 	table.clearPVTable();
-	startTime = GetTickCount();
-	endTime = 0; numOfNodes = 0;
+	numOfNodes = 0;
+	numOfEvals = 0;
 }
 
 //Returns the best move found by the nega-max function
@@ -119,6 +119,7 @@ Move AI::findBestMove(BoardStructure board, int depth){
 	cout << "\n\nI, " << NAME << ", have decided to make move ";
 	movelist.uciPrintMoveGivenMove(board, bestMove);
 	cout << " after searching to depth " << ai.maxDepth << ".\n";
+	cout << "\nNumber of nodes scanned: " << numOfNodes << ". Number of evaluations made: " << numOfEvals << ".\n";
 	cout << "Total calculation time: " << ((float)timer) / CLOCKS_PER_SEC << " seconds. \n"; //Convert clock_t object to time in seconds and print out
 
 	//Print the pv (principal variation)
@@ -135,19 +136,15 @@ int AI::negamax(int alpha, int beta, BoardStructure board, int depth)
 {
 	numOfNodes++;
 
-	//If depth == 0, we have reached a leaf and must go back up the tree
-	if (depth == 0) {
+	//If depth == 0 or ply too high, go back up the tree
+	if (depth == 0 || board.ply > 63) {
+		numOfEvals++;
 		return evaluate(board);
 	}
 
 	//If this is a tie, return 0
 	if (board.isRepetition()) {
 		return 0;
-	}
-
-	//Make sure ply isn't too high
-	if (board.ply > 63) {
-		return evaluate(board);
 	}
 
 	//Generate all moves for this position
