@@ -49,3 +49,5 @@ kouri/Debug/
 Release/
 Debug/
 
+# User files
+.suo
