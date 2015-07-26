@@ -443,7 +443,7 @@ void testFunction23() {
 	bool quit = false;
 
 	/***Set depth here***/
-	ai.maxDepth = 5;
+	ai.maxDepth = 4;
 	/********************/
 
 	while (!quit) {
@@ -469,6 +469,7 @@ void testFunction23() {
 			else if (x.compare("help") == 0) cout << help << "\n";
 
 			cout << "Enter your command: ";
+		a:
 			getline(cin, x);
 		}
 
@@ -476,8 +477,9 @@ void testFunction23() {
 
 		m.move = translateMoveCommand(x);
 
-		while (!board.makeMove(m)) {
-			m.move = translateMoveCommand(x);
+		if (!board.makeMove(m)) {
+			cout << "Playing that move would leave your king in check! Please enter another move:";
+			goto a;
 		}
 
 		///cout << "board.sideToMove:" << board.sideToMove << "\n";
