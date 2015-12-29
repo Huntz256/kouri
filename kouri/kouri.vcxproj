@@ -10,6 +10,16 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="defs.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ai.cpp" />
+    <ClCompile Include="board.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="moves.cpp" />
+    <ClCompile Include="pvtable.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{6E56DDEF-181F-41D1-B968-853523EB6338}</ProjectGuid>
     <RootNamespace>kouri</RootNamespace>
@@ -64,16 +74,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="ai.cpp" />
-    <ClCompile Include="board.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="moves.cpp" />
-    <ClCompile Include="pvtable.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="defs.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
