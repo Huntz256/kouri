@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kouri", "kouri\kouri.vcxpro
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kouri_v2.0", "kouri_v2.0\kouri_v2.0.vcxproj", "{66BDAAC8-3CEF-4415-87CF-82894D00483B}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kouri_v2.0_tests", "kouri_v2.0_tests\kouri_v2.0_tests.vcxproj", "{35F9E2B4-C46E-43D9-A16E-9959CB125122}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -29,6 +31,14 @@ Global
 		{66BDAAC8-3CEF-4415-87CF-82894D00483B}.Release|Win32.Build.0 = Release|Win32
 		{66BDAAC8-3CEF-4415-87CF-82894D00483B}.Release|x64.ActiveCfg = Release|x64
 		{66BDAAC8-3CEF-4415-87CF-82894D00483B}.Release|x64.Build.0 = Release|x64
+		{35F9E2B4-C46E-43D9-A16E-9959CB125122}.Debug|Win32.ActiveCfg = Debug|Win32
+		{35F9E2B4-C46E-43D9-A16E-9959CB125122}.Debug|Win32.Build.0 = Debug|Win32
+		{35F9E2B4-C46E-43D9-A16E-9959CB125122}.Debug|x64.ActiveCfg = Debug|x64
+		{35F9E2B4-C46E-43D9-A16E-9959CB125122}.Debug|x64.Build.0 = Debug|x64
+		{35F9E2B4-C46E-43D9-A16E-9959CB125122}.Release|Win32.ActiveCfg = Release|Win32
+		{35F9E2B4-C46E-43D9-A16E-9959CB125122}.Release|Win32.Build.0 = Release|Win32
+		{35F9E2B4-C46E-43D9-A16E-9959CB125122}.Release|x64.ActiveCfg = Release|x64
+		{35F9E2B4-C46E-43D9-A16E-9959CB125122}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
