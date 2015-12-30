@@ -1,5 +1,5 @@
-#include "Game.h"
-#include "Console.h"
+#include "GameState.h"
+#include "Engine.h"
 
 #include <string>
 #include <iostream>
@@ -8,6 +8,6 @@
 // Runs console
 // Note: Keep main() nice and short
 int main() {
-	startConsole();
+	startEngine(); // On your marks...
 	return 0;
 }

@@ -4,7 +4,7 @@ kouri was a chess AI, programmed in C++.
 kouri v2.0 is a work-in-progress multi-game AI (also programmed in C++).
 
 ## Authors
-kouri is a personal project created by two computer science students named Hunter and Minh.
+kouri is a personal project created by Hunter (a computer engineering student) and Minh (a computer science student).
 
 ## Compatibility
 The project contains some Windows-specific code and thus, isn't meant to be cross-platform (at the moment). kouri is coded using Visual Studio 2015 on Windows.
