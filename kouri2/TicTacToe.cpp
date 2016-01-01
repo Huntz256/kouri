@@ -1,7 +1,5 @@
 #include "GameState.h"
 #include "TicTacToe.h"
-#include <string>
-#include <vector>
 #include <cassert>
 
 //////// PUBLIC METHODS //////////
@@ -31,9 +29,9 @@ void TicTacToe::printBoard() const {
 	}
 }
 
-std::vector<GameState*> TicTacToe::generateMoves() const {
+std::vector<std::string> TicTacToe::generateMoves() const {
 	// TO DO
-	std::vector<GameState*> test;
+	std::vector<std::string> test;
 	return test;
 }
 
@@ -113,3 +111,7 @@ bool TicTacToe::is_gameTied() const {
 	return is_boardFilled() && !(is_winner('X') || is_winner('O'));
 }
 
+int TicTacToe::evaluate() const {
+	// TO DO
+	return 0;
+}

@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <iostream>
+#include <string>
 
 // Declaration of generic Game interface
 // This class and its children must implement the specified virtual
@@ -16,11 +17,10 @@ public:
 	//	appealing manner
 	virtual void printBoard() const = 0;
 
-	// EFFECTS: Returns a vector of GameState pointers, each of 
-	//	which can be dereferenced to obtain a valid GameState after a single
-	//	move has been made
-	// The responsibility for deleting said pointers lies outside of GameState
-	virtual std::vector<GameState*> generateMoves() const = 0;
+	// EFFECTS: Returns a vector of strings, each of which represents 
+	//	a valid Move command that can be applied to the GameState
+	//	using applyMoveCommand()
+	virtual std::vector<std::string> generateMoves() const = 0;
 
 	// EFFECTS: Returns true if *this (Game) has ended (ie. one side has won
 	//	or no moves can be made according to the rules of this game)
@@ -50,4 +50,11 @@ public:
 	//	current game, and updates GameState accordingly
 	virtual void applyMoveCommand(const std::string &com) = 0;
 
+	// EFFECTS: Returns an int representing a numerical estimate
+	//	of the value of the board from the POV of the computer
+	//
+	//	ie. Returns a higher value if the board is advantageous for
+	//	the computer (consult for internet for sample evaluation
+	//	functions for various strategy games such as chess)
+	virtual int evaluate() const = 0;
 };

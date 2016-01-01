@@ -13,12 +13,13 @@ public:
 	// Overridden inherited virtual functions from GameState
 	// See GameState interface for RME's
 	virtual void printBoard() const;
-	virtual std::vector<GameState*> generateMoves() const;
+	virtual std::vector<std::string> generateMoves() const;
 	virtual bool is_gameOver() const;
 	virtual void printWinner() const;
 	virtual void requestUserInput() const;
 	virtual bool is_validMoveCommand(const std::string &com) const;
 	virtual void applyMoveCommand(const std::string &com);
+	virtual int evaluate() const;
 
 private: // VARIABLES
 
