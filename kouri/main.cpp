@@ -454,13 +454,13 @@ void testFunction23() {
 			quit = true; break;
 		}
 
-		cout << "For a list of commands, type: help \nEnter your command: ";
+		cout << "For a list of commands, type: help \nEnter your command (e.g. e2e4): ";
 		getline(cin, x);
 
 		//While user command is not valid
 		while (x.compare("f") == 0 || x.compare("hint") == 0 || x.compare("help") == 0 || !(movelist.isMoveValid2(board, translateMoveCommand(x)))) {
 			if (x.compare("help") != 0 && x.compare("hint") != 0 && x.compare("f") != 0) {
-				cout << "\n\nThat is not a valid move or command. For a list of commands, type: help \n";
+				cout << "\n\nThat is not a valid move or command.\n";
 			}
 			board.displayBoard();
 	
@@ -468,7 +468,7 @@ void testFunction23() {
 			else if (x.compare("f") == 0) break;
 			else if (x.compare("help") == 0) cout << help << "\n";
 
-			cout << "Enter your command: ";
+			cout << "Enter your command (e.g. e2e4): ";
 		a:
 			getline(cin, x);
 		}
@@ -563,16 +563,16 @@ int main() {
 	initKeys(); 
 
 	cout << "Hello. My name is " << NAME << ".\n";
-	cout << "\nI have been created by Minter (Hunter and Minh) for a CS class project";
+	cout << "\nI have been created by Minter (Hunter and Minh).";
 	cout << "\nCurrently, I understand most rules of chess.";
 	cout << "\nI also have some idea regarding what makes one move better than another.\n\n";
 
-	string in; cout << "Choose one:\n \"1\" - player vs kouri (random moves)\n \"2\" - kouri vs kouri\n \"3\" - player vs player\n "
-		<< "\"4\" - castling testing\n \"5\" - parse a FEN string\n \"6\" - player vs kouri (with AI!!)\n>> ";
+	string in; cout << "Choose one:\n \"1\" - Play against kouri\n \"2\" - Have kouri play against itself\n \"3\" - Play with yourself\n "
+		<< "\n>> ";
 	getline(cin, in);
 
 	if (in.compare("1") == 0) {
-		testFunction5();
+		testFunction23();
 	}
 	else if (in.compare("2") == 0) {
 		testFunction3();
@@ -580,14 +580,20 @@ int main() {
 	else if (in.compare("3") == 0) {
 		testFunction422();
 	}
+
+	// Castling testing
 	else if (in.compare("4") == 0) {
 		testFunction2();
 	}
+
+	// Parse a FEN string
 	else if (in.compare("5") == 0) {
 		testFunction1();
 	}
+
+	// Player vs kouri that makes random moves
 	else if (in.compare("6") == 0) {
-		testFunction23();
+		testFunction5();
 	}
 	
 	return 0;

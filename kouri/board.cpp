@@ -36,7 +36,7 @@ char numToPieceChar(int num) {
 		pieceMap[B_KNIGHT] = 'n';  pieceMap[W_KNIGHT] = 'N';
 		pieceMap[B_ROOK] = 'r';  pieceMap[W_ROOK] = 'R'; 
 		pieceMap[B_QUEEN] = 'q';  pieceMap[W_QUEEN] = 'Q';
-		pieceMap[B_KING] = 002; pieceMap[W_KING] = 001; // smiley faces
+		pieceMap[B_KING] = 'k'; pieceMap[W_KING] = 'K';
 
 		return pieceMap[num];
 	}

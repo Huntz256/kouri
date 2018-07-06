@@ -1,60 +1,20 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kouri", "kouri\kouri.vcxproj", "{6E56DDEF-181F-41D1-B968-853523EB6338}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kouri2", "kouri2\kouri2.vcxproj", "{F9419866-D636-4F57-8405-438FF9AD00E6}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kouri2_tests", "kouri2_tests\kouri2_tests.vcxproj", "{35F9E2B4-C46E-43D9-A16E-9959CB125122}"
-	ProjectSection(ProjectDependencies) = postProject
-		{F9419866-D636-4F57-8405-438FF9AD00E6} = {F9419866-D636-4F57-8405-438FF9AD00E6}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kouri2_engine", "kouri2_engine\kouri2_engine.vcxproj", "{2029D461-76DE-4CD1-B1F4-04C6FA6DD58D}"
-	ProjectSection(ProjectDependencies) = postProject
-		{F9419866-D636-4F57-8405-438FF9AD00E6} = {F9419866-D636-4F57-8405-438FF9AD00E6}
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
-		Debug|x64 = Debug|x64
 		Release|Win32 = Release|Win32
-		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{6E56DDEF-181F-41D1-B968-853523EB6338}.Debug|Win32.ActiveCfg = Debug|Win32
 		{6E56DDEF-181F-41D1-B968-853523EB6338}.Debug|Win32.Build.0 = Debug|Win32
-		{6E56DDEF-181F-41D1-B968-853523EB6338}.Debug|x64.ActiveCfg = Debug|Win32
 		{6E56DDEF-181F-41D1-B968-853523EB6338}.Release|Win32.ActiveCfg = Release|Win32
 		{6E56DDEF-181F-41D1-B968-853523EB6338}.Release|Win32.Build.0 = Release|Win32
-		{6E56DDEF-181F-41D1-B968-853523EB6338}.Release|x64.ActiveCfg = Release|Win32
-		{F9419866-D636-4F57-8405-438FF9AD00E6}.Debug|Win32.ActiveCfg = Debug|Win32
-		{F9419866-D636-4F57-8405-438FF9AD00E6}.Debug|Win32.Build.0 = Debug|Win32
-		{F9419866-D636-4F57-8405-438FF9AD00E6}.Debug|x64.ActiveCfg = Debug|x64
-		{F9419866-D636-4F57-8405-438FF9AD00E6}.Debug|x64.Build.0 = Debug|x64
-		{F9419866-D636-4F57-8405-438FF9AD00E6}.Release|Win32.ActiveCfg = Release|Win32
-		{F9419866-D636-4F57-8405-438FF9AD00E6}.Release|Win32.Build.0 = Release|Win32
-		{F9419866-D636-4F57-8405-438FF9AD00E6}.Release|x64.ActiveCfg = Release|x64
-		{F9419866-D636-4F57-8405-438FF9AD00E6}.Release|x64.Build.0 = Release|x64
-		{35F9E2B4-C46E-43D9-A16E-9959CB125122}.Debug|Win32.ActiveCfg = Debug|Win32
-		{35F9E2B4-C46E-43D9-A16E-9959CB125122}.Debug|Win32.Build.0 = Debug|Win32
-		{35F9E2B4-C46E-43D9-A16E-9959CB125122}.Debug|x64.ActiveCfg = Debug|x64
-		{35F9E2B4-C46E-43D9-A16E-9959CB125122}.Debug|x64.Build.0 = Debug|x64
-		{35F9E2B4-C46E-43D9-A16E-9959CB125122}.Release|Win32.ActiveCfg = Release|Win32
-		{35F9E2B4-C46E-43D9-A16E-9959CB125122}.Release|Win32.Build.0 = Release|Win32
-		{35F9E2B4-C46E-43D9-A16E-9959CB125122}.Release|x64.ActiveCfg = Release|x64
-		{35F9E2B4-C46E-43D9-A16E-9959CB125122}.Release|x64.Build.0 = Release|x64
-		{2029D461-76DE-4CD1-B1F4-04C6FA6DD58D}.Debug|Win32.ActiveCfg = Debug|Win32
-		{2029D461-76DE-4CD1-B1F4-04C6FA6DD58D}.Debug|Win32.Build.0 = Debug|Win32
-		{2029D461-76DE-4CD1-B1F4-04C6FA6DD58D}.Debug|x64.ActiveCfg = Debug|x64
-		{2029D461-76DE-4CD1-B1F4-04C6FA6DD58D}.Debug|x64.Build.0 = Debug|x64
-		{2029D461-76DE-4CD1-B1F4-04C6FA6DD58D}.Release|Win32.ActiveCfg = Release|Win32
-		{2029D461-76DE-4CD1-B1F4-04C6FA6DD58D}.Release|Win32.Build.0 = Release|Win32
-		{2029D461-76DE-4CD1-B1F4-04C6FA6DD58D}.Release|x64.ActiveCfg = Release|x64
-		{2029D461-76DE-4CD1-B1F4-04C6FA6DD58D}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
