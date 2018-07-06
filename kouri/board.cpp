@@ -293,11 +293,13 @@ bool BoardStructure::isSquareAttacked(int square, int attackingSide) {
 	for (int i = 0; i < 8; i++) {
 
 		//If square square is being attacked by a white knight, return true
-		if (attackingSide == WHITE && pieces[square + KNIGHT_MOVEMENTS[i]] == 6) {
-			///cout << "isSquareAttacked(): yes. square " << square << " is being attacked by a white knight\n"; 
-			return true;
+		if (attackingSide == WHITE) {
+			if (pieces[square + KNIGHT_MOVEMENTS[i]] == 6) {
+				///cout << "isSquareAttacked(): yes. square " << square << " is being attacked by a white knight\n"; 
+				return true;
+			}
 		}
-		else{
+		else {
 			//If square square is being attacked by a black knight, return true
 			if (pieces[square + KNIGHT_MOVEMENTS[i]] == 5) {
 				///cout << "isSquareAttacked(): yes. square " << square << " is being attacked by a black knight\n"; 
