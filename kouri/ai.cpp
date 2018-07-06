@@ -93,7 +93,7 @@ void AI::init(BoardStructure board) {
 //Returns the best move found by the nega-max function
 Move AI::findBestMove(BoardStructure board, int depth){
 	
-	Move bestMove; bestMove.move = 0;
+	bestMove.move = 0;
 	int bestScore = -INFIN, pvMovesCount = 0;
 	clock_t timer; //Declare clock object to retrieve system time
 
@@ -108,7 +108,7 @@ Move AI::findBestMove(BoardStructure board, int depth){
 	pvMovesCount = table.getPVLine(board, depth);
 
 	//Get the best move from the pvArray
-	bestMove.move = pvArray[0];
+	//bestMove.move = pvArray[0];
 	///cout << "bestMove is:"; movelist.uciPrintMoveGivenMove(board, bestMove);
 
 	//Fill pvArray and get number of moves in pv
@@ -154,13 +154,17 @@ int AI::negamax(int alpha, int beta, BoardStructure board, int depth)
 	///cout << "haha movelist.moves[0]:"; movelist.uciPrintMoveGivenMove(board, movelist.moves[0]);
 
 	//Go through all of the generated moves
-	Move bestMove; bestMove.move = 0; 
+	Move pvBestMove; pvBestMove.move = 0;
 	int numOfLegalMoves = 0, score = -INFIN, oldAlpha = alpha;
 
 	for (int i = 0; i < gen1.numberOfMoves; i++) {
 
 		//Make move i. If move i is invalid, go to the next move in the move list
 		if (!board.makeMove(gen1.moves[i])) {
+			if (depth == maxDepth) {
+				cout << "\ni:" << i << " move ";
+				gen1.uciPrintMoveGivenMove(board, gen1.moves[i]); cout << " is invalid.";
+			}
 			continue;
 		}
 
@@ -228,9 +232,12 @@ int AI::negamax(int alpha, int beta, BoardStructure board, int depth)
 			}
 			alpha = score;
 
-			//if (depth == maxDepth) {
+			pvBestMove = gen1.moves[i];
+			if (depth == maxDepth) {
 				bestMove = gen1.moves[i];
-			//}
+				cout << "\nSetting bestMove to ";
+				gen1.uciPrintMoveGivenMove(board, gen1.moves[i]); 
+			}
 		}
 
 	}
@@ -252,9 +259,9 @@ int AI::negamax(int alpha, int beta, BoardStructure board, int depth)
 
 	}
 
-	//Store the best move
+	//Store the best move in pv table
 	if (alpha != oldAlpha) {
-		table.storePVMove(board, bestMove.move);
+		table.storePVMove(board, pvBestMove.move);
 	}
 
 	return alpha;
