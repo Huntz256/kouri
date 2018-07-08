@@ -458,12 +458,11 @@ void testFunction23() {
 		getline(cin, x);
 
 		//While user command is not valid
-		while (x.compare("f") == 0 || x.compare("hint") == 0 || x.compare("help") == 0 || !(movelist.isMoveValid2(board, translateMoveCommand(x)))) {
+		while (x.compare("f") == 0 || x.compare("hint") == 0 || x.compare("help") == 0 || !(movelist.isMoveValid(board, translateMoveCommand(x)))) {
 			if (x.compare("help") != 0 && x.compare("hint") != 0 && x.compare("f") != 0) {
 				cout << "\n\nThat is not a valid move or command.\n";
 			}
-			board.displayBoard();
-	
+			
 			if (x.compare("hint") == 0) movelist.printMoveList(board);
 			else if (x.compare("f") == 0) break;
 			else if (x.compare("help") == 0) cout << help << "\n";

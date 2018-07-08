@@ -151,6 +151,11 @@ int AI::negamax(int alpha, int beta, BoardStructure board, int depth)
 	MoveListGenerator gen1;
 	gen1.generateMoveList(board);
 
+	//Default best move
+	if (depth == maxDepth) {
+		bestMove = gen1.moves[0];
+	}
+
 	///cout << "haha movelist.moves[0]:"; movelist.uciPrintMoveGivenMove(board, movelist.moves[0]);
 
 	//Go through all of the generated moves

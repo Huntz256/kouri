@@ -2,6 +2,7 @@
 #include <iostream>
 #include <unordered_map>
 #include <fstream>
+#include <cmath>
 using namespace std;
 
 const int CASTLE_PERMISSIONS[120] = {
@@ -96,9 +97,12 @@ void BoardStructure::displayBoard() {
 
 	//Also display some more infomation
 	cout << "Side to move: " << (sideToMove == 0 ? "White" : "Black");
-	cout << "\nCastling permissions: " << castlePerms << '\n';
+	//cout << "\nCastling permissions: " << castlePerms << '\n';
 	///cout << "Enpass. square: " << enPassSquare << '\n';
-	cout << "evaluate(): " << ai.evaluate(*this) << '\n';
+	float p = -((float) ai.evaluate(*this)) / 100;
+	cout << "\nKouri's evaluation: I think I have a " << 
+		round((0.5 + 0.5 * p / (abs(p) + 2 / (abs(p) + 1))) * 100) <<
+		"% chance of winning.\n";
 }
 
 //Sets up the board for a standard chess match
@@ -511,7 +515,7 @@ bool BoardStructure::makeMove(Move m) {
 	}
 
 	//Update king square if the king moved
-	if ((toSquare == W_KING) || (toSquare == B_KING)) {
+	if ((pieces[toSquare] == W_KING) || (pieces[toSquare] == B_KING)) {
 		kingSquare[sideToMove] = toSquare;
 	}
 	
@@ -595,7 +599,7 @@ void BoardStructure::undoMove() {
 	movePieceToSquare(toSquare, fromSquare);
 
 	//Update KingSq if the king moved
-	if ((fromSquare == W_KING) || (fromSquare == B_KING)) {
+	if ((pieces[fromSquare] == W_KING) || (pieces[fromSquare] == B_KING)) {
 		kingSquare[sideToMove] = fromSquare;
 	}
 
@@ -612,11 +616,6 @@ void BoardStructure::undoMove() {
 
 	//Update posiition ID
 	positionID = generateAndGetPositionID();
-
-	//If board is not valid, show an error message
-	if (!isBoardValid()) {
-		///cout << "\nERROR: BOARD NOT VALID.\n"; 
-	}
 
 }
 
@@ -708,12 +707,12 @@ bool BoardStructure::isBoardValid() {
 
 	//Make sure KingSq arrays are valid
 	if (pieces[kingSquare[WHITE]] != W_KING) {
-		//cout << "ERROR: pieces[kingSquare[WHITE]]  pieces[" << kingSquare[WHITE] << "] = " << pieces[kingSquare[WHITE]] << " WHICH IS NOT A WHITE KING.\n";
-		//return false;
+		cout << "ERROR: pieces[kingSquare[WHITE]]  pieces[" << kingSquare[WHITE] << "] = " << pieces[kingSquare[WHITE]] << " WHICH IS NOT A WHITE KING.\n";
+		return false;
 	}
 	if (pieces[kingSquare[BLACK]] != B_KING) {
-		//cout << "ERROR: pieces[kingSquare[BLACK]] = pieces[" << kingSquare[BLACK] << "] = " <<  pieces[kingSquare[BLACK]] << " WHICH IS NOT A BLACK KING.\n";
-		//return false;
+		cout << "ERROR: pieces[kingSquare[BLACK]] = pieces[" << kingSquare[BLACK] << "] = " <<  pieces[kingSquare[BLACK]] << " WHICH IS NOT A BLACK KING.\n";
+		return false;
 	}
 	
 
