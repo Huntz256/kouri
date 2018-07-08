@@ -38,7 +38,7 @@ const int PIECE_MOVEMENTS[13][8] = {
 
 
 //Used for debugging the function isSquareAttacked()
-void testIsSquareAttacked(int side, BoardStructure board) {
+void testIsSquareAttacked(int side, BoardStructure& board) {
 	cout << "All squares attacked by side " << side << '\n';
 
 	//Display the board
@@ -68,20 +68,20 @@ int Move::getCapturedPiece() {
 	return (move >> 14) & 0xF;
 }
 int Move::getPromoted() {
-	return (move >> 18) & 0x7F;
+	return (move >> 18) & 0xF;
 }
 int Move::getCastling() {
 	return (move >> 22) & 0x7;
 }
 
-void MoveListGenerator::addPawnCapturingMove(BoardStructure board, int fromSquare, int toSquare, int capture, int side) {
+void MoveListGenerator::addPawnCapturingMove(BoardStructure& board, int fromSquare, int toSquare, int capture, int side) {
 	if (FILES[fromSquare] == -1) {
 		throw "ERROR3";
 	}
 	if (FILES[toSquare] == -1) {
 		throw "ERROR4";
 	}
-	
+
 	if (side == WHITE) {
 		if (RANKS[fromSquare] == RANK_7) {
 			moves[numberOfMoves].move = MOVE(fromSquare, toSquare, capture, W_QUEEN, 0); numberOfMoves++;
@@ -105,7 +105,7 @@ void MoveListGenerator::addPawnCapturingMove(BoardStructure board, int fromSquar
 		}
 	}
 }
-void MoveListGenerator::addPawnMove(BoardStructure board, int fromSquare, int toSquare, int side) {
+void MoveListGenerator::addPawnMove(BoardStructure& board, int fromSquare, int toSquare, int side) {
 
 	if (FILES[fromSquare] == -1) {
 		throw "ERROR1";
@@ -143,11 +143,11 @@ void MoveListGenerator::addPawnMove(BoardStructure board, int fromSquare, int to
 		}
 	}
 }
-void MoveListGenerator::generatePawnMoves(BoardStructure board) {
-	if (board.sideToMove == WHITE) {
+void MoveListGenerator::generatePawnMoves(BoardStructure& board) {
+	//Go through every square on the board
+	for (int i = 0; i < BOARD_SQUARE_COUNT; i++) {
 
-		//Go through every square on the board
-		for (int i = 0; i < BOARD_SQUARE_COUNT; i++) {
+		if (board.sideToMove == WHITE) {
 
 			//If the current square is a white pawn...
 			if (board.pieces[i] == 2) {
@@ -162,8 +162,6 @@ void MoveListGenerator::generatePawnMoves(BoardStructure board) {
 
 					//.. regardless ...
 					addPawnMove(board, i, i + 10, WHITE);
-
-
 				}
 
 				//Pawn capturing
@@ -186,12 +184,9 @@ void MoveListGenerator::generatePawnMoves(BoardStructure board) {
 				}
 
 			}
-			
+
 		}
-	}
-	else {
-		//Go through every square on the board
-		for (int i = 0; i < BOARD_SQUARE_COUNT; i++) {
+		else {
 
 			//If the current square is a black pawn...
 			if (board.pieces[i] == 1) {
@@ -227,11 +222,10 @@ void MoveListGenerator::generatePawnMoves(BoardStructure board) {
 					}
 				}
 			}
-			
 		}
 	}
 }
-void MoveListGenerator::generateSliderMoves(BoardStructure board) {
+void MoveListGenerator::generateSliderMoves(BoardStructure& board) {
 	int pieceIndex = SLIDING_PIECES_START_INDEX[board.sideToMove];
 	int piece = SLIDING_PIECES[pieceIndex];
 	pieceIndex++;
@@ -242,7 +236,7 @@ void MoveListGenerator::generateSliderMoves(BoardStructure board) {
 
 			//If there is a piece on square i that is a slider piece...
 			if (board.pieces[i] == piece) {
-				
+
 				//For each direction...
 				for (int j = 0; j < NUMBER_OF_DIRECTIONS[piece]; j++) {
 					int tempSquare = i + PIECE_MOVEMENTS[piece][j];
@@ -279,7 +273,7 @@ void MoveListGenerator::generateSliderMoves(BoardStructure board) {
 	}
 
 }
-void MoveListGenerator::generateNonSliderMoves(BoardStructure board) {
+void MoveListGenerator::generateNonSliderMoves(BoardStructure& board) {
 	int pieceIndex = NON_SLIDING_PIECES_START_INDEX[board.sideToMove];
 	int piece = NON_SLIDING_PIECES[pieceIndex];
 	pieceIndex++;
@@ -314,7 +308,7 @@ void MoveListGenerator::generateNonSliderMoves(BoardStructure board) {
 							//cout << "board.getPieceColor(board.pieces[tempSquare])" << board.getPieceColor(board.pieces[tempSquare]) << "\n";
 							//cout << "board.sideToMove:" << board.sideToMove << "\n";
 
-							moves[numberOfMoves].move = MOVE(i, tempSquare, board.pieces[tempSquare], 0, 0); 
+							moves[numberOfMoves].move = MOVE(i, tempSquare, board.pieces[tempSquare], 0, 0);
 							numberOfMoves++;
 
 							//If king is attacked by the other side when this move is made
@@ -338,7 +332,7 @@ void MoveListGenerator::generateNonSliderMoves(BoardStructure board) {
 		pieceIndex++;
 	}
 }
-void MoveListGenerator::generateCastlingMoves(BoardStructure board) {
+void MoveListGenerator::generateCastlingMoves(BoardStructure& board) {
 	if (board.sideToMove == WHITE) {
 		//White Kingside Castling
 		if (board.castlePerms & 1) {
@@ -384,7 +378,7 @@ void MoveListGenerator::generateCastlingMoves(BoardStructure board) {
 
 	}
 }
-void MoveListGenerator::generateMoveList(BoardStructure board) {
+void MoveListGenerator::generateMoveList(BoardStructure& board) {
 	numberOfMoves = 0;
 
 	//Clear move arrays
@@ -405,10 +399,10 @@ void MoveListGenerator::generateMoveList(BoardStructure board) {
 
 //Prints all of the moves in our move list in algebraic notation
 //MUST be called immediately after generateMoveList() for piece num printing to be accuarate
-void MoveListGenerator::printMoveList(BoardStructure board) {
+void MoveListGenerator::printMoveList(BoardStructure& board) {
 
 	const char PIECE_NUM_TO_CHAR[13] = { ' ', ' ', ' ', 'B', 'B', 'N', 'N', 'R', 'R', 'Q', 'Q', 'K', 'K' };
-	
+
 	for (int i = 0; i < numberOfMoves; i++) {
 		int fromSquare = moves[i].getFromSquare();
 		int toSquare = moves[i].getToSquare();
@@ -425,11 +419,11 @@ void MoveListGenerator::printMoveList(BoardStructure board) {
 			cout << "O-O-O\n";
 		}
 		else {
-			 cout << PIECE_NUM_TO_CHAR[board.pieces[moves[i].getFromSquare()]];
-			 //cout << PIECE_NUM_TO_CHAR[board.pieces[fromSquare]];
+			cout << PIECE_NUM_TO_CHAR[board.pieces[moves[i].getFromSquare()]];
+			//cout << PIECE_NUM_TO_CHAR[board.pieces[fromSquare]];
 
-			 if (moves[i].getCapturedPiece() != 0) {
-				 cout << FILES_TO_CHAR[FILES[moves[i].getFromSquare()]] << "x";
+			if (moves[i].getCapturedPiece() != 0) {
+				cout << FILES_TO_CHAR[FILES[moves[i].getFromSquare()]] << "x";
 				//cout << FILES_TO_CHAR[FILES[fromSquare]] << "x";
 			}
 
@@ -443,7 +437,7 @@ void MoveListGenerator::printMoveList(BoardStructure board) {
 }
 
 //Prints a move in UCI format given a move number on a move list. E.g. uciPrintMove(board, 4)
-void MoveListGenerator::uciPrintMoveGivenMoveListNumber(BoardStructure board, int moveNum) {
+void MoveListGenerator::uciPrintMoveGivenMoveListNumber(BoardStructure& board, int moveNum) {
 	const char PIECE_NUM_TO_CHAR[13] = { ' ', ' ', ' ', 'B', 'B', 'N', 'N', 'R', 'R', 'Q', 'Q', 'K', 'K' };
 
 	int fromSquare = moves[moveNum].getFromSquare();
@@ -458,7 +452,7 @@ void MoveListGenerator::uciPrintMoveGivenMoveListNumber(BoardStructure board, in
 }
 
 //Prints a move in UCI format given a move. E.g. uciPrintMove(board, m)
-void MoveListGenerator::uciPrintMoveGivenMove(BoardStructure board, Move m) {
+void MoveListGenerator::uciPrintMoveGivenMove(BoardStructure& board, Move m) {
 	const char PIECE_NUM_TO_CHAR[13] = { ' ', ' ', ' ', 'B', 'B', 'N', 'N', 'R', 'R', 'Q', 'Q', 'K', 'K' };
 
 	int fromSquare = m.getFromSquare();
@@ -470,7 +464,7 @@ void MoveListGenerator::uciPrintMoveGivenMove(BoardStructure board, Move m) {
 }
 
 //Prints a move in UCI format given a move integer. E.g. uciPrintMove(board, m.move)
-void MoveListGenerator::uciPrintMoveGivenMoveInt(BoardStructure board, int move) {
+void MoveListGenerator::uciPrintMoveGivenMoveInt(BoardStructure& board, int move) {
 	const char PIECE_NUM_TO_CHAR[13] = { ' ', ' ', ' ', 'B', 'B', 'N', 'N', 'R', 'R', 'Q', 'Q', 'K', 'K' };
 
 	Move m; m.move = move;
@@ -483,7 +477,7 @@ void MoveListGenerator::uciPrintMoveGivenMoveInt(BoardStructure board, int move)
 }
 
 //Checks if a move integer is contained in the generated movelist and is valid
-bool MoveListGenerator::isMoveValid(BoardStructure board, int move) {
+bool MoveListGenerator::isMoveValid(BoardStructure& board, int move) {
 
 	int fromSquare = move & 0x7F;
 	int toSquare = (move >> 7) & 0x7F;
@@ -497,7 +491,7 @@ bool MoveListGenerator::isMoveValid(BoardStructure board, int move) {
 	if (board.pieces[fromSquare] <= 0) {
 		return false;
 	}
-	
+
 	generateMoveList(board);
 
 	for (int i = 0; i < numberOfMoves; i++) {
@@ -505,33 +499,6 @@ bool MoveListGenerator::isMoveValid(BoardStructure board, int move) {
 			continue;
 		}
 		board.undoMove();
-		if (moves[i].move == move) {
-			return true;
-		}
-	}
-	return false;
-}
-
-//Checks if a move integer is contained in the generated movelist and is valid
-//Less likely to return a false negative than isMoveValid(), but more likely to return a false positive
-bool MoveListGenerator::isMoveValid2(BoardStructure board, int move) {
-
-	int fromSquare = move & 0x7F;
-	int toSquare = (move >> 7) & 0x7F;
-
-	if (fromSquare < 21 || fromSquare > 98) {
-		return false;
-	}
-	if (toSquare < 21 || toSquare > 98) {
-		return false;
-	}
-	if (board.pieces[fromSquare] <= 0) {
-		return false;
-	}
-
-	generateMoveList(board);
-
-	for (int i = 0; i < numberOfMoves; i++) {
 		if (moves[i].move == move) {
 			return true;
 		}

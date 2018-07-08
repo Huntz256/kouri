@@ -24,14 +24,14 @@ void PVTable::clearPVTable() {
 }
 
 //Store a move and position ID in the PV table
-void PVTable::storePVMove(BoardStructure board, int move) {
+void PVTable::storePVMove(BoardStructure& board, int move) {
 	int i = board.generateAndGetPositionID() % numOfEntries;
 	pvTable[i].move = move;
 	pvTable[i].positionID = board.generateAndGetPositionID();
 }
 
 //Get the principal variation move
-int PVTable::getPVMove(BoardStructure board) {
+int PVTable::getPVMove(BoardStructure& board) {
 	int i = board.generateAndGetPositionID() % numOfEntries;
 
 	if (pvTable[i].positionID == board.generateAndGetPositionID()) {
@@ -42,7 +42,7 @@ int PVTable::getPVMove(BoardStructure board) {
 }
 
 
-int PVTable::getPVLine(BoardStructure board, int d)  {
+int PVTable::getPVLine(BoardStructure& board, int d) {
 	Move move; move.move = getPVMove(board);
 	int count = 0;
 

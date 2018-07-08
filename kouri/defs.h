@@ -30,8 +30,10 @@ enum { WHITE, BLACK };
 #define MOVE(from,to,capture,promotion,castling) ( (from) | ((to) << 7) | ((capture) << 14) | ((promotion) << 18) | ((castling) << 22))
 
 //Define B_PAWN = 1, W_PAWN = 2, B_BISHOP = 3, W_BISHOP = 4, B_KNIGHT = 5, W_KNIGHT = 6, B_ROOK = 7, W_ROOK = 8, B_QUEEN = 9, W_QUEEN = 10, B_KING = 11, W_KING = 12
-enum { EMPTY, B_PAWN, W_PAWN, B_BISHOP, W_BISHOP, B_KNIGHT, W_KNIGHT, 
-B_ROOK, W_ROOK, B_QUEEN, W_QUEEN, B_KING, W_KING };
+enum {
+	EMPTY, B_PAWN, W_PAWN, B_BISHOP, W_BISHOP, B_KNIGHT, W_KNIGHT,
+	B_ROOK, W_ROOK, B_QUEEN, W_QUEEN, B_KING, W_KING
+};
 
 //Piece material values, in centipawns
 const int PIECE_VALUE[13] = { 0, 100, 100, 300, 300, 300, 300, 500, 500, 900, 900, 220000, 220000 };
@@ -136,14 +138,14 @@ public:
 class BoardStructure {
 public:
 	//Represents previous moves that have been played on this board. Assumes that amount of half moves < 2048.
-	MoveHistory history[2048]; 
+	MoveHistory history[2048];
 
 	//Represents every piece in a position using the 10x12 board representation.
 	//E.g. pieces[21] represents the square a1, pieces[98] represents the square h8.
 	int pieces[BOARD_SQUARE_COUNT];
 
 	//The current side to move on this board - 0 (White) or 1 (Black)
-	int sideToMove; 
+	int sideToMove;
 
 	//Describes what types of castling is allowed on this board
 	//This is an integer from 0000 (no castling is allowed) to 1111 (all castling is allowed)
@@ -153,17 +155,17 @@ public:
 	//1000 = black queenside castling allowed
 	//Example: 1010 means queenside castling is allowed for both sides.
 	//Note that this integer is DIFFERENT from that used in Move
-	int castlePerms; 
+	int castlePerms;
 
 	//The square that en pass can be done on
-	int enPassSquare; 
+	int enPassSquare;
 
 	//pawns[0] represents all white pawns on this board, pawns[1] is the same for black
-	U64 pawns[2]; 
+	U64 pawns[2];
 
 	//material[0] represents white material, material[1] represents black material
 	//pawn = 1 point, knight = bishop = 3 points, rook = 5 points, queen = 9 points
-	int material[2]; 
+	int material[2];
 
 	//The square that the king is on; kingSquare[0] is for white, kingSquare[1] is for black
 	int kingSquare[2];
@@ -214,16 +216,16 @@ public:
 
 	void initPVTable();
 	void clearPVTable();
-	void storePVMove(BoardStructure board, int move);
-	int getPVMove(BoardStructure board);
-	int getPVLine(BoardStructure board, int depth);
+	void storePVMove(BoardStructure& board, int move);
+	int getPVMove(BoardStructure& board);
+	int getPVLine(BoardStructure& board, int depth);
 
 };
 
 extern PVTable table;
 
 
-void testIsSquareAttacked(int side, BoardStructure board); //Used only for testing isSquareAttacked()
+void testIsSquareAttacked(int side, BoardStructure& board); //Used only for testing isSquareAttacked()
 char numToPieceChar(int num); //Converts integer to char representing a piece
 void printSquare(int square); //Prints square in alg. notation
 int charToPieceInt(char c); //Converts char like 'p' or 'Q' to the corresponding integer
@@ -233,21 +235,20 @@ class MoveListGenerator {
 public:
 	Move moves[2048];
 	int numberOfMoves;
-	void generateMoveList(BoardStructure board);
-	void generatePawnMoves(BoardStructure board);
-	void generateSliderMoves(BoardStructure board);
-	void generateNonSliderMoves(BoardStructure board);
-	void generateCastlingMoves(BoardStructure board);
+	void generateMoveList(BoardStructure& board);
+	void generatePawnMoves(BoardStructure& board);
+	void generateSliderMoves(BoardStructure& board);
+	void generateNonSliderMoves(BoardStructure& board);
+	void generateCastlingMoves(BoardStructure& board);
 
-	void addPawnCapturingMove(BoardStructure board, int fromSquare, int toSquare, int capture, int side);
-	void addPawnMove(BoardStructure board, int fromSquare, int toSquare, int side);
-	void printMoveList(BoardStructure board);
-	void uciPrintMoveGivenMoveListNumber(BoardStructure board, int moveNum);
-	void uciPrintMoveGivenMove(BoardStructure board, Move m);
-	void uciPrintMoveGivenMoveInt(BoardStructure board, int move);
+	void addPawnCapturingMove(BoardStructure& board, int fromSquare, int toSquare, int capture, int side);
+	void addPawnMove(BoardStructure& board, int fromSquare, int toSquare, int side);
+	void printMoveList(BoardStructure& board);
+	void uciPrintMoveGivenMoveListNumber(BoardStructure& board, int moveNum);
+	void uciPrintMoveGivenMove(BoardStructure& board, Move m);
+	void uciPrintMoveGivenMoveInt(BoardStructure& board, int move);
 
-	bool isMoveValid(BoardStructure board, int move);
-	bool isMoveValid2(BoardStructure board, int move);
+	bool isMoveValid(BoardStructure& board, int move);
 };
 
 extern MoveListGenerator movelist;
@@ -262,10 +263,10 @@ class AI {
 	Move bestMove;
 public:
 	int maxDepth;
-	void init(BoardStructure board); //Init AI by clearing the PV table and other variables
-	int evaluate(BoardStructure board); //Does a basic evaluation of a board based on piece counts from WHITE's perspective
-	int negamax(int alpha, int beta, BoardStructure board, int depth); //nega-max algorithm with alpha-beta pruning
-	Move findBestMove(BoardStructure board, int depth); //Uses nega-max to find best move
+	void init(BoardStructure& board); //Init AI by clearing the PV table and other variables
+	int evaluate(BoardStructure& board); //Does a basic evaluation of a board based on piece counts from WHITE's perspective
+	int negamax(int alpha, int beta, BoardStructure& board, int depth); //nega-max algorithm with alpha-beta pruning
+	Move findBestMove(BoardStructure& board, int depth); //Uses nega-max to find best move
 };
 
 extern AI ai;
