@@ -10,6 +10,9 @@
 //Define NAME as "kouri"
 #define NAME "kouri"
 
+//True if we want to use kouri with a UCI GUI
+extern bool UCIMODE;
+
 //Define the number of squares, BOARD_SQUARE_COUNT, on our board representation as 120
 #define BOARD_SQUARE_COUNT 120
 

@@ -3,6 +3,7 @@
 #include <string>
 #include <random>
 #include <ctime>
+#include <sstream>
 using namespace std;
 
 BoardStructure board; //BoardStructure* boardpt;
@@ -11,6 +12,7 @@ MoveListGenerator movelist;
 PVTable table;
 AI ai;
 int pvArray[64];
+bool UCIMODE = true;
 
 int getRandomInteger(int min, int max) {
 	srand((int)time(NULL)); 
@@ -556,44 +558,107 @@ void initKeys() {
 	}
 }
 
+// Interface with UCI GUI
+void uci(string in)
+{
+	string uciCommand = in; Move m;
+	ai.maxDepth = 4;
+
+	do {
+		if (uciCommand == "uci") {
+			cout << "id name Kouri\n";
+			cout << "id author Hunter and Minh\n";
+			cout << "uciok\n";
+		}
+		else if (uciCommand == "isready") {
+			cout << "readyok\n";
+		}
+		else if (uciCommand.substr(0, 17) == "position startpos") {
+			board.init(true);
+
+			string buf;
+			stringstream ss(uciCommand);
+			vector<string> words;
+			while (ss >> buf)
+				words.push_back(buf);
+
+			for (auto& word : words) {
+				if (word != "position" && word != "startpos" && word != "moves") {
+					m.move = translateMoveCommand(word);
+					board.makeMove(m);
+				}
+			}
+
+			
+		}
+		else if (uciCommand.substr(0, 2) == "go") {
+			m = ai.findBestMove(board, ai.maxDepth); 
+
+			cout << "bestmove ";
+			movelist.uciPrintMoveGivenMove(board, m);
+			cout << "\n";
+		}
+	} while (getline(cin, uciCommand));
+}
+
 //Program execution starts here
 int main() {
-
-	initKeys(); 
-
-	cout << "Hello. My name is " << NAME << ".\n";
-	cout << "\nI have been created by Minter (Hunter and Minh).";
-	cout << "\nCurrently, I understand most rules of chess.";
-	cout << "\nI also have some idea regarding what makes one move better than another.\n\n";
-
-	string in; cout << "Choose one:\n \"1\" - Play against kouri\n \"2\" - Have kouri play against itself\n \"3\" - Play with yourself\n "
-		<< "\n>> ";
-	getline(cin, in);
-
-	if (in.compare("1") == 0) {
-		testFunction23();
-	}
-	else if (in.compare("2") == 0) {
-		testFunction3();
-	}
-	else if (in.compare("3") == 0) {
-		testFunction422();
-	}
-
-	// Castling testing
-	else if (in.compare("4") == 0) {
-		testFunction2();
-	}
-
-	// Parse a FEN string
-	else if (in.compare("5") == 0) {
-		testFunction1();
-	}
-
-	// Player vs kouri that makes random moves
-	else if (in.compare("6") == 0) {
-		testFunction5();
-	}
 	
+	initKeys();
+
+	cout << "~Kouri~\nIf you are not a chess GUI, enter \"human\".\n>>";
+	string in;
+	getline(cin, in);
+	
+	// Toggle UCI mode off if not interfacing with UCI GUI
+	if (in.compare("human") == 0) {
+		UCIMODE = false;
+	} 
+	else {
+		UCIMODE = true;
+	}
+
+	// Interface with UCI GUI
+	if (UCIMODE) {
+		uci(in);
+	}
+
+	// Interface with human
+	else {
+		cout << "\nHello. My name is " << NAME << ".\n";
+		cout << "\nI have been created by Minter (Hunter and Minh).";
+		cout << "\nCurrently, I understand most rules of chess.";
+		cout << "\nI also have some idea regarding what makes one move better than another.\n\n";
+
+		cout << "Choose one:\n \"1\" - Play against kouri\n\n "
+			<< "\n>> ";
+		getline(cin, in);
+
+		if (in.compare("1") == 0) {
+			testFunction23();
+		}
+		else if (in.compare("2") == 0) {
+			testFunction3();
+		}
+		else if (in.compare("3") == 0) {
+			testFunction422();
+		}
+
+		// Castling testing
+		else if (in.compare("4") == 0) {
+			testFunction2();
+		}
+
+		// Parse a FEN string
+		else if (in.compare("5") == 0) {
+			testFunction1();
+		}
+
+		// Player vs kouri that makes random moves
+		else if (in.compare("6") == 0) {
+			testFunction5();
+		}
+	}
+
 	return 0;
 }

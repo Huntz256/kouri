@@ -116,16 +116,18 @@ Move AI::findBestMove(BoardStructure board, int depth){
 
 	timer = clock() - timer; //Find time difference between previously retrieved system time and current time
 
-	cout << "\n\nI, " << NAME << ", have decided to make move ";
-	movelist.uciPrintMoveGivenMove(board, bestMove);
-	cout << " after searching to depth " << ai.maxDepth << ".\n";
-	cout << "\nNumber of nodes scanned: " << numOfNodes << ". Number of evaluations made: " << numOfEvals << ".\n";
-	cout << "Total calculation time: " << ((float)timer) / CLOCKS_PER_SEC << " seconds. \n"; //Convert clock_t object to time in seconds and print out
+	if (!UCIMODE) {
+		cout << "\n\nI, " << NAME << ", have decided to make move ";
+		movelist.uciPrintMoveGivenMove(board, bestMove);
+		cout << " after searching to depth " << ai.maxDepth << ".\n";
+		cout << "\nNumber of nodes scanned: " << numOfNodes << ". Number of evaluations made: " << numOfEvals << ".\n";
+		cout << "Total calculation time: " << ((float)timer) / CLOCKS_PER_SEC << " seconds. \n"; //Convert clock_t object to time in seconds and print out
 
-	//Print the pv (principal variation)
-	cout << "\nPrincipal variation is:\n";
-	for (int i = 0; i < pvMovesCount; i++) {
-		movelist.uciPrintMoveGivenMoveInt(board, pvArray[i]);
+		//Print the pv (principal variation)
+		cout << "\nPrincipal variation is:\n";
+		for (int i = 0; i < pvMovesCount; i++) {
+			movelist.uciPrintMoveGivenMoveInt(board, pvArray[i]);
+		}
 	}
 
 	return bestMove;
@@ -166,7 +168,7 @@ int AI::negamax(int alpha, int beta, BoardStructure board, int depth)
 
 		//Make move i. If move i is invalid, go to the next move in the move list
 		if (!board.makeMove(gen1.moves[i])) {
-			if (depth == maxDepth) {
+			if (!UCIMODE && depth == maxDepth) {
 				cout << "\ni:" << i << " move ";
 				gen1.uciPrintMoveGivenMove(board, gen1.moves[i]); cout << " is invalid.";
 			}
@@ -194,7 +196,7 @@ int AI::negamax(int alpha, int beta, BoardStructure board, int depth)
 		}
 
 		//Print what kouri is thinking about
-		if (depth == maxDepth) {
+		if (!UCIMODE && depth == maxDepth) {
 			cout << "\ni:" << i << " thinking about valid move ";
 			gen1.uciPrintMoveGivenMove(board, gen1.moves[i]); cout << "...";
 		}
@@ -207,7 +209,7 @@ int AI::negamax(int alpha, int beta, BoardStructure board, int depth)
 		//Call negaMax() to get the move's score
 		score = -negamax(-beta, -alpha, board, depth - 1);
 
-		if (depth == maxDepth) {
+		if (!UCIMODE && depth == maxDepth) {
 			cout << " score: " << score;
 		}
 
@@ -240,8 +242,10 @@ int AI::negamax(int alpha, int beta, BoardStructure board, int depth)
 			pvBestMove = gen1.moves[i];
 			if (depth == maxDepth) {
 				bestMove = gen1.moves[i];
-				cout << "\nSetting bestMove to ";
-				gen1.uciPrintMoveGivenMove(board, gen1.moves[i]); 
+				if (!UCIMODE) {
+					cout << "\nSetting bestMove to ";
+					gen1.uciPrintMoveGivenMove(board, gen1.moves[i]);
+				}
 			}
 		}
 
