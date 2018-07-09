@@ -379,12 +379,12 @@ void MoveListGenerator::generateCastlingMoves(BoardStructure& board) {
 	}
 }
 void MoveListGenerator::generateMoveList(BoardStructure& board) {
-	numberOfMoves = 0;
-
 	//Clear move arrays
 	for (int i = 0; i <= numberOfMoves; i++) {
 		moves[i].move = 0;
 	}
+
+	numberOfMoves = 0;
 
 	//Generate psuedo-legal moves
 	generatePawnMoves(board);
@@ -504,4 +504,19 @@ bool MoveListGenerator::isMoveValid(BoardStructure& board, int move) {
 		}
 	}
 	return false;
+}
+
+int MoveListGenerator::getNumLegalMoves(BoardStructure& board) {
+	int numLegalMoves = 0;
+
+	generateMoveList(board);
+
+	for (int i = 0; i < numberOfMoves; i++) {
+		if (board.makeMove(moves[i])) {
+			numLegalMoves++;
+			board.undoMove();
+		}
+	}
+
+	return numLegalMoves;
 }

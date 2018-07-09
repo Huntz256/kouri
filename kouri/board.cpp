@@ -99,10 +99,17 @@ void BoardStructure::displayBoard() {
 	cout << "Side to move: " << (sideToMove == 0 ? "White" : "Black");
 	//cout << "\nCastling permissions: " << castlePerms << '\n';
 	///cout << "Enpass. square: " << enPassSquare << '\n';
+
+	// Display estimated probability of winning
 	float p = -((float)ai.evaluate(*this)) / 100;
 	cout << "\nKouri's evaluation: I think I have a " <<
 		round((0.5 + 0.5 * p / (abs(p) + 2 / (abs(p) + 1))) * 100) <<
-		"% chance of winning.\n";
+		"% chance of winning.";
+
+	for (const auto i : ai.getEvaluationBreakdown(*this))
+		cout << ' ' << i;
+	cout << "\n";
+
 }
 
 //Sets up the board for a standard chess match

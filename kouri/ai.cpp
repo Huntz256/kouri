@@ -229,7 +229,10 @@ int AI::negamax(int alpha, int beta, BoardStructure& board, int depth)
 	return alpha;
 }
 
-//Evaluates board from the perspective of board.sideToMove
+// Returns an an evaluation of the board.
+//  - A positive score represents a board in favor of the size to move, while a negative score means that
+//  the other side has an advantage.
+//  - Material: See PIECE_VALUE[]. A pawn is worth 100 points, a bishop 300 points, etc.
 int AI::evaluate(BoardStructure& board) {
 	//Evaluate material
 	board.countPieces();
@@ -270,11 +273,86 @@ int AI::evaluate(BoardStructure& board) {
 		}
 	}
 
+	// Evaluate mobility
+	int mobility = 0;
+	movelist.generateMoveList(board);
+	mobility += movelist.numberOfMoves;
+	board.sideToMove ^= 1;
+	movelist.generateMoveList(board);
+	mobility -= movelist.numberOfMoves;
+	board.sideToMove ^= 1;
+
 	if (board.sideToMove == WHITE) {
-		return (materialScore + positionalScore);
+		return (materialScore + positionalScore + mobility);
 	}
 	else {
-		return -(materialScore + positionalScore);
+		return -(materialScore + positionalScore + mobility);
 	}
+}
+
+vector<int> AI::getEvaluationBreakdown(BoardStructure& board) {
+
+	vector<int> evaluation;
+
+	//Evaluate material
+	board.countPieces();
+	int materialScore = PIECE_VALUE[12] * (board.pieceCount[W_KING] - board.pieceCount[B_KING])
+		+ PIECE_VALUE[10] * (board.pieceCount[W_QUEEN] - board.pieceCount[B_QUEEN])
+		+ PIECE_VALUE[8] * (board.pieceCount[W_ROOK] - board.pieceCount[B_ROOK])
+		+ PIECE_VALUE[6] * (board.pieceCount[W_BISHOP] - board.pieceCount[B_BISHOP] + board.pieceCount[W_KNIGHT] - board.pieceCount[B_KNIGHT])
+		+ PIECE_VALUE[2] * (board.pieceCount[W_PAWN] - board.pieceCount[B_PAWN]);
+
+	//Evaluate position
+	int positionalScore = 0;
+	for (int i = 21; i < 98; i++) {
+		if (RANKS[i] != -1) {
+			if (board.pieces[i] == W_PAWN) {
+				positionalScore += PAWN_TABLE[squareID64[i]];
+			}
+			else if (board.pieces[i] == B_PAWN) {
+				positionalScore -= PAWN_TABLE[MIRROR_64[squareID64[i]]];
+			}
+			else if (board.pieces[i] == W_KNIGHT) {
+				positionalScore += KNIGHT_TABLE[squareID64[i]];
+			}
+			else if (board.pieces[i] == B_KNIGHT) {
+				positionalScore -= KNIGHT_TABLE[MIRROR_64[squareID64[i]]];
+			}
+			else if (board.pieces[i] == W_BISHOP) {
+				positionalScore += BISHOP_TABLE[squareID64[i]];
+			}
+			else if (board.pieces[i] == B_BISHOP) {
+				positionalScore -= BISHOP_TABLE[MIRROR_64[squareID64[i]]];
+			}
+			else if (board.pieces[i] == W_ROOK) {
+				positionalScore += ROOK_TABLE[squareID64[i]];
+			}
+			else if (board.pieces[i] == B_ROOK) {
+				positionalScore -= ROOK_TABLE[MIRROR_64[squareID64[i]]];
+			}
+		}
+	}
+
+	// Evaluate mobility
+	int mobility = 0;
+	movelist.generateMoveList(board);
+	mobility += movelist.numberOfMoves;
+	board.sideToMove ^= 1;
+	movelist.generateMoveList(board);
+	mobility -= movelist.numberOfMoves;
+	board.sideToMove ^= 1;
+
+	if (board.sideToMove == WHITE) {
+		evaluation.push_back(materialScore);
+		evaluation.push_back(positionalScore);
+		evaluation.push_back(mobility);
+	}
+	else {
+		evaluation.push_back(-materialScore);
+		evaluation.push_back(-positionalScore);
+		evaluation.push_back(-mobility);
+	}
+
+	return evaluation;
 }
 

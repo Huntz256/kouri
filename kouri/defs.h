@@ -6,6 +6,7 @@
 #define DEFS_H
 
 #include <fstream>
+#include <vector>
 
 //Define NAME as "kouri"
 #define NAME "kouri"
@@ -249,6 +250,7 @@ public:
 	void uciPrintMoveGivenMoveInt(BoardStructure& board, int move);
 
 	bool isMoveValid(BoardStructure& board, int move);
+	int getNumLegalMoves(BoardStructure& board);
 };
 
 extern MoveListGenerator movelist;
@@ -263,10 +265,11 @@ class AI {
 	Move bestMove;
 public:
 	int maxDepth;
-	void init(BoardStructure& board); //Init AI by clearing the PV table and other variables
-	int evaluate(BoardStructure& board); //Does a basic evaluation of a board based on piece counts from WHITE's perspective
-	int negamax(int alpha, int beta, BoardStructure& board, int depth); //nega-max algorithm with alpha-beta pruning
-	Move findBestMove(BoardStructure& board, int depth); //Uses nega-max to find best move
+	void init(BoardStructure& board); // Init AI by clearing the PV table and other variables
+	int evaluate(BoardStructure& board); // Does a basic evaluation of a board from the perspective of the size to move
+	std::vector<int> getEvaluationBreakdown(BoardStructure& board); // Gets the evaluation of the board but as a vector
+	int negamax(int alpha, int beta, BoardStructure& board, int depth); // Negamax algorithm with alpha-beta pruning
+	Move findBestMove(BoardStructure& board, int depth); // Uses negamax to find best move
 };
 
 extern AI ai;

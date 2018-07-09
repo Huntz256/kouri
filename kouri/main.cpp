@@ -375,7 +375,7 @@ void testFunction70() {
 
 //Play against AI-enabled kouri
 void testFunction23() {
-	string x; board.init(true); Move m;
+	string x; Move m; board.init(true);
 	string help = "\nTo make a move, type a command in the form: a2a4 \nPawn promotions are done as such: a1b2=Q \nCastling is done using: O-O or O-O-O \nFor a movelist, type: hint \nTo forfeit, type: f \n";
 	bool quit = false;
 
@@ -383,26 +383,27 @@ void testFunction23() {
 	ai.maxDepth = 4;
 	/********************/
 
-	do {
-		cout << "Do you want to go first? (y/n)\n>> ";
-		getline(cin, x);
-	} while (x.compare("y") != 0 && x.compare("n") != 0);
-
-	if (x.compare("y") == 0) board.init(true);
-	else board.init(false);
+	board.init(true);
 
 	while (!quit) {
-		movelist.generateMoveList(board);
 		board.displayBoard();
 
-		if (movelist.numberOfMoves == 0) {
+		// Check if ai has won
+		movelist.generateMoveList(board);
+		if (movelist.getNumLegalMoves(board) == 0) {
+			if (board.isSquareAttacked(board.kingSquare[board.sideToMove], board.sideToMove ^ 1)) {
+				cout << "\nKouri has won. :)\n";
+			}
+			else {
+				cout << "\nIt's a tie!\n";
+			}
 			quit = true; break;
 		}
 
+		// Get player input
 		cout << "For a list of commands, type: help \nEnter your command (e.g. e2e4): ";
 		getline(cin, x);
 
-		//While user command is not valid
 		while (x.compare("f") == 0 || x.compare("hint") == 0 || x.compare("help") == 0 || !(movelist.isMoveValid(board, translateMoveCommand(x)))) {
 			if (x.compare("help") != 0 && x.compare("hint") != 0 && x.compare("f") != 0) {
 				cout << "\n\nThat is not a valid move or command.\n";
@@ -413,26 +414,41 @@ void testFunction23() {
 			else if (x.compare("help") == 0) cout << help << "\n";
 
 			cout << "Enter your command (e.g. e2e4): ";
-		a:
 			getline(cin, x);
 		}
 
-		if (x.compare("f") == 0) break; //exit game loop
+		// Quit game if player requests so
+		if (x.compare("f") == 0) break;
 
+		// Make player's move
 		m.move = translateMoveCommand(x);
 
 		if (!board.makeMove(m)) {
-			cout << "Playing that move would leave your king in check! Please enter another move:";
-			goto a;
+			cout << "Error";
+			quit = true; break;
 		}
 
-		///cout << "board.sideToMove:" << board.sideToMove << "\n";
+		// Check if player has won
+		movelist.generateMoveList(board);
+		if (movelist.getNumLegalMoves(board) == 0) {
+			if (board.isSquareAttacked(board.kingSquare[board.sideToMove], board.sideToMove ^ 1)) {
+				cout << "\nYou won. >:( \n";
+			}
+			else {
+				cout << "\nIt's a tie!\n";
+			}
+			quit = true; break;
+		}
+
+		// Get move from AI and make AI's move
 		m = ai.findBestMove(board, ai.maxDepth);
 		board.makeMove(m);
 	}
 
 	cout << "\nGAME OVER\n";
-	system("PAUSE"); //Windows-exclusive "Press any key to continue" command. Used in place of the getline() function
+
+	//Windows-exclusive "Press any key to continue" command. Used in place of the getline() function
+	system("PAUSE"); 
 }
 
 //Play against yourself; used to test pv table and rep rule
