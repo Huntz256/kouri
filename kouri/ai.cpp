@@ -100,7 +100,9 @@ Move AI::findBestMove(BoardStructure& board, int depth) {
 	bestScore = negamax(-INFIN, INFIN, board, depth);
 
 	//Print the best move
-	cout << "bestMove is:"; movelist.uciPrintMoveGivenMove(board, bestMove);
+	if (!UCIMODE) {
+		cout << "bestMove is:"; movelist.uciPrintMoveGivenMove(board, bestMove);
+	}
 
 	//Fill pvArray and get number of moves in pv
 	pvMovesCount = table.getPVLine(board, depth);
