@@ -112,15 +112,8 @@ void Move_List_Generator::add_pawn_capturing_move(int from_square, int to_square
         }
     }
 }
-void Move_List_Generator::add_pawn_move(int from_square, int to_square, int side)
+void Move_List_Generator::add_pawn_move(int from_square, int to_square, int side) noexcept
 {
-    if (files[from_square] == -1) {
-        throw "ERROR1";
-    }
-    if (files[to_square] == -1) {
-        throw "ERROR2";
-    }
-
     //White----
     if (side == WHITE) {
         //Promotions

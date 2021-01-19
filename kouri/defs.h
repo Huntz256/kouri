@@ -244,7 +244,7 @@ public:
     void generate_castling_moves(Board_Structure& board);
 
     void add_pawn_capturing_move(int from_square, int to_square, int capture, int side);
-    void add_pawn_move(int from_square, int to_square, int side);
+    void add_pawn_move(int from_square, int to_square, int side) noexcept;
     void print_move_list(const Board_Structure& board);
     void uci_print_move_given_move_list_number(int move_num);
     void uci_print_move_given_move(Move m);
