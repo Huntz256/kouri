@@ -389,10 +389,6 @@ void testFunction23()
     string help = "\nTo make a move, type a command in the form: a2a4 \nPawn promotions are done as such: a1b2=Q \nCastling is done using: O-O or O-O-O \nFor a movelist, type: hint \nTo forfeit, type: f \n";
     bool quit = false;
 
-    /***Set depth here***/
-    ai.maxDepth = 4;
-    /********************/
-
     board.init(true);
 
     while (!quit) {
@@ -534,7 +530,6 @@ void initKeys() noexcept
 void uci(string in)
 {
     string uciCommand = in; Move m;
-    ai.maxDepth = 4;
 
     do {
         if (uciCommand == "uci") {

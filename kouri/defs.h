@@ -262,12 +262,12 @@ extern int pvArray[64];
 //AI Stuff
 class AI {
 public:
-    int maxDepth;
     void init(BoardStructure& board) noexcept; // Init AI by clearing the PV table and other variables
     int evaluate(BoardStructure& board); // Does a basic evaluation of a board from the perspective of the size to move
     std::vector<int> getEvaluationBreakdown(BoardStructure& board); // Gets the evaluation of the board but as a vector
     int negamax(int alpha, int beta, BoardStructure& board, int depth); // Negamax algorithm with alpha-beta pruning
     Move findBestMove(BoardStructure& board, int depth); // Uses negamax to find best move
+    int maxDepth = 6;
 private:
     int numOfNodes; //Number of nodes scanned for a search
     int numOfEvals; //Number of evaluations done for a search
