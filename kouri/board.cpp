@@ -5,7 +5,7 @@
 #include <cmath>
 using namespace std;
 
-const int CASTLE_PERMISSIONS[120] = {
+const int castle_permissions[120] = {
     15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
     15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
     15, 13, 15, 15, 15, 12, 15, 15, 14, 15,
@@ -21,33 +21,33 @@ const int CASTLE_PERMISSIONS[120] = {
 };
 
 //Represents where a knight/rook/bishop/queeen/king can move
-const int KNIGHT_MOVEMENTS[8] = { -19, -8, 12, 21, 19, 8, -12, -21 };
-const int ROOK_MOVEMENTS[4] = { -10, 1, 10, -1 };
-const int BISHOP_MOVEMENTS[4] = { -9, 11, 9, -11 };
-const int KING_MOVEMENTS[8] = { -10, -9, 1, 11, 10, 9, -1, -11 };
+const int knight_movements[8] = { -19, -8, 12, 21, 19, 8, -12, -21 };
+const int rook_movements[4] = { -10, 1, 10, -1 };
+const int bishop_movements[4] = { -9, 11, 9, -11 };
+const int king_movements[8] = { -10, -9, 1, 11, 10, 9, -1, -11 };
 
 //Returns a character representing a piece, given a piece number.
-char numToPieceChar(int num)
+char num_to_piece_char(int num)
 {
-    unordered_map<int, char> pieceMap;
+    unordered_map<int, char> piece_map;
 
     if (num >= 0) {
-        pieceMap[0] = ' ';
-        pieceMap[B_PAWN] = 'p';  pieceMap[W_PAWN] = 'P';
-        pieceMap[B_BISHOP] = 'b';  pieceMap[W_BISHOP] = 'B';
-        pieceMap[B_KNIGHT] = 'n';  pieceMap[W_KNIGHT] = 'N';
-        pieceMap[B_ROOK] = 'r';  pieceMap[W_ROOK] = 'R';
-        pieceMap[B_QUEEN] = 'q';  pieceMap[W_QUEEN] = 'Q';
-        pieceMap[B_KING] = 'k'; pieceMap[W_KING] = 'K';
+        piece_map[0] = ' ';
+        piece_map[B_PAWN] = 'p';  piece_map[W_PAWN] = 'P';
+        piece_map[B_BISHOP] = 'b';  piece_map[W_BISHOP] = 'B';
+        piece_map[B_KNIGHT] = 'n';  piece_map[W_KNIGHT] = 'N';
+        piece_map[B_ROOK] = 'r';  piece_map[W_ROOK] = 'R';
+        piece_map[B_QUEEN] = 'q';  piece_map[W_QUEEN] = 'Q';
+        piece_map[B_KING] = 'k'; piece_map[W_KING] = 'K';
 
-        return pieceMap[num];
+        return piece_map[num];
     }
 
     return '~';
 }
 
 //Used for pawn promotion user command
-int charToPieceInt(char c) noexcept
+int char_to_piece_int(char c) noexcept
 {
     switch (c) {
     case 'p': return B_PAWN; case 'P': return W_PAWN;
@@ -61,17 +61,17 @@ int charToPieceInt(char c) noexcept
 }
 
 //Outputs full 10x12 board to console
-void BoardStructure::displayFullBoard(bool dispPieces)
+void Board_Structure::display_full_board(bool disp_pieces)
 {
     for (int i = 0; i < BOARD_SQUARE_COUNT; i++) {
         if (i % 10 == 0) {
             cout << "\n------------------------------\n";
         }
-        if (!dispPieces && pieces[i] < 10 && pieces[i] >= 0) {
+        if (!disp_pieces && pieces[i] < 10 && pieces[i] >= 0) {
             cout << 0;
         }
-        if (dispPieces) {
-            cout << " " << numToPieceChar(pieces[i]) << "|";
+        if (disp_pieces) {
+            cout << " " << num_to_piece_char(pieces[i]) << "|";
         }
         else {
             cout << pieces[i] << "|";
@@ -80,28 +80,28 @@ void BoardStructure::displayFullBoard(bool dispPieces)
     cout << "\n------------------------------\n";
 
     //Also display some more infomation
-    cout << "Side to move: " << (sideToMove == 0 ? "White" : "Black");
-    cout << "\nCastling permissions: " << castlePerms << '\n';
+    cout << "Side to move: " << (side_to_move == 0 ? "White" : "Black");
+    cout << "\nCastling permissions: " << castle_perms << '\n';
 }
 
 //Outputs 8x8 board to console
-void BoardStructure::displayBoard()
+void Board_Structure::display_board()
 {
     //Display the board with white on bottom
     cout << "\n";
     for (int rank = RANK_8; rank >= RANK_1; rank--) {
         cout << rank + 1 << " ";
         for (int file = FILE_A; file <= FILE_H; file++) {
-            cout << " " << numToPieceChar(pieces[squareID120[rank * 8 + file]]) << "|";
+            cout << " " << num_to_piece_char(pieces[square_ID_120[rank * 8 + file]]) << "|";
         }
         cout << "\n  ------------------------\n";
     }
     cout << "   a  b  c  d  e  f  g  h\n\n";
 
     //Also display some more infomation
-    cout << "Side to move: " << (sideToMove == 0 ? "White" : "Black");
-    //cout << "\nCastling permissions: " << castlePerms << '\n';
-    ///cout << "Enpass. square: " << enPassSquare << '\n';
+    cout << "Side to move: " << (side_to_move == 0 ? "White" : "Black");
+    //cout << "\nCastling permissions: " << castle_perms << '\n';
+    ///cout << "Enpass. square: " << en_pass_square << '\n';
 
     // Display estimated probability of winning
     const float p = -((float)ai.evaluate(*this)) / 100;
@@ -109,25 +109,25 @@ void BoardStructure::displayBoard()
         round((0.5 + 0.5 * p / ((double)abs(p) + 2 / ((double)abs(p) + 1))) * 100) <<
         "% chance of winning.";
 
-    for (const auto i : ai.getEvaluationBreakdown(*this))
+    for (const auto i : ai.get_eval_breakdown(*this))
         cout << ' ' << i;
     cout << "\n";
 
 }
 
 //Sets up the board for a standard chess match
-void BoardStructure::init(bool goFirst)
+void Board_Structure::init(bool go_first)
 {
-    if (goFirst) {
-        setUpBoardUsingFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+    if (go_first) {
+        setup_board_using_FEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
     }
     else {
-        setUpBoardUsingFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1");
+        setup_board_using_FEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1");
     }
 }
 
 //Resets the board
-void BoardStructure::resetBoardToEmpty() noexcept
+void Board_Structure::reset_board_to_empty() noexcept
 {
     //Set all squares on the board to the value -1 representing off board squares
     for (int i = 0; i < BOARD_SQUARE_COUNT; i++) {
@@ -136,7 +136,7 @@ void BoardStructure::resetBoardToEmpty() noexcept
 
     //Set only the middle 8 x 8 squares to the value 0 representing empty squares
     for (int i = 0; i < 64; i++) {
-        pieces[squareID120[i]] = 0;
+        pieces[square_ID_120[i]] = 0;
     }
 
     //Clear the pawns bitboard and reset material value to zero
@@ -146,38 +146,38 @@ void BoardStructure::resetBoardToEmpty() noexcept
     }
 
     //No side can castle on an empty board
-    castlePerms = 0;
+    castle_perms = 0;
 
     //Reset en pass square
-    enPassSquare = 0;
+    en_pass_square = 0;
 
     //Reset king's square
-    kingSquare[0] = 0; kingSquare[1] = 0;
+    king_square[0] = 0; king_square[1] = 0;
 
-    //Reset ply and historyPly
-    ply = 0; historyPly = 0;
+    //Reset ply and history_ply
+    ply = 0; history_ply = 0;
 
     //Reset side to move 
-    sideToMove = WHITE;
+    side_to_move = WHITE;
 
     //Reset position ID by setting all bits to zero
-    positionID = 0ULL;
+    position_ID = 0ULL;
 
     //Init pv table
-    table.initPVTable();
+    table.init_PV_table();
 }
 
 //Sets up pieces given a FEN string. Returns 0 if successful.
-int BoardStructure::setUpBoardUsingFEN(string fen)
+int Board_Structure::setup_board_using_FEN(string fen)
 {
-    resetBoardToEmpty();
+    reset_board_to_empty();
 
-    int currentRank = RANK_8, currentFile = FILE_A, emptyNum = 0, piece = 0;
+    int current_rank = RANK_8, current_file = FILE_A, empty_num = 0, piece = 0;
     size_t i = 0;
 
     //Set up board pieces using the infomation in fen
-    while ((currentRank >= RANK_1) && (i < fen.size())) {
-        emptyNum = 1;
+    while ((current_rank >= RANK_1) && (i < fen.size())) {
+        empty_num = 1;
 
         switch (fen[i]) {
         case 'p': piece = B_PAWN; break; case 'P': piece = W_PAWN; break;
@@ -188,26 +188,26 @@ int BoardStructure::setUpBoardUsingFEN(string fen)
         case 'k': piece = B_KING; break; case 'K': piece = W_KING; break;
 
         case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8':
-            piece = 0; emptyNum = fen[i] - '0'; break;
+            piece = 0; empty_num = fen[i] - '0'; break;
 
         case '/': case ' ':
-            currentRank--; currentFile = FILE_A; i++; continue;
+            current_rank--; current_file = FILE_A; i++; continue;
         default:
             return -1;
         }
 
-        for (int j = 0; j < emptyNum; j++) {
+        for (int j = 0; j < empty_num; j++) {
             if (piece != 0) {
-                pieces[squareID120[currentRank * 8 + currentFile]] = piece;
+                pieces[square_ID_120[current_rank * 8 + current_file]] = piece;
             }
-            currentFile++;
+            current_file++;
         }
 
         i++;
     }
 
     //Set the side to move using infomation in FEN
-    sideToMove = (fen[i] == 'w') ? 0 : 1;
+    side_to_move = (fen[i] == 'w') ? 0 : 1;
 
     //Set castling permissions using infomation in FEN
     fen += 2;
@@ -218,30 +218,30 @@ int BoardStructure::setUpBoardUsingFEN(string fen)
 
         //for a FEN such as ...blah blah w KQkq blah blah...
         switch (fen[i]) {
-        case 'K': castlePerms |= 1;  break; //... if there is a K, do castlePerms OR 0001; e.g. 0000 | 0001 = 0001
-        case 'Q': castlePerms |= 2;  break; //... if there is a Q, do castlePerms OR 0010; e.g. 0001 | 0010 = 0011
-        case 'k': castlePerms |= 4;  break; //... if there is a k, do castlePerms OR 0100; e.g. 0011 | 0100 = 0111
-        case 'q': castlePerms |= 8; break; //... if there is a q, do castlePerms OR 1000; e.g. 0111 | 1000 = 1111
+        case 'K': castle_perms |= 1;  break; //... if there is a K, do castle_perms OR 0001; e.g. 0000 | 0001 = 0001
+        case 'Q': castle_perms |= 2;  break; //... if there is a Q, do castle_perms OR 0010; e.g. 0001 | 0010 = 0011
+        case 'k': castle_perms |= 4;  break; //... if there is a k, do castle_perms OR 0100; e.g. 0011 | 0100 = 0111
+        case 'q': castle_perms |= 8; break; //... if there is a q, do castle_perms OR 1000; e.g. 0111 | 1000 = 1111
         default: break;
         }
         i++;
     }
 
     //Generate position id
-    positionID = generateAndGetPositionID();
+    position_ID = generate_and_get_position_ID();
 
-    //Update material[] and kingSquare[]
+    //Update material[] and king_square[]
     for (int j = 0; j < BOARD_SQUARE_COUNT; j++) {
         if (pieces[j] > 0) {
-            int color = getPieceColor(pieces[j]);
-            material[color] += PIECE_VALUE[pieces[j]];
-            pieceCount[pieces[j]]++;
+            int color = get_piece_color(pieces[j]);
+            material[color] += piece_value[pieces[j]];
+            piece_count[pieces[j]]++;
 
             if (pieces[j] == W_KING) {
-                kingSquare[WHITE] = j;
+                king_square[WHITE] = j;
             }
             else if (pieces[j] == B_KING) {
-                kingSquare[BLACK] = j;
+                king_square[BLACK] = j;
             }
 
         }
@@ -251,21 +251,21 @@ int BoardStructure::setUpBoardUsingFEN(string fen)
 }
 
 //Retrieves the color of a piece
-int BoardStructure::getPieceColor(int pieceNum) noexcept
+int Board_Structure::get_piece_color(int piece_num) noexcept
 {
-    switch (pieceNum) {
+    switch (piece_num) {
     case B_PAWN: case B_BISHOP: case B_KNIGHT: case B_ROOK: case B_QUEEN: case B_KING:
         return BLACK; break;
     case W_PAWN: case W_BISHOP: case W_KNIGHT: case W_ROOK: case W_QUEEN: case W_KING:
         return WHITE; break;
     default:
-        ///cout << "ERROR: INVALID PIECE COLOR. pieceNum: " << pieceNum << "\n";
+        ///cout << "ERROR: INVALID PIECE COLOR. piece_num: " << piece_num << "\n";
         return -42; break;
     }
 }
 
 //Displays all the moves so far as move integers
-void BoardStructure::displayHistory()
+void Board_Structure::display_history()
 {
     for (int i = 0; i < 1028; i++) {
         if (history[i].move == 0) break;
@@ -274,189 +274,188 @@ void BoardStructure::displayHistory()
     cout << "\n";
 }
 
-//Prints a square. For example, printSquare(55) prints "e4"
-void printSquare(int square)
+//Prints a square. For example, print_square(55) prints "e4"
+void print_square(int square)
 {
-    cout << FILES_TO_CHAR[FILES[square]] << (1 + RANKS[square]);
+    cout << files_to_char[files[square]] << (1 + ranks[square]);
 }
 
-//Returns true if square square is being attacked by a piece from the side attackingSide
-bool BoardStructure::isSquareAttacked(int square, int attackingSide)
+//Returns true if square square is being attacked by a piece from the side attacking_side
+bool Board_Structure::is_square_attacked(int square, int attacking_side)
 {
-    //cout << "isSquareAttacked(): attackingSide = " << attackingSide << "\n";
-    ///cout << "isSquareAttacked(): bloop\n";
+    //cout << "is_square_attacked(): attacking_side = " << attacking_side << "\n";
+    ///cout << "is_square_attacked(): bloop\n";
     //Make sure arguments of this function are valid first
     if (pieces[square] == -1) {
         cout << "EXCEPTION: INVALID SQUARE ARGUMENT";
     }
 
-    //Check if square square is being attacked by attackingSide by any pawns...
-    if (attackingSide == WHITE) {
+    //Check if square square is being attacked by attacking_side by any pawns...
+    if (attacking_side == WHITE) {
 
         //If square square is being attacked by a white pawn, return true
         if (pieces[square - 11] == 2 || pieces[square - 9] == 2) {
-            ///cout << "isSquareAttacked(): yes. square " << square << " is being attacked by a pawn\n"; 
+            ///cout << "is_square_attacked(): yes. square " << square << " is being attacked by a pawn\n"; 
             return true;
         }
-
 
     }
     else {
         //If square square is being attacked by a black pawn, return true
         if (pieces[square + 11] == 1 || pieces[square + 9] == 1) {
-            ///cout << "isSquareAttacked(): yes. square " << square << " is being attacked by a pawn\n"; 
+            ///cout << "is_square_attacked(): yes. square " << square << " is being attacked by a pawn\n"; 
             return true;
         }
     }
 
-    //Check if square square is being attacked by attackingSide by any knights...
+    //Check if square square is being attacked by attacking_side by any knights...
     for (int i = 0; i < 8; i++) {
 
         //If square square is being attacked by a white knight, return true
-        if (attackingSide == WHITE) {
-            if (pieces[square + KNIGHT_MOVEMENTS[i]] == 6) {
-                ///cout << "isSquareAttacked(): yes. square " << square << " is being attacked by a white knight\n"; 
+        if (attacking_side == WHITE) {
+            if (pieces[square + knight_movements[i]] == 6) {
+                ///cout << "is_square_attacked(): yes. square " << square << " is being attacked by a white knight\n"; 
                 return true;
             }
         }
         else {
             //If square square is being attacked by a black knight, return true
-            if (pieces[square + KNIGHT_MOVEMENTS[i]] == 5) {
-                ///cout << "isSquareAttacked(): yes. square " << square << " is being attacked by a black knight\n"; 
+            if (pieces[square + knight_movements[i]] == 5) {
+                ///cout << "is_square_attacked(): yes. square " << square << " is being attacked by a black knight\n"; 
                 return true;
             }
         }
     }
 
-    //Check if square square is being attacked by attackingSide by any rooks or queens...
-    int tempSquare = 0;
+    //Check if square square is being attacked by attacking_side by any rooks or queens...
+    int temp_square = 0;
     for (int i = 0; i < 4; i++) {
-        tempSquare = square + ROOK_MOVEMENTS[i];
-        while (pieces[tempSquare] != -1) {
-            if (pieces[tempSquare] != 0) {
-                if (((pieces[tempSquare] == 8) || (pieces[tempSquare] == 10)) && attackingSide == WHITE) {
-                    ///cout << "isSquareAttacked(): yes. square " << square << " is being attacked by a white rook or queen\n"; 
+        temp_square = square + rook_movements[i];
+        while (pieces[temp_square] != -1) {
+            if (pieces[temp_square] != 0) {
+                if (((pieces[temp_square] == 8) || (pieces[temp_square] == 10)) && attacking_side == WHITE) {
+                    ///cout << "is_square_attacked(): yes. square " << square << " is being attacked by a white rook or queen\n"; 
                     return true;
                 }
-                if (((pieces[tempSquare] == 7) || (pieces[tempSquare] == 9)) && attackingSide == BLACK) {
-                    ///cout << "isSquareAttacked(): yes. square " << square << " is being attacked by a black rook or queen\n"; 
+                if (((pieces[temp_square] == 7) || (pieces[temp_square] == 9)) && attacking_side == BLACK) {
+                    ///cout << "is_square_attacked(): yes. square " << square << " is being attacked by a black rook or queen\n"; 
                     return true;
                 }
                 break;
             }
-            tempSquare += ROOK_MOVEMENTS[i];
+            temp_square += rook_movements[i];
         }
     }
 
-    //Check if square square is being attacked by attackingSide by any bishops or queens...
-    tempSquare = 0;
+    //Check if square square is being attacked by attacking_side by any bishops or queens...
+    temp_square = 0;
     for (int i = 0; i < 4; i++) {
-        tempSquare = square + BISHOP_MOVEMENTS[i];
-        while (pieces[tempSquare] != -1) {
-            if (pieces[tempSquare] != 0) {
-                if (((pieces[tempSquare] == 4) || (pieces[tempSquare] == 10)) && attackingSide == WHITE) {
-                    ///cout << "isSquareAttacked(): yes. square " << square << " is being attacked by a white bishop or queen\n";
+        temp_square = square + bishop_movements[i];
+        while (pieces[temp_square] != -1) {
+            if (pieces[temp_square] != 0) {
+                if (((pieces[temp_square] == 4) || (pieces[temp_square] == 10)) && attacking_side == WHITE) {
+                    ///cout << "is_square_attacked(): yes. square " << square << " is being attacked by a white bishop or queen\n";
                     return true;
                 }
-                if (((pieces[tempSquare] == 3) || (pieces[tempSquare] == 9)) && attackingSide == BLACK) {
-                    ///cout << "isSquareAttacked(): yes. square " << square << " is being attacked by a white bishop or queen\n"; 
+                if (((pieces[temp_square] == 3) || (pieces[temp_square] == 9)) && attacking_side == BLACK) {
+                    ///cout << "is_square_attacked(): yes. square " << square << " is being attacked by a white bishop or queen\n"; 
                     return true;
                 }
                 break;
             }
-            tempSquare += BISHOP_MOVEMENTS[i];
+            temp_square += bishop_movements[i];
         }
     }
 
-    //Check if square square is being attacked by attackingSide by any kings (with the courage to attack)...
+    //Check if square square is being attacked by attacking_side by any kings (with the courage to attack)...
     for (int i = 0; i < 8; i++) {
 
         //If square square is being attacked by a white knight, return true
-        if (attackingSide == WHITE && pieces[square + KING_MOVEMENTS[i]] == 12) {
-            ///cout << "isSquareAttacked(): yes. square " << square << " is being attacked by a white king\n"; 
+        if (attacking_side == WHITE && pieces[square + king_movements[i]] == 12) {
+            ///cout << "is_square_attacked(): yes. square " << square << " is being attacked by a white king\n"; 
             return true;
         }
         else {
             //If square square is being attacked by a black knight, return true
-            if (pieces[square + KING_MOVEMENTS[i]] == 11 && attackingSide == BLACK) {
-                ///cout << "isSquareAttacked(): yes. square " << square << " is being attacked by a black king\n"; 
+            if (pieces[square + king_movements[i]] == 11 && attacking_side == BLACK) {
+                ///cout << "is_square_attacked(): yes. square " << square << " is being attacked by a black king\n"; 
                 return true;
             }
         }
     }
 
-    ///cout << "isSquareAttacked(): no. square " << square << " is not being attacked by anyone\n";
+    ///cout << "is_square_attacked(): no. square " << square << " is not being attacked by anyone\n";
     return false;
 }
 
 //Remove the piece from square square and update variables as needed
-void BoardStructure::removePieceFromSquare(int square) noexcept
+void Board_Structure::remove_piece_from_square(int square) noexcept
 {
-    //Update positionID, material, and pieceCount
-    positionID ^= pieceSquareKey[pieces[square]][square];
-    material[getPieceColor(pieces[square])] -= PIECE_VALUE[pieces[square]];
-    pieceCount[pieces[square]]--;
+    //Update position_ID, material, and piece_count
+    position_ID ^= piece_square_key[pieces[square]][square];
+    material[get_piece_color(pieces[square])] -= piece_value[pieces[square]];
+    piece_count[pieces[square]]--;
 
     //Set square to EMPTY
     pieces[square] = EMPTY;
 }
 
 //Add piece piece to square square and update variables as needed
-void BoardStructure::addPieceToSquare(int square, int piece) noexcept
+void Board_Structure::add_piece_to_square(int square, int piece) noexcept
 {
-    //Update positionID, material, and pieceCount
-    positionID ^= pieceSquareKey[pieces[square]][square];
-    material[getPieceColor(pieces[square])] += PIECE_VALUE[pieces[square]];
-    pieceCount[pieces[square]]++;
+    //Update position_ID, material, and piece_count
+    position_ID ^= piece_square_key[pieces[square]][square];
+    material[get_piece_color(pieces[square])] += piece_value[pieces[square]];
+    piece_count[pieces[square]]++;
 
     //Set square to the piece
     pieces[square] = piece;
 }
 
-//Move piece piece from square fromSquare to square toSquare
-void BoardStructure::movePieceToSquare(int fromSquare, int toSquare) noexcept
+//Move piece piece from square from_square to square to_square
+void Board_Structure::move_piece_to_square(int fromSquare, int toSquare) noexcept
 {
     const int piece = pieces[fromSquare];
 
-    //Update positionID and set toSquare to the piece and set fromSquare to EMPTY
-    positionID ^= pieceSquareKey[pieces[fromSquare]][fromSquare];
+    //Update position_ID and set to_square to the piece and set from_square to EMPTY
+    position_ID ^= piece_square_key[pieces[fromSquare]][fromSquare];
     pieces[fromSquare] = EMPTY;
-    positionID ^= pieceSquareKey[pieces[toSquare]][toSquare];
+    position_ID ^= piece_square_key[pieces[toSquare]][toSquare];
     pieces[toSquare] = piece;
 }
 
 //Modifies the board and stores the move in history[]. 
 //Returns false if after making the move the side making the move leaves themselves in check,
 //or in other cases when the move is invalid
-bool BoardStructure::makeMove(Move m)
+bool Board_Structure::make_move(Move m)
 {
     //Inits and validations before we even attempt to make the move--------------------------------------	
-    const int fromSquare = m.getFromSquare();
-    const int toSquare = m.getToSquare();
-    const int capturedPiece = m.getCapturedPiece();
-    const int castling = m.getCastling();
-    const int promotedPiece = m.getPromoted();
-    const int side = sideToMove;
+    const int from_square = m.get_from_square();
+    const int to_square = m.get_to_square();
+    const int captured_piece = m.get_captured_piece();
+    const int castling = m.get_castling();
+    const int promoted_piece = m.get_promoted();
+    const int side = side_to_move;
 
     //If board is not valid, show an error message
-    if (!isBoardValid()) {
+    if (!is_board_valid()) {
         cout << "\nERROR: BOARD NOT VALID.\n";
         return false;
     }
 
-    //If piece on fromSquare is not valid, show an error message
-    if ((pieces[fromSquare] < B_PAWN) || (pieces[fromSquare] > W_KING)) {
-        cout << "\nERROR: PIECE NUMBER " << pieces[fromSquare] << " ON SQUARE " << fromSquare << " IS NOT VALID.\n";
+    //If piece on from_square is not valid, show an error message
+    if ((pieces[from_square] < B_PAWN) || (pieces[from_square] > W_KING)) {
+        cout << "\nERROR: PIECE NUMBER " << pieces[from_square] << " ON SQUARE " << from_square << " IS NOT VALID.\n";
         return false;
     }
 
-    //If square fromSquare or toSquare is not on the board, show an error message
-    if (FILES[fromSquare] == -1) {
-        cout << "\nERROR: FROMSQUARE " << fromSquare << " IS NOT VALID.\n";
+    //If square from_square or to_square is not on the board, show an error message
+    if (files[from_square] == -1) {
+        cout << "\nERROR: FROMSQUARE " << from_square << " IS NOT VALID.\n";
         return false;
     }
-    if (FILES[toSquare] == -1) {
-        cout << "\nERROR: TOSQUARE " << toSquare << " IS NOT VALID.\n";
+    if (files[to_square] == -1) {
+        cout << "\nERROR: TOSQUARE " << to_square << " IS NOT VALID.\n";
         return false;
     }
 
@@ -465,26 +464,26 @@ bool BoardStructure::makeMove(Move m)
     //Start of performing the special movement portions of special moves (castling, en passant) -----------------------------
 
     //Update history[]'s position ID
-    history[historyPly].positionID = positionID;
+    history[history_ply].position_ID = position_ID;
 
     //If en passant move, make the en passant portion (i.e. clearing a pawn) of the move
         //to do later
 
     //If castling move, make the rook movement portion of the castling move
     if (castling != 0) {
-        switch (toSquare) {
+        switch (to_square) {
             //White Kingside Castling
         case 27:
-            movePieceToSquare(28, 26); break;
+            move_piece_to_square(28, 26); break;
             //White Queenside Castling
         case 23:
-            movePieceToSquare(21, 24); break;
+            move_piece_to_square(21, 24); break;
             //Black Kingside Castling
         case 97:
-            movePieceToSquare(98, 96); break;
+            move_piece_to_square(98, 96); break;
             //Black Queenside Castling
         case 93:
-            movePieceToSquare(91, 94); break;
+            move_piece_to_square(91, 94); break;
         default:
             cout << "\nERROR: INVALID CASTILING TOSQUARE.\n"; break;
         }
@@ -493,56 +492,56 @@ bool BoardStructure::makeMove(Move m)
     //End of performing the special movement portions of special moves (castling, en passant) -----------------------------
 
     //Update history[]
-    history[historyPly].move = m.move;
-    history[historyPly].castlePerms = castlePerms;
-    history[historyPly].enPassSquare = enPassSquare;
+    history[history_ply].move = m.move;
+    history[history_ply].castle_perms = castle_perms;
+    history[history_ply].en_pass_square = en_pass_square;
 
     //Update castling permissions
     //If a piece moves from a8, a1, e1, or e8, update castling permissions as needed
-    castlePerms &= CASTLE_PERMISSIONS[fromSquare];
-    castlePerms &= CASTLE_PERMISSIONS[toSquare];
+    castle_perms &= castle_permissions[from_square];
+    castle_perms &= castle_permissions[to_square];
 
-    //Update enPassSquare to 0, as the enpassant portion of the move has already been made
-    enPassSquare = 0;
+    //Update en_pass_square to 0, as the enpassant portion of the move has already been made
+    en_pass_square = 0;
 
     //If a capturing move, remove captured piece
-    if (capturedPiece != EMPTY) {
-        removePieceFromSquare(toSquare);
+    if (captured_piece != EMPTY) {
+        remove_piece_from_square(to_square);
     }
 
-    //Update historyPly and ply
-    historyPly++; ply++;
+    //Update history_ply and ply
+    history_ply++; ply++;
 
     //Update en pass square if needed
-    /*if (pieces[m.getFromSquare()] == W_PAWN || (pieces[m.getFromSquare()] == B_PAWN)) {
-        if (sideToMove == WHITE) {
-            enPassSquare = m.getFromSquare() + 10;
+    /*if (pieces[m.get_from_square()] == W_PAWN || (pieces[m.get_from_square()] == B_PAWN)) {
+        if (side_to_move == WHITE) {
+            en_pass_square = m.get_from_square() + 10;
         }
         else {
-            enPassSquare = m.getFromSquare() - 10;
+            en_pass_square = m.get_from_square() - 10;
         }
     }*/
 
     //Now that the captured piece is removed, we can now actually move the piece we want to move
-    movePieceToSquare(fromSquare, toSquare);
+    move_piece_to_square(from_square, to_square);
 
     //If this is a promotion move, then promote the pawn
-    if (castling == 0 && promotedPiece != 0) {
-        removePieceFromSquare(toSquare);
-        addPieceToSquare(toSquare, promotedPiece);
+    if (castling == 0 && promoted_piece != 0) {
+        remove_piece_from_square(to_square);
+        add_piece_to_square(to_square, promoted_piece);
     }
 
     //Update king square if the king moved
-    if ((pieces[toSquare] == W_KING) || (pieces[toSquare] == B_KING)) {
-        kingSquare[sideToMove] = toSquare;
+    if ((pieces[to_square] == W_KING) || (pieces[to_square] == B_KING)) {
+        king_square[side_to_move] = to_square;
     }
 
-    //Flip side to move and update positionID
-    sideToMove ^= 1; positionID = generateAndGetPositionID();
+    //Flip side to move and update position_ID
+    side_to_move ^= 1; position_ID = generate_and_get_position_ID();
 
     //If the king is under attack (in check) now, undo the move and return false
-    if (isSquareAttacked(kingSquare[side], sideToMove) == true) {
-        undoMove();
+    if (is_square_attacked(king_square[side], side_to_move) == true) {
+        undo_move();
         return false;
     }
 
@@ -550,33 +549,33 @@ bool BoardStructure::makeMove(Move m)
 }
 
 //Undoes the last move
-void BoardStructure::undoMove()
+void Board_Structure::undo_move()
 {
-    //Update ply and historyPly
-    ply--; historyPly--;
+    //Update ply and history_ply
+    ply--; history_ply--;
 
     //Init variables
-    const int m = history[historyPly].move;
-    const int fromSquare = m & 0x7F;
-    const int toSquare = (m >> 7) & 0x7F;
+    const int m = history[history_ply].move;
+    const int from_square = m & 0x7F;
+    const int to_square = (m >> 7) & 0x7F;
     const int captured = (m >> 14) & 0xF;
-    const int promotedPiece = (m >> 18) & 0xF;
+    const int promoted_piece = (m >> 18) & 0xF;
     const int castling = (m >> 22) & 0x7;
 
-    //If square fromSquare or toSquare is not on the board, output an error message
-    if (fromSquare >= BOARD_SQUARE_COUNT || FILES[fromSquare] == -1) {
-        cout << "\nERROR: FROMSQUARE " << fromSquare << " IS NOT VALID.\n";
+    //If square from_square or to_square is not on the board, output an error message
+    if (from_square >= BOARD_SQUARE_COUNT || files[from_square] == -1) {
+        cout << "\nERROR: FROMSQUARE " << from_square << " IS NOT VALID.\n";
     }
-    if (toSquare >= BOARD_SQUARE_COUNT || FILES[toSquare] == -1) {
-        cout << "\nERROR: TOSQUARE " << toSquare << " IS NOT VALID.\n";
+    if (to_square >= BOARD_SQUARE_COUNT || files[to_square] == -1) {
+        cout << "\nERROR: TOSQUARE " << to_square << " IS NOT VALID.\n";
     }
 
-    //Revert castlePerms and enPassSquare
-    castlePerms = history[historyPly].castlePerms;
-    enPassSquare = history[historyPly].enPassSquare;
+    //Revert castle_perms and en_pass_square
+    castle_perms = history[history_ply].castle_perms;
+    en_pass_square = history[history_ply].en_pass_square;
 
-    //Flip side to move and update positionID
-    sideToMove ^= 1; positionID = generateAndGetPositionID();
+    //Flip side to move and update position_ID
+    side_to_move ^= 1; position_ID = generate_and_get_position_ID();
 
     //If en passant move, undo the en passant portion (i.e. clearing a pawn) of the move
         //to do later
@@ -584,81 +583,81 @@ void BoardStructure::undoMove()
     //If castling move, undo the rook movement portion of the castling move
     //In other words move the rooks back to their home squares if needed
     if (castling != 0) {
-        switch (toSquare) {
+        switch (to_square) {
             //White Kingside Castling
         case 27:
-            movePieceToSquare(26, 28); break;
+            move_piece_to_square(26, 28); break;
             //White Queenside Castling
         case 23:
-            movePieceToSquare(24, 21); break;
+            move_piece_to_square(24, 21); break;
             //Black Kingside Castling
         case 97:
-            movePieceToSquare(96, 98); break;
+            move_piece_to_square(96, 98); break;
             //Black Queenside Castling
         case 93:
-            movePieceToSquare(94, 91); break;
+            move_piece_to_square(94, 91); break;
         default:
             cout << "\nERROR: INVALID CASTILING TOSQUARE.\n"; break;
         }
     }
 
-    //Move piece back to fromSquare.
-    movePieceToSquare(toSquare, fromSquare);
+    //Move piece back to from_square.
+    move_piece_to_square(to_square, from_square);
 
     //Update KingSq if the king moved
-    if ((pieces[fromSquare] == W_KING) || (pieces[fromSquare] == B_KING)) {
-        kingSquare[sideToMove] = fromSquare;
+    if ((pieces[from_square] == W_KING) || (pieces[from_square] == B_KING)) {
+        king_square[side_to_move] = from_square;
     }
 
     //Then, undo clearing of piece due to capture if there was a capture
     if (captured != EMPTY) {
-        addPieceToSquare(toSquare, captured);
+        add_piece_to_square(to_square, captured);
     }
 
     //Then, undo promotion if there was a promotion
-    if (promotedPiece != EMPTY) {
-        removePieceFromSquare(fromSquare);
-        addPieceToSquare(fromSquare, ((getPieceColor(pieces[fromSquare]) == WHITE) ? W_PAWN : B_PAWN));
+    if (promoted_piece != EMPTY) {
+        remove_piece_from_square(from_square);
+        add_piece_to_square(from_square, ((get_piece_color(pieces[from_square]) == WHITE) ? W_PAWN : B_PAWN));
     }
 
     //Update posiition ID
-    positionID = generateAndGetPositionID();
+    position_ID = generate_and_get_position_ID();
 
 }
 
-// Counts all the pieces on the board and records them in the pieceCount[] array
-void BoardStructure::countPieces() noexcept
+// Counts all the pieces on the board and records them in the piece_count[] array
+void Board_Structure::count_pieces() noexcept
 {
-    //Initialize pieceCount[] array
+    //Initialize piece_count[] array
     for (int i = 0; i < 13; i++) {
-        pieceCount[i] = 0;
+        piece_count[i] = 0;
     }
 
     //Loop through the entire board
     for (int i = 0; i < BOARD_SQUARE_COUNT; i++) {
         switch (pieces[i]) {
-        case EMPTY: pieceCount[EMPTY]++; break;
-        case B_PAWN: pieceCount[B_PAWN]++; break;
-        case W_PAWN: pieceCount[W_PAWN]++; break;
-        case B_BISHOP: pieceCount[B_BISHOP]++; break;
-        case W_BISHOP: pieceCount[W_BISHOP]++; break;
-        case B_KNIGHT: pieceCount[B_KNIGHT]++; break;
-        case W_KNIGHT: pieceCount[W_KNIGHT]++; break;
-        case B_ROOK: pieceCount[B_ROOK]++; break;
-        case W_ROOK: pieceCount[W_ROOK]++; break;
-        case B_QUEEN: pieceCount[B_QUEEN]++; break;
-        case W_QUEEN: pieceCount[W_QUEEN]++; break;
-        case B_KING: pieceCount[B_KING]++; break;
-        case W_KING: pieceCount[W_KING]++; break;
+        case EMPTY: piece_count[EMPTY]++; break;
+        case B_PAWN: piece_count[B_PAWN]++; break;
+        case W_PAWN: piece_count[W_PAWN]++; break;
+        case B_BISHOP: piece_count[B_BISHOP]++; break;
+        case W_BISHOP: piece_count[W_BISHOP]++; break;
+        case B_KNIGHT: piece_count[B_KNIGHT]++; break;
+        case W_KNIGHT: piece_count[W_KNIGHT]++; break;
+        case B_ROOK: piece_count[B_ROOK]++; break;
+        case W_ROOK: piece_count[W_ROOK]++; break;
+        case B_QUEEN: piece_count[B_QUEEN]++; break;
+        case W_QUEEN: piece_count[W_QUEEN]++; break;
+        case B_KING: piece_count[B_KING]++; break;
+        case W_KING: piece_count[W_KING]++; break;
         }
     }
 }
 
 //Has this position occured before in the game? If yes, return true. Used for checking threefold repetition.
-bool BoardStructure::isRepetition() noexcept
+bool Board_Structure::is_repetition() noexcept
 {
-    for (int i = 0; i < historyPly - 1; i++) {
-        if (positionID == history[i].positionID) {
+    for (int i = 0; i < history_ply - 1; i++) {
+        if (position_ID == history[i].position_ID) {
             return true;
         }
     }
@@ -666,7 +665,7 @@ bool BoardStructure::isRepetition() noexcept
 }
 
 //Generate and return a position id representing this board's position
-U64 BoardStructure::generateAndGetPositionID() noexcept
+U64 Board_Structure::generate_and_get_position_ID() noexcept
 {
     U64 id = 0;
 
@@ -676,24 +675,24 @@ U64 BoardStructure::generateAndGetPositionID() noexcept
         //If the square contains a piece, modify id 
         if (pieces[i] > 0) {
 
-            //Set id to id XOR pieceSquareKey
+            //Set id to id XOR piece_square_key
             //cout << "i:" << i << " pieces[i]: " << pieces[i] << "\n";
-            id ^= pieceSquareKey[pieces[i]][i];
+            id ^= piece_square_key[pieces[i]][i];
         }
     }
 
     //Modify id if white to move
-    if (sideToMove == WHITE) {
-        id ^= sideKey;
+    if (side_to_move == WHITE) {
+        id ^= side_key;
     }
 
     //Modify id if en passant square exists
-    if (enPassSquare != EMPTY) {
-        id ^= pieceSquareKey[EMPTY][enPassSquare];
+    if (en_pass_square != EMPTY) {
+        id ^= piece_square_key[EMPTY][en_pass_square];
     }
 
     //Modify id using castling permissions
-    id ^= castlePermKey[castlePerms];
+    id ^= castle_perm_key[castle_perms];
 
     ///cout << "\nPosition ID generated: " << id << "\n";
 
@@ -701,34 +700,34 @@ U64 BoardStructure::generateAndGetPositionID() noexcept
 }
 
 //Return false if there is something wrong with the current board
-bool BoardStructure::isBoardValid()
+bool Board_Structure::is_board_valid()
 {
     //Make sure position ID is good
-    if (positionID != generateAndGetPositionID()) {
-        cout << "ERROR: POSITION ID " << positionID << " INVALID\n";
+    if (position_ID != generate_and_get_position_ID()) {
+        cout << "ERROR: POSITION ID " << position_ID << " INVALID\n";
         return false;
     }
 
     //Make sure en pass square is valid
-    if (enPassSquare != 0 && RANKS[enPassSquare] != RANK_6 && RANKS[enPassSquare] != RANK_3) {
-        cout << "ERROR: EN PASS SQUARE," << enPassSquare << " IS INVALID\n";
+    if (en_pass_square != 0 && ranks[en_pass_square] != RANK_6 && ranks[en_pass_square] != RANK_3) {
+        cout << "ERROR: EN PASS SQUARE," << en_pass_square << " IS INVALID\n";
         return false;
     }
 
     //Make sure KingSq arrays are valid
-    if (pieces[kingSquare[WHITE]] != W_KING) {
-        cout << "ERROR: pieces[kingSquare[WHITE]]  pieces[" << kingSquare[WHITE] << "] = " << pieces[kingSquare[WHITE]] << " WHICH IS NOT A WHITE KING.\n";
+    if (pieces[king_square[WHITE]] != W_KING) {
+        cout << "ERROR: pieces[king_square[WHITE]]  pieces[" << king_square[WHITE] << "] = " << pieces[king_square[WHITE]] << " WHICH IS NOT A WHITE KING.\n";
         return false;
     }
-    if (pieces[kingSquare[BLACK]] != B_KING) {
-        cout << "ERROR: pieces[kingSquare[BLACK]] = pieces[" << kingSquare[BLACK] << "] = " << pieces[kingSquare[BLACK]] << " WHICH IS NOT A BLACK KING.\n";
+    if (pieces[king_square[BLACK]] != B_KING) {
+        cout << "ERROR: pieces[king_square[BLACK]] = pieces[" << king_square[BLACK] << "] = " << pieces[king_square[BLACK]] << " WHICH IS NOT A BLACK KING.\n";
         return false;
     }
 
 
     //Make sure side makes sense
-    if ((sideToMove != WHITE) && (sideToMove != BLACK)) {
-        cout << "ERROR: SIDE " << sideToMove << " IS INVALID.\n";
+    if ((side_to_move != WHITE) && (side_to_move != BLACK)) {
+        cout << "ERROR: SIDE " << side_to_move << " IS INVALID.\n";
         return false;
     }
 

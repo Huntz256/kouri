@@ -12,7 +12,7 @@ using namespace std;
 // These are used in evaluation to assign values to specific pieces on specific locations.
 
 // The d2 and e2 pawns should advance before the other pawns. 
-const int PAWN_TABLE[64] = {
+const int pawn_table[64] = {
     0,   0,  0,  0,    0,  0,  0,  0,
     10, 10,  0, -10, -10,  0, 10, 10,
     5,   0,  0,  5,    5,  0,  0,  5,
@@ -24,7 +24,7 @@ const int PAWN_TABLE[64] = {
 };
 
 // Knights should go toward the center
-const int KNIGHT_TABLE[64] = {
+const int knight_table[64] = {
     0, -25, 0,  -5,  -5,  0, -25, 0,
     0,  0,  0,  5,  5,  0,   0, 0,
     -5,  0, 10, 10, 10, 10,   0, -5,
@@ -36,7 +36,7 @@ const int KNIGHT_TABLE[64] = {
 };
 
 // Bishops should also go toward the center
-const int BISHOP_TABLE[64] = {
+const int bishop_table[64] = {
     0, 0, -10, 0,   0, -10,  0, 0,
     0, 0,   0, 10, 10,   0,  0, 0,
     0, 0,  10, 15, 15,  10,  0, 0,
@@ -49,7 +49,7 @@ const int BISHOP_TABLE[64] = {
 
 // Rooks should be in the center files or the
 // 7th rank if possible.
-const int ROOK_TABLE[64] = {
+const int rook_table[64] = {
     0,   0,  5, 10, 10,  5,  0,  0,
     0,   0,  5, 10, 10,  5,  0,  0,
     0,   0,  5, 10, 10,  5,  0,  0,
@@ -60,7 +60,7 @@ const int ROOK_TABLE[64] = {
     0,   0,  5, 10, 10,  5, 0,  0
 };
 
-const int MIRROR_64[64] = {
+const int mirror_64[64] = {
     56, 57, 58, 59, 60, 61, 62, 63,
     48, 49, 50, 51, 52, 53, 54, 55,
     40, 41, 42, 43, 44, 45, 46, 47,
@@ -71,25 +71,25 @@ const int MIRROR_64[64] = {
      0,  1,  2,  3,  4,  5,  6,  7
 };
 
-//Inits AI. This is called in findBestMove().
-void AI::init(BoardStructure& board) noexcept
+//Inits AI. This is called in find_best_move().
+void AI::init(Board_Structure& board) noexcept
 {
-    // Reset bestMove to no move
-    bestMove.move = 0;
+    // Reset best_move to no move
+    best_move.move = 0;
 
     //Note that histPly stores # of half-moves for the entire game,
     // while ply stores # of half-moves for the current search
     board.ply = 0;
 
-    table.clearPVTable();
-    numOfNodes = 0;
-    numOfEvals = 0;
+    table.clear_PV_table();
+    nodes_count = 0;
+    evals_count = 0;
 }
 
 //Returns the best move found by the negamax function
-Move AI::findBestMove(BoardStructure& board, int depth)
+Move AI::find_best_move(Board_Structure& board, int depth)
 {
-    int bestScore = -INFIN, pvMovesCount = 0;
+    int best_score = -INFIN, pv_moves_count = 0;
 
     //Clock to retrieve system time
     clock_t timer = clock();
@@ -98,97 +98,97 @@ Move AI::findBestMove(BoardStructure& board, int depth)
     init(board);
 
     //Negamax searches for the best move
-    bestScore = negamax(-INFIN, INFIN, board, depth);
+    best_score = negamax(-INFIN, INFIN, board, depth);
 
     //Print the best move
-    if (!UCIMODE) {
-        cout << "bestMove is:"; movelist.uciPrintMoveGivenMove(bestMove);
+    if (!uci_mode) {
+        cout << "best_move is:"; move_list.uci_print_move_given_move(best_move);
     }
 
-    //Fill pvArray and get number of moves in pv
-    pvMovesCount = table.getPVLine(board, depth);
+    //Fill pv_array and get number of moves in pv
+    pv_moves_count = table.get_PV_line(board, depth);
 
     //Find time difference between previously retrieved system time and current time
     timer = clock() - timer;
 
-    if (!UCIMODE) {
+    if (!uci_mode) {
         cout << "\n\nI, " << NAME << ", have decided to make move ";
-        movelist.uciPrintMoveGivenMove(bestMove);
-        cout << " after searching to depth " << ai.maxDepth << ".\n";
-        cout << "\nNumber of nodes scanned: " << numOfNodes << ". Number of evaluations made: " << numOfEvals << ".\n";
+        move_list.uci_print_move_given_move(best_move);
+        cout << " after searching to depth " << ai.max_depth << ".\n";
+        cout << "\nNumber of nodes scanned: " << nodes_count << ". Number of evaluations made: " << evals_count << ".\n";
         cout << "Total calculation time: " << ((float)timer) / CLOCKS_PER_SEC << " seconds. \n"; //Convert clock_t object to time in seconds and print out
 
         //Print the pv (principal variation)
         cout << "\nPrincipal variation is:\n";
-        for (int i = 0; i < pvMovesCount; i++) {
-            movelist.uciPrintMoveGivenMoveInt(pvArray[i]);
+        for (int i = 0; i < pv_moves_count; i++) {
+            move_list.uci_print_move_given_move_int(pv_array[i]);
         }
     }
 
-    return bestMove;
+    return best_move;
 }
 
 // Negamax with alpha-beta pruning.
 // Searches recursively for the best move in the board position given by 
 // the parameter board.
-int AI::negamax(int alpha, int beta, BoardStructure& board, int depth)
+int AI::negamax(int alpha, int beta, Board_Structure& board, int depth)
 {
-    numOfNodes++;
+    nodes_count++;
 
     //If depth == 0 or ply too high, go back up the tree
     if (depth == 0 || board.ply > 63) {
-        numOfEvals++;
+        evals_count++;
         return evaluate(board);
     }
 
     //If this is a tie, return 0
-    if (board.isRepetition()) {
+    if (board.is_repetition()) {
         return 0;
     }
 
     //Generate all moves for this position
-    MoveListGenerator gen1;
-    gen1.generateMoveList(board);
+    Move_List_Generator gen1;
+    gen1.generate_move_list(board);
 
     //Default best move
-    if (depth == maxDepth) {
-        bestMove = gen1.moves[0];
+    if (depth == max_depth) {
+        best_move = gen1.moves[0];
     }
 
-    Move pvBestMove; pvBestMove.move = 0;
-    int numOfLegalMoves = 0, score = -INFIN;
-    const int oldAlpha = alpha;
+    Move pv_best_move; pv_best_move.move = 0;
+    int legal_moves_count = 0, score = -INFIN;
+    const int old_alpha = alpha;
 
     //Go through all of the generated moves
-    for (int i = 0; i < gen1.numberOfMoves; i++) {
+    for (int i = 0; i < gen1.moves_count; i++) {
 
         //Make move i. If move i is invalid, go to the next move in the move list
-        if (!board.makeMove(gen1.moves[i])) {
-            if (!UCIMODE && depth == maxDepth) {
+        if (!board.make_move(gen1.moves[i])) {
+            if (!uci_mode && depth == max_depth) {
                 cout << "\ni:" << i << " move ";
-                gen1.uciPrintMoveGivenMove(gen1.moves[i]); cout << " is invalid.";
+                gen1.uci_print_move_given_move(gen1.moves[i]); cout << " is invalid.";
             }
             continue;
         }
 
         //If move i is valid (legal), continue and increment legal counter
-        numOfLegalMoves++;
+        legal_moves_count++;
 
         //Print what kouri is thinking about
-        if (!UCIMODE && depth == maxDepth) {
+        if (!uci_mode && depth == max_depth) {
             cout << "\ni:" << i << " thinking about valid move ";
-            gen1.uciPrintMoveGivenMove(gen1.moves[i]); cout << "...";
+            gen1.uci_print_move_given_move(gen1.moves[i]); cout << "...";
         }
 
         //Call negaMax() to get the move's score
         score = -negamax(-beta, -alpha, board, depth - 1);
 
-        if (!UCIMODE && depth == maxDepth) {
+        if (!uci_mode && depth == max_depth) {
             cout << " score: " << score;
         }
 
         //Undo the move we just made
-        board.undoMove();
+        board.undo_move();
 
         if (score > alpha) {
             if (score >= beta) {
@@ -196,12 +196,12 @@ int AI::negamax(int alpha, int beta, BoardStructure& board, int depth)
             }
             alpha = score;
 
-            pvBestMove = gen1.moves[i];
-            if (depth == maxDepth) {
-                bestMove = gen1.moves[i];
-                if (!UCIMODE) {
-                    cout << "\nSetting bestMove to ";
-                    gen1.uciPrintMoveGivenMove(gen1.moves[i]);
+            pv_best_move = gen1.moves[i];
+            if (depth == max_depth) {
+                best_move = gen1.moves[i];
+                if (!uci_mode) {
+                    cout << "\nSetting best_move to ";
+                    gen1.uci_print_move_given_move(gen1.moves[i]);
                 }
             }
         }
@@ -209,10 +209,10 @@ int AI::negamax(int alpha, int beta, BoardStructure& board, int depth)
     }
 
     //What if there are no legal moves found? We must be in checkmate or stalemate!
-    if (numOfLegalMoves == 0) {
+    if (legal_moves_count == 0) {
 
         //If our king is attacked, it is checkmate! Game over.
-        if (board.isSquareAttacked(board.kingSquare[board.sideToMove], board.sideToMove ^ 1)) {
+        if (board.is_square_attacked(board.king_square[board.side_to_move], board.side_to_move ^ 1)) {
 
             //Note that adding board.ply means that a mate in 3 is better than a mate in 6
             return -MATE + board.ply;
@@ -226,8 +226,8 @@ int AI::negamax(int alpha, int beta, BoardStructure& board, int depth)
     }
 
     //Store the best move in pv table
-    if (alpha != oldAlpha) {
-        table.storePVMove(board, pvBestMove.move);
+    if (alpha != old_alpha) {
+        table.store_PV_move(board, pv_best_move.move);
     }
 
     return alpha;
@@ -236,125 +236,125 @@ int AI::negamax(int alpha, int beta, BoardStructure& board, int depth)
 // Returns an an evaluation of the board.
 //  - A positive score represents a board in favor of the size to move, while a negative score means that
 //  the other side has an advantage.
-//  - Material: See PIECE_VALUE[]. A pawn is worth 100 points, a bishop 300 points, etc.
-int AI::evaluate(BoardStructure& board)
+//  - Material: See piece_value[]. A pawn is worth 100 points, a bishop 300 points, etc.
+int AI::evaluate(Board_Structure& board)
 {
     //Evaluate material
-    board.countPieces();
-    const int materialScore = PIECE_VALUE[12] * (board.pieceCount[W_KING] - board.pieceCount[B_KING])
-        + PIECE_VALUE[10] * (board.pieceCount[W_QUEEN] - board.pieceCount[B_QUEEN])
-        + PIECE_VALUE[8] * (board.pieceCount[W_ROOK] - board.pieceCount[B_ROOK])
-        + PIECE_VALUE[6] * (board.pieceCount[W_BISHOP] - board.pieceCount[B_BISHOP] + board.pieceCount[W_KNIGHT] - board.pieceCount[B_KNIGHT])
-        + PIECE_VALUE[2] * (board.pieceCount[W_PAWN] - board.pieceCount[B_PAWN]);
+    board.count_pieces();
+    const int material_score = piece_value[12] * (board.piece_count[W_KING] - board.piece_count[B_KING])
+        + piece_value[10] * (board.piece_count[W_QUEEN] - board.piece_count[B_QUEEN])
+        + piece_value[8] * (board.piece_count[W_ROOK] - board.piece_count[B_ROOK])
+        + piece_value[6] * (board.piece_count[W_BISHOP] - board.piece_count[B_BISHOP] + board.piece_count[W_KNIGHT] - board.piece_count[B_KNIGHT])
+        + piece_value[2] * (board.piece_count[W_PAWN] - board.piece_count[B_PAWN]);
 
     //Evaluate position
-    int positionalScore = 0;
+    int positional_score = 0;
     for (int i = 21; i < 98; i++) {
-        if (RANKS[i] != -1) {
+        if (ranks[i] != -1) {
             if (board.pieces[i] == W_PAWN) {
-                positionalScore += PAWN_TABLE[squareID64[i]];
+                positional_score += pawn_table[square_ID_64[i]];
             }
             else if (board.pieces[i] == B_PAWN) {
-                positionalScore -= PAWN_TABLE[MIRROR_64[squareID64[i]]];
+                positional_score -= pawn_table[mirror_64[square_ID_64[i]]];
             }
             else if (board.pieces[i] == W_KNIGHT) {
-                positionalScore += KNIGHT_TABLE[squareID64[i]];
+                positional_score += knight_table[square_ID_64[i]];
             }
             else if (board.pieces[i] == B_KNIGHT) {
-                positionalScore -= KNIGHT_TABLE[MIRROR_64[squareID64[i]]];
+                positional_score -= knight_table[mirror_64[square_ID_64[i]]];
             }
             else if (board.pieces[i] == W_BISHOP) {
-                positionalScore += BISHOP_TABLE[squareID64[i]];
+                positional_score += bishop_table[square_ID_64[i]];
             }
             else if (board.pieces[i] == B_BISHOP) {
-                positionalScore -= BISHOP_TABLE[MIRROR_64[squareID64[i]]];
+                positional_score -= bishop_table[mirror_64[square_ID_64[i]]];
             }
             else if (board.pieces[i] == W_ROOK) {
-                positionalScore += ROOK_TABLE[squareID64[i]];
+                positional_score += rook_table[square_ID_64[i]];
             }
             else if (board.pieces[i] == B_ROOK) {
-                positionalScore -= ROOK_TABLE[MIRROR_64[squareID64[i]]];
+                positional_score -= rook_table[mirror_64[square_ID_64[i]]];
             }
         }
     }
 
     // Evaluate mobility
     int mobility = 0;
-    movelist.generateMoveList(board);
-    mobility += movelist.numberOfMoves;
-    board.sideToMove ^= 1;
-    movelist.generateMoveList(board);
-    mobility -= movelist.numberOfMoves;
-    board.sideToMove ^= 1;
+    move_list.generate_move_list(board);
+    mobility += move_list.moves_count;
+    board.side_to_move ^= 1;
+    move_list.generate_move_list(board);
+    mobility -= move_list.moves_count;
+    board.side_to_move ^= 1;
 
-    if (board.sideToMove == WHITE) {
-        return (materialScore + positionalScore + mobility);
+    if (board.side_to_move == WHITE) {
+        return (material_score + positional_score + mobility);
     }
     else {
-        return -(materialScore + positionalScore + mobility);
+        return -(material_score + positional_score + mobility);
     }
 }
 
-vector<int> AI::getEvaluationBreakdown(BoardStructure& board)
+vector<int> AI::get_eval_breakdown(Board_Structure& board)
 {
     vector<int> evaluation;
 
     //Evaluate material
-    board.countPieces();
-    const int materialScore = PIECE_VALUE[12] * (board.pieceCount[W_KING] - board.pieceCount[B_KING])
-        + PIECE_VALUE[10] * (board.pieceCount[W_QUEEN] - board.pieceCount[B_QUEEN])
-        + PIECE_VALUE[8] * (board.pieceCount[W_ROOK] - board.pieceCount[B_ROOK])
-        + PIECE_VALUE[6] * (board.pieceCount[W_BISHOP] - board.pieceCount[B_BISHOP] + board.pieceCount[W_KNIGHT] - board.pieceCount[B_KNIGHT])
-        + PIECE_VALUE[2] * (board.pieceCount[W_PAWN] - board.pieceCount[B_PAWN]);
+    board.count_pieces();
+    const int material_score = piece_value[12] * (board.piece_count[W_KING] - board.piece_count[B_KING])
+        + piece_value[10] * (board.piece_count[W_QUEEN] - board.piece_count[B_QUEEN])
+        + piece_value[8] * (board.piece_count[W_ROOK] - board.piece_count[B_ROOK])
+        + piece_value[6] * (board.piece_count[W_BISHOP] - board.piece_count[B_BISHOP] + board.piece_count[W_KNIGHT] - board.piece_count[B_KNIGHT])
+        + piece_value[2] * (board.piece_count[W_PAWN] - board.piece_count[B_PAWN]);
 
     //Evaluate position
-    int positionalScore = 0;
+    int positional_score = 0;
     for (int i = 21; i < 98; i++) {
-        if (RANKS[i] != -1) {
+        if (ranks[i] != -1) {
             if (board.pieces[i] == W_PAWN) {
-                positionalScore += PAWN_TABLE[squareID64[i]];
+                positional_score += pawn_table[square_ID_64[i]];
             }
             else if (board.pieces[i] == B_PAWN) {
-                positionalScore -= PAWN_TABLE[MIRROR_64[squareID64[i]]];
+                positional_score -= pawn_table[mirror_64[square_ID_64[i]]];
             }
             else if (board.pieces[i] == W_KNIGHT) {
-                positionalScore += KNIGHT_TABLE[squareID64[i]];
+                positional_score += knight_table[square_ID_64[i]];
             }
             else if (board.pieces[i] == B_KNIGHT) {
-                positionalScore -= KNIGHT_TABLE[MIRROR_64[squareID64[i]]];
+                positional_score -= knight_table[mirror_64[square_ID_64[i]]];
             }
             else if (board.pieces[i] == W_BISHOP) {
-                positionalScore += BISHOP_TABLE[squareID64[i]];
+                positional_score += bishop_table[square_ID_64[i]];
             }
             else if (board.pieces[i] == B_BISHOP) {
-                positionalScore -= BISHOP_TABLE[MIRROR_64[squareID64[i]]];
+                positional_score -= bishop_table[mirror_64[square_ID_64[i]]];
             }
             else if (board.pieces[i] == W_ROOK) {
-                positionalScore += ROOK_TABLE[squareID64[i]];
+                positional_score += rook_table[square_ID_64[i]];
             }
             else if (board.pieces[i] == B_ROOK) {
-                positionalScore -= ROOK_TABLE[MIRROR_64[squareID64[i]]];
+                positional_score -= rook_table[mirror_64[square_ID_64[i]]];
             }
         }
     }
 
     // Evaluate mobility
     int mobility = 0;
-    movelist.generateMoveList(board);
-    mobility += movelist.numberOfMoves;
-    board.sideToMove ^= 1;
-    movelist.generateMoveList(board);
-    mobility -= movelist.numberOfMoves;
-    board.sideToMove ^= 1;
+    move_list.generate_move_list(board);
+    mobility += move_list.moves_count;
+    board.side_to_move ^= 1;
+    move_list.generate_move_list(board);
+    mobility -= move_list.moves_count;
+    board.side_to_move ^= 1;
 
-    if (board.sideToMove == WHITE) {
-        evaluation.push_back(materialScore);
-        evaluation.push_back(positionalScore);
+    if (board.side_to_move == WHITE) {
+        evaluation.push_back(material_score);
+        evaluation.push_back(positional_score);
         evaluation.push_back(mobility);
     }
     else {
-        evaluation.push_back(-materialScore);
-        evaluation.push_back(-positionalScore);
+        evaluation.push_back(-material_score);
+        evaluation.push_back(-positional_score);
         evaluation.push_back(-mobility);
     }
 
