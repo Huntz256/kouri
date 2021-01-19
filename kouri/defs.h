@@ -7,6 +7,7 @@
 
 #include <fstream>
 #include <vector>
+#include <string>
 
 //Define NAME as "kouri"
 #define NAME "kouri"
@@ -21,17 +22,17 @@ extern bool UCIMODE;
 typedef unsigned long long U64;
 
 //Define RANK_1 as 0, RANK_2 as 1, etc. Define FILE_1 as 0, etc.
-enum { RANK_1, RANK_2, RANK_3, RANK_4, RANK_5, RANK_6, RANK_7, RANK_8 };
-enum { FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H };
+enum Rank { RANK_1, RANK_2, RANK_3, RANK_4, RANK_5, RANK_6, RANK_7, RANK_8 };
+enum File { FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H };
 
 //Define WHITE as 0 and BLACK as 1
-enum { WHITE, BLACK };
+enum Color { WHITE, BLACK };
 
 //Define MOVE(from,to,capture,promotion,castling)
 #define MOVE(from,to,capture,promotion,castling) ( (from) | ((to) << 7) | ((capture) << 14) | ((promotion) << 18) | ((castling) << 22))
 
 //Define B_PAWN = 1, W_PAWN = 2, B_BISHOP = 3, W_BISHOP = 4, B_KNIGHT = 5, W_KNIGHT = 6, B_ROOK = 7, W_ROOK = 8, B_QUEEN = 9, W_QUEEN = 10, B_KING = 11, W_KING = 12
-enum {
+enum Piece {
     EMPTY, B_PAWN, W_PAWN, B_BISHOP, W_BISHOP, B_KNIGHT, W_KNIGHT,
     B_ROOK, W_ROOK, B_QUEEN, W_QUEEN, B_KING, W_KING
 };
@@ -128,11 +129,11 @@ public:
 class Move {
 public:
     int move; //Stores all infomation regarding a single move
-    int getFromSquare();
-    int getToSquare();
-    int getCapturedPiece();
-    int getPromoted();
-    int getCastling();
+    int getFromSquare() noexcept;
+    int getToSquare() noexcept;
+    int getCapturedPiece() noexcept;
+    int getPromoted() noexcept;
+    int getCastling() noexcept;
 };
 
 //Board structure class represents a board
@@ -186,19 +187,19 @@ public:
     void displayFullBoard(bool dispPieces = true); //Outputs full 10x12 board to console
     void displayBoard(); //Outputs 8x8 board to console
     void init(bool goFirst); //Sets up pieces for a standard chess match
-    void resetBoardToEmpty(); //Resets the board
-    int setUpBoardUsingFEN(char* fen); //Sets up the board given a FEN string. Returns 0 if successful.
-    void removePieceFromSquare(int square);
-    void addPieceToSquare(int square, int piece);
-    void movePieceToSquare(int fromSquare, int toSquare);
+    void resetBoardToEmpty() noexcept; //Resets the board
+    int setUpBoardUsingFEN(std::string fen); //Sets up the board given a FEN string. Returns 0 if successful.
+    void removePieceFromSquare(int square) noexcept;
+    void addPieceToSquare(int square, int piece) noexcept;
+    void movePieceToSquare(int fromSquare, int toSquare) noexcept;
     bool makeMove(Move move); //Modifies the board and stores the move in history[]. Return true if successful.
     void undoMove(); //Undoes the last move
-    int getPieceColor(int pieceNumber); //Retrieves the color of a piece
+    int getPieceColor(int pieceNumber) noexcept; //Retrieves the color of a piece
     void displayHistory(); //Displays all the moves so far as move integers
     bool isSquareAttacked(int square, int attackingSide); //Returns true if square square is being attacked by a piece from the side attackingSide
-    void countPieces(); //Counts all the pieces on the board and records them in the pieceCount[] array
-    bool isRepetition(); //Has this position occured before in the game? If yes, return true.  Used for checking threefold repetition.
-    U64 generateAndGetPositionID(); //Generate and return a position id representing this board's position. Used for checking threefold repetition.
+    void countPieces() noexcept; //Counts all the pieces on the board and records them in the pieceCount[] array
+    bool isRepetition() noexcept; //Has this position occured before in the game? If yes, return true.  Used for checking threefold repetition.
+    U64 generateAndGetPositionID() noexcept; //Generate and return a position id representing this board's position. Used for checking threefold repetition.
     bool isBoardValid(); //Looks at some aspects of the board and returns false if there is something wrong with the current board
 };
 
@@ -215,10 +216,10 @@ public:
     PVEntity pvTable[2048];
     int numOfEntries;
 
-    void initPVTable();
-    void clearPVTable();
-    void storePVMove(BoardStructure& board, int move);
-    int getPVMove(BoardStructure& board);
+    void initPVTable() noexcept;
+    void clearPVTable() noexcept;
+    void storePVMove(BoardStructure& board, int move) noexcept;
+    int getPVMove(BoardStructure& board) noexcept;
     int getPVLine(BoardStructure& board, int depth);
 
 };
@@ -229,7 +230,7 @@ extern PVTable table;
 void testIsSquareAttacked(int side, BoardStructure& board); //Used only for testing isSquareAttacked()
 char numToPieceChar(int num); //Converts integer to char representing a piece
 void printSquare(int square); //Prints square in alg. notation
-int charToPieceInt(char c); //Converts char like 'p' or 'Q' to the corresponding integer
+int charToPieceInt(char c) noexcept; //Converts char like 'p' or 'Q' to the corresponding integer
 
 //Contains all move generation functions
 class MoveListGenerator {
@@ -238,16 +239,16 @@ public:
     int numberOfMoves;
     void generateMoveList(BoardStructure& board);
     void generatePawnMoves(BoardStructure& board);
-    void generateSliderMoves(BoardStructure& board);
-    void generateNonSliderMoves(BoardStructure& board);
+    void generateSliderMoves(BoardStructure& board) noexcept;
+    void generateNonSliderMoves(BoardStructure& board) noexcept;
     void generateCastlingMoves(BoardStructure& board);
 
-    void addPawnCapturingMove(BoardStructure& board, int fromSquare, int toSquare, int capture, int side);
-    void addPawnMove(BoardStructure& board, int fromSquare, int toSquare, int side);
-    void printMoveList(BoardStructure& board);
-    void uciPrintMoveGivenMoveListNumber(BoardStructure& board, int moveNum);
-    void uciPrintMoveGivenMove(BoardStructure& board, Move m);
-    void uciPrintMoveGivenMoveInt(BoardStructure& board, int move);
+    void addPawnCapturingMove(int fromSquare, int toSquare, int capture, int side);
+    void addPawnMove(int fromSquare, int toSquare, int side);
+    void printMoveList(const BoardStructure& board);
+    void uciPrintMoveGivenMoveListNumber(int moveNum);
+    void uciPrintMoveGivenMove(Move m);
+    void uciPrintMoveGivenMoveInt(int move);
 
     bool isMoveValid(BoardStructure& board, int move);
     int getNumLegalMoves(BoardStructure& board);
@@ -260,16 +261,17 @@ extern int pvArray[64];
 
 //AI Stuff
 class AI {
-    int numOfNodes; //Number of nodes scanned for a search
-    int numOfEvals; //Number of evaluations done for a search
-    Move bestMove;
 public:
     int maxDepth;
-    void init(BoardStructure& board); // Init AI by clearing the PV table and other variables
+    void init(BoardStructure& board) noexcept; // Init AI by clearing the PV table and other variables
     int evaluate(BoardStructure& board); // Does a basic evaluation of a board from the perspective of the size to move
     std::vector<int> getEvaluationBreakdown(BoardStructure& board); // Gets the evaluation of the board but as a vector
     int negamax(int alpha, int beta, BoardStructure& board, int depth); // Negamax algorithm with alpha-beta pruning
     Move findBestMove(BoardStructure& board, int depth); // Uses negamax to find best move
+private:
+    int numOfNodes; //Number of nodes scanned for a search
+    int numOfEvals; //Number of evaluations done for a search
+    Move bestMove;
 };
 
 extern AI ai;

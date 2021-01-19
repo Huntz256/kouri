@@ -72,7 +72,7 @@ const int MIRROR_64[64] = {
 };
 
 //Inits AI. This is called in findBestMove().
-void AI::init(BoardStructure& board)
+void AI::init(BoardStructure& board) noexcept
 {
     // Reset bestMove to no move
     bestMove.move = 0;
@@ -102,7 +102,7 @@ Move AI::findBestMove(BoardStructure& board, int depth)
 
     //Print the best move
     if (!UCIMODE) {
-        cout << "bestMove is:"; movelist.uciPrintMoveGivenMove(board, bestMove);
+        cout << "bestMove is:"; movelist.uciPrintMoveGivenMove(bestMove);
     }
 
     //Fill pvArray and get number of moves in pv
@@ -113,7 +113,7 @@ Move AI::findBestMove(BoardStructure& board, int depth)
 
     if (!UCIMODE) {
         cout << "\n\nI, " << NAME << ", have decided to make move ";
-        movelist.uciPrintMoveGivenMove(board, bestMove);
+        movelist.uciPrintMoveGivenMove(bestMove);
         cout << " after searching to depth " << ai.maxDepth << ".\n";
         cout << "\nNumber of nodes scanned: " << numOfNodes << ". Number of evaluations made: " << numOfEvals << ".\n";
         cout << "Total calculation time: " << ((float)timer) / CLOCKS_PER_SEC << " seconds. \n"; //Convert clock_t object to time in seconds and print out
@@ -121,7 +121,7 @@ Move AI::findBestMove(BoardStructure& board, int depth)
         //Print the pv (principal variation)
         cout << "\nPrincipal variation is:\n";
         for (int i = 0; i < pvMovesCount; i++) {
-            movelist.uciPrintMoveGivenMoveInt(board, pvArray[i]);
+            movelist.uciPrintMoveGivenMoveInt(pvArray[i]);
         }
     }
 
@@ -156,7 +156,8 @@ int AI::negamax(int alpha, int beta, BoardStructure& board, int depth)
     }
 
     Move pvBestMove; pvBestMove.move = 0;
-    int numOfLegalMoves = 0, score = -INFIN, oldAlpha = alpha;
+    int numOfLegalMoves = 0, score = -INFIN;
+    const int oldAlpha = alpha;
 
     //Go through all of the generated moves
     for (int i = 0; i < gen1.numberOfMoves; i++) {
@@ -165,7 +166,7 @@ int AI::negamax(int alpha, int beta, BoardStructure& board, int depth)
         if (!board.makeMove(gen1.moves[i])) {
             if (!UCIMODE && depth == maxDepth) {
                 cout << "\ni:" << i << " move ";
-                gen1.uciPrintMoveGivenMove(board, gen1.moves[i]); cout << " is invalid.";
+                gen1.uciPrintMoveGivenMove(gen1.moves[i]); cout << " is invalid.";
             }
             continue;
         }
@@ -176,7 +177,7 @@ int AI::negamax(int alpha, int beta, BoardStructure& board, int depth)
         //Print what kouri is thinking about
         if (!UCIMODE && depth == maxDepth) {
             cout << "\ni:" << i << " thinking about valid move ";
-            gen1.uciPrintMoveGivenMove(board, gen1.moves[i]); cout << "...";
+            gen1.uciPrintMoveGivenMove(gen1.moves[i]); cout << "...";
         }
 
         //Call negaMax() to get the move's score
@@ -200,7 +201,7 @@ int AI::negamax(int alpha, int beta, BoardStructure& board, int depth)
                 bestMove = gen1.moves[i];
                 if (!UCIMODE) {
                     cout << "\nSetting bestMove to ";
-                    gen1.uciPrintMoveGivenMove(board, gen1.moves[i]);
+                    gen1.uciPrintMoveGivenMove(gen1.moves[i]);
                 }
             }
         }
@@ -240,7 +241,7 @@ int AI::evaluate(BoardStructure& board)
 {
     //Evaluate material
     board.countPieces();
-    int materialScore = PIECE_VALUE[12] * (board.pieceCount[W_KING] - board.pieceCount[B_KING])
+    const int materialScore = PIECE_VALUE[12] * (board.pieceCount[W_KING] - board.pieceCount[B_KING])
         + PIECE_VALUE[10] * (board.pieceCount[W_QUEEN] - board.pieceCount[B_QUEEN])
         + PIECE_VALUE[8] * (board.pieceCount[W_ROOK] - board.pieceCount[B_ROOK])
         + PIECE_VALUE[6] * (board.pieceCount[W_BISHOP] - board.pieceCount[B_BISHOP] + board.pieceCount[W_KNIGHT] - board.pieceCount[B_KNIGHT])
@@ -300,7 +301,7 @@ vector<int> AI::getEvaluationBreakdown(BoardStructure& board)
 
     //Evaluate material
     board.countPieces();
-    int materialScore = PIECE_VALUE[12] * (board.pieceCount[W_KING] - board.pieceCount[B_KING])
+    const int materialScore = PIECE_VALUE[12] * (board.pieceCount[W_KING] - board.pieceCount[B_KING])
         + PIECE_VALUE[10] * (board.pieceCount[W_QUEEN] - board.pieceCount[B_QUEEN])
         + PIECE_VALUE[8] * (board.pieceCount[W_ROOK] - board.pieceCount[B_ROOK])
         + PIECE_VALUE[6] * (board.pieceCount[W_BISHOP] - board.pieceCount[B_BISHOP] + board.pieceCount[W_KNIGHT] - board.pieceCount[B_KNIGHT])

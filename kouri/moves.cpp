@@ -59,28 +59,28 @@ void testIsSquareAttacked(int side, BoardStructure& board)
     cout << "   a  b  c  d  e  f  g  h\n\n";
 }
 
-int Move::getFromSquare()
+int Move::getFromSquare() noexcept
 {
     return move & 0x7F;
 }
-int Move::getToSquare()
+int Move::getToSquare() noexcept
 {
     return (move >> 7) & 0x7F;
 }
-int Move::getCapturedPiece()
+int Move::getCapturedPiece() noexcept
 {
     return (move >> 14) & 0xF;
 }
-int Move::getPromoted()
+int Move::getPromoted() noexcept
 {
     return (move >> 18) & 0xF;
 }
-int Move::getCastling()
+int Move::getCastling() noexcept
 {
     return (move >> 22) & 0x7;
 }
 
-void MoveListGenerator::addPawnCapturingMove(BoardStructure& board, int fromSquare, int toSquare, int capture, int side)
+void MoveListGenerator::addPawnCapturingMove(int fromSquare, int toSquare, int capture, int side)
 {
     if (FILES[fromSquare] == -1) {
         throw "ERROR3";
@@ -112,7 +112,7 @@ void MoveListGenerator::addPawnCapturingMove(BoardStructure& board, int fromSqua
         }
     }
 }
-void MoveListGenerator::addPawnMove(BoardStructure& board, int fromSquare, int toSquare, int side)
+void MoveListGenerator::addPawnMove(int fromSquare, int toSquare, int side)
 {
     if (FILES[fromSquare] == -1) {
         throw "ERROR1";
@@ -165,20 +165,20 @@ void MoveListGenerator::generatePawnMoves(BoardStructure& board)
 
                     //.. and the pawn is on starting rank
                     if (RANKS[i] == RANK_2 && board.pieces[i + 20] == 0) {
-                        addPawnMove(board, i, i + 20, WHITE);
+                        addPawnMove(i, i + 20, WHITE);
                     }
 
                     //.. regardless ...
-                    addPawnMove(board, i, i + 10, WHITE);
+                    addPawnMove(i, i + 10, WHITE);
                 }
 
                 //Pawn capturing
                 if (board.pieces[i + 9] > 0 && board.getPieceColor(board.pieces[i + 9]) == BLACK) {
-                    addPawnCapturingMove(board, i, i + 9, board.pieces[i + 9], WHITE);
+                    addPawnCapturingMove(i, i + 9, board.pieces[i + 9], WHITE);
                 }
 
                 if (board.pieces[i + 11] > 0 && board.getPieceColor(board.pieces[i + 11]) == BLACK) {
-                    addPawnCapturingMove(board, i, i + 11, board.pieces[i + 11], WHITE);
+                    addPawnCapturingMove(i, i + 11, board.pieces[i + 11], WHITE);
                 }
 
                 if (board.enPassSquare != 0) {
@@ -200,32 +200,32 @@ void MoveListGenerator::generatePawnMoves(BoardStructure& board)
             if (board.pieces[i] == 1) {
 
                 //... and the square in front of it is empty, add a move
-                if (board.pieces[i - 10] == 0) {
+                if (i >= 10 && board.pieces[i - 10] == 0) {
 
                     //.. and the pawn is on starting rank
                     if (RANKS[i] == RANK_7 && board.pieces[i - 20] == 0) {
-                        addPawnMove(board, i, i - 20, BLACK);
+                        addPawnMove(i, i - 20, BLACK);
                     }
 
                     //.. regardless...
-                    addPawnMove(board, i, i - 10, BLACK);
+                    addPawnMove(i, i - 10, BLACK);
                 }
 
                 //Pawn capturing
-                if (board.pieces[i - 9] > 0 && board.getPieceColor(board.pieces[i - 9]) == WHITE) {
-                    addPawnCapturingMove(board, i, i - 9, board.pieces[i - 9], BLACK);
+                if (i >= 9 && board.pieces[i - 9] > 0 && board.getPieceColor(board.pieces[i - 9]) == WHITE) {
+                    addPawnCapturingMove(i, i - 9, board.pieces[i - 9], BLACK);
                 }
 
-                if (board.pieces[i - 11] > 0 && board.getPieceColor(board.pieces[i - 11]) == WHITE) {
-                    addPawnCapturingMove(board, i, i - 11, board.pieces[i - 11], BLACK);
+                if (i >= 11 && board.pieces[i - 11] > 0 && board.getPieceColor(board.pieces[i - 11]) == WHITE) {
+                    addPawnCapturingMove(i, i - 11, board.pieces[i - 11], BLACK);
                 }
 
                 if (board.enPassSquare != 0) {
                     //En passant 
-                    if (board.pieces[i - 9] > 0 && board.pieces[i - 9] == board.enPassSquare) {
+                    if (i >= 9 && board.pieces[i - 9] > 0 && board.pieces[i - 9] == board.enPassSquare) {
                         //	addPawnCapturingMove(board, i, i - 9, 0, BLACK);
                     }
-                    if (board.pieces[i - 11] > 0 && board.pieces[i - 11] == board.enPassSquare) {
+                    if (i >= 11 && board.pieces[i - 11] > 0 && board.pieces[i - 11] == board.enPassSquare) {
                         //addPawnCapturingMove(board, i, i - 11, 0, BLACK);
                     }
                 }
@@ -233,7 +233,7 @@ void MoveListGenerator::generatePawnMoves(BoardStructure& board)
         }
     }
 }
-void MoveListGenerator::generateSliderMoves(BoardStructure& board)
+void MoveListGenerator::generateSliderMoves(BoardStructure& board) noexcept
 {
     int pieceIndex = SLIDING_PIECES_START_INDEX[board.sideToMove];
     int piece = SLIDING_PIECES[pieceIndex];
@@ -282,7 +282,7 @@ void MoveListGenerator::generateSliderMoves(BoardStructure& board)
     }
 
 }
-void MoveListGenerator::generateNonSliderMoves(BoardStructure& board)
+void MoveListGenerator::generateNonSliderMoves(BoardStructure& board) noexcept
 {
     int pieceIndex = NON_SLIDING_PIECES_START_INDEX[board.sideToMove];
     int piece = NON_SLIDING_PIECES[pieceIndex];
@@ -302,7 +302,7 @@ void MoveListGenerator::generateNonSliderMoves(BoardStructure& board)
 
                 //For each direction...
                 for (int j = 0; j < NUMBER_OF_DIRECTIONS[piece]; j++) {
-                    int tempSquare = i + PIECE_MOVEMENTS[piece][j];
+                    const int tempSquare = i + PIECE_MOVEMENTS[piece][j];
 
                     //If tempSquare is off board, move on to the next direction
                     if (board.pieces[tempSquare] == -1) {
@@ -399,15 +399,15 @@ void MoveListGenerator::generateMoveList(BoardStructure& board)
 
 //Prints all of the moves in our move list in algebraic notation
 //MUST be called immediately after generateMoveList() for piece num printing to be accuarate
-void MoveListGenerator::printMoveList(BoardStructure& board)
+void MoveListGenerator::printMoveList(const BoardStructure& board)
 {
     const char PIECE_NUM_TO_CHAR[13] = { ' ', ' ', ' ', 'B', 'B', 'N', 'N', 'R', 'R', 'Q', 'Q', 'K', 'K' };
 
     for (int i = 0; i < numberOfMoves; i++) {
-        int fromSquare = moves[i].getFromSquare();
-        int toSquare = moves[i].getToSquare();
-        int capPiece = moves[i].getCapturedPiece();
-        int promPiece = moves[i].getPromoted();
+        const int fromSquare = moves[i].getFromSquare();
+        const int toSquare = moves[i].getToSquare();
+        const int capPiece = moves[i].getCapturedPiece();
+        const int promPiece = moves[i].getPromoted();
 
         cout << "Move " << i << " Found: "; cout << "(piece num: " << board.pieces[fromSquare] << ")";
         //cout << "Move " << i << " Found: "; cout << "(piece num: " << board.pieces[fromSquare] << ")";
@@ -437,12 +437,12 @@ void MoveListGenerator::printMoveList(BoardStructure& board)
 }
 
 //Prints a move in UCI format given a move number on a move list. E.g. uciPrintMove(board, 4)
-void MoveListGenerator::uciPrintMoveGivenMoveListNumber(BoardStructure& board, int moveNum)
+void MoveListGenerator::uciPrintMoveGivenMoveListNumber(int moveNum)
 {
     const char PIECE_NUM_TO_CHAR[13] = { ' ', ' ', ' ', 'B', 'B', 'N', 'N', 'R', 'R', 'Q', 'Q', 'K', 'K' };
 
-    int fromSquare = moves[moveNum].getFromSquare();
-    int toSquare = moves[moveNum].getToSquare();
+    const int fromSquare = moves[moveNum].getFromSquare();
+    const int toSquare = moves[moveNum].getToSquare();
 
     printSquare(fromSquare);
 
@@ -452,12 +452,12 @@ void MoveListGenerator::uciPrintMoveGivenMoveListNumber(BoardStructure& board, i
 }
 
 //Prints a move in UCI format given a move. E.g. uciPrintMove(board, m)
-void MoveListGenerator::uciPrintMoveGivenMove(BoardStructure& board, Move m)
+void MoveListGenerator::uciPrintMoveGivenMove(Move m)
 {
     const char PIECE_NUM_TO_CHAR[13] = { ' ', ' ', ' ', 'B', 'B', 'N', 'N', 'R', 'R', 'Q', 'Q', 'K', 'K' };
 
-    int fromSquare = m.getFromSquare();
-    int toSquare = m.getToSquare();
+    const int fromSquare = m.getFromSquare();
+    const int toSquare = m.getToSquare();
 
     printSquare(fromSquare);
     printSquare(toSquare);
@@ -465,13 +465,13 @@ void MoveListGenerator::uciPrintMoveGivenMove(BoardStructure& board, Move m)
 }
 
 //Prints a move in UCI format given a move integer. E.g. uciPrintMove(board, m.move)
-void MoveListGenerator::uciPrintMoveGivenMoveInt(BoardStructure& board, int move)
+void MoveListGenerator::uciPrintMoveGivenMoveInt(int move)
 {
     const char PIECE_NUM_TO_CHAR[13] = { ' ', ' ', ' ', 'B', 'B', 'N', 'N', 'R', 'R', 'Q', 'Q', 'K', 'K' };
 
     Move m; m.move = move;
-    int fromSquare = m.getFromSquare();
-    int toSquare = m.getToSquare();
+    const int fromSquare = m.getFromSquare();
+    const int toSquare = m.getToSquare();
 
     printSquare(fromSquare);
     printSquare(toSquare);
@@ -481,8 +481,8 @@ void MoveListGenerator::uciPrintMoveGivenMoveInt(BoardStructure& board, int move
 //Checks if a move integer is contained in the generated movelist and is valid
 bool MoveListGenerator::isMoveValid(BoardStructure& board, int move)
 {
-    int fromSquare = move & 0x7F;
-    int toSquare = (move >> 7) & 0x7F;
+    const int fromSquare = move & 0x7F;
+    const int toSquare = (move >> 7) & 0x7F;
 
     if (fromSquare < 21 || fromSquare > 98) {
         return false;

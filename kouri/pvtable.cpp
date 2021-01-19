@@ -7,7 +7,7 @@
 #include <iostream>
 using namespace std;
 
-void PVTable::initPVTable()
+void PVTable::initPVTable() noexcept
 {
     //The number of entries in the table
     numOfEntries = 2048;
@@ -17,7 +17,7 @@ void PVTable::initPVTable()
 }
 
 //Set all variables of PVEntities in pvTable to 0 values.
-void PVTable::clearPVTable()
+void PVTable::clearPVTable() noexcept
 {
     for (int i = 0; i < numOfEntries; i++) {
         pvTable[i].positionID = 0ULL;
@@ -26,7 +26,7 @@ void PVTable::clearPVTable()
 }
 
 //Store a move and position ID in the PV table
-void PVTable::storePVMove(BoardStructure& board, int move)
+void PVTable::storePVMove(BoardStructure& board, int move) noexcept
 {
     int i = board.generateAndGetPositionID() % numOfEntries;
     pvTable[i].move = move;
@@ -34,9 +34,9 @@ void PVTable::storePVMove(BoardStructure& board, int move)
 }
 
 //Get the principal variation move
-int PVTable::getPVMove(BoardStructure& board)
+int PVTable::getPVMove(BoardStructure& board) noexcept
 {
-    int i = board.generateAndGetPositionID() % numOfEntries;
+    const int i = board.generateAndGetPositionID() % numOfEntries;
 
     if (pvTable[i].positionID == board.generateAndGetPositionID()) {
         return pvTable[i].move;

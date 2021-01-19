@@ -14,13 +14,13 @@ AI ai;
 int pvArray[64];
 bool UCIMODE = true;
 
-int getRandomInteger(int min, int max)
+int getRandomInteger(int min, int max) noexcept
 {
-    srand((int)time(NULL));
+    srand((int)time(nullptr));
     return rand() % (max - min + 1) + min;
 }
 
-U64 getRandom64BitInteger()
+U64 getRandom64BitInteger() noexcept
 {
     //rand() gives a 15 bit random number. Let's say that this random number is 101010101010101
     //We want a 64 bit random number such as 0000 000000000000000 000000000000000 000000000000000 000000000000000
@@ -47,7 +47,7 @@ void playerMove()
 }
 
 //Assumes input is a move command. Returns move integer if valid, else returns -1
-int translateMoveCommand(string com)
+int translateMoveCommand(string com) noexcept
 {
     //Castling
     if (com.length() == 3 && board.sideToMove == WHITE && com.compare("O-O") == 0) return MOVE(25, 27, 0, 0, 1);
@@ -62,9 +62,9 @@ int translateMoveCommand(string com)
     }
 
     //Regular move with possible promotion
-    int from = (com[0] - 'a' + 1) + (com[1] - '1' + 2) * 10;
-    int to = (com[2] - 'a' + 1) + (com[3] - '1' + 2) * 10;
-    int prom = (com.length() == 5) ? charToPieceInt(com[4]) : 0;
+    const int from = (com[0] - 'a' + 1) + (com[1] - '1' + 2) * 10;
+    const int to = (com[2] - 'a' + 1) + (com[3] - '1' + 2) * 10;
+    const int prom = (com.length() == 5) ? charToPieceInt(com[4]) : 0;
 
     ///cout << "Attempting to make non-castling move:" << from << " " << to << " " << board.pieces[to] << " " << prom << "\n";
     return MOVE(from, to, board.pieces[to], prom, 0);
@@ -79,7 +79,7 @@ int testFunction1()
     getline(cin, fen);
 
     while (true) {
-        if (board.setUpBoardUsingFEN(&fen[0u]) == -1) {
+        if (board.setUpBoardUsingFEN(fen) == -1) {
             return -1;
         }
         board.displayBoard(); testIsSquareAttacked(WHITE, board); testIsSquareAttacked(BLACK, board);
@@ -343,7 +343,8 @@ void testFunction70()
 
     //Make and undo more moves
     for (int i = 0; i < 30; i++) {
-        movelist.generateMoveList(board); int moveNum = getRandomInteger(0, movelist.numberOfMoves - 1);
+        movelist.generateMoveList(board); 
+        const int moveNum = getRandomInteger(0, movelist.numberOfMoves - 1);
         m.move = movelist.moves[moveNum].move; board.makeMove(m);
         cout << "i:" << i << "\n";
         cout << "movelist.numberOfMoves:" << movelist.numberOfMoves << "\n";
@@ -366,7 +367,7 @@ void testFunction70()
     for (int i = 0; i < 50; i++) {
         cout << "i:" << i << "\n";
 
-        int moveNum = getRandomInteger(0, movelist.numberOfMoves - 1);
+        const int moveNum = getRandomInteger(0, movelist.numberOfMoves - 1);
         cout << "moveNum:" << moveNum << "\n";
         movelist.generateMoveList(board);
         cout << "movelist.numberOfMoves:" << movelist.numberOfMoves << "\n";
@@ -464,7 +465,9 @@ void testFunction23()
 void testFunction422()
 {
     board.init(true);
-    Move m; int pvNum = 0, max = 0; string x;
+    Move m; 
+    string x;
+    int max = 0;
 
     while (true) {
         board.displayBoard();
@@ -488,7 +491,7 @@ void testFunction422()
             cout << "max: " << max << "\n";
             for (int i = 0; i < max; i++) {
                 m.move = pvArray[i];
-                movelist.uciPrintMoveGivenMove(board, m);
+                movelist.uciPrintMoveGivenMove(m);
             }
 
         }
@@ -512,7 +515,7 @@ void testFunction422()
 
 //Init pieceSquareKey[][] with random 64 bit integers. 
 //Used to generate position ids for the threefold repetition rule
-void initKeys()
+void initKeys() noexcept
 {
     for (int i = 0; i < 13; i++) {
         for (int j = 0; j < 120; j++) {
@@ -564,7 +567,7 @@ void uci(string in)
             m = ai.findBestMove(board, ai.maxDepth);
 
             cout << "bestmove ";
-            movelist.uciPrintMoveGivenMove(board, m);
+            movelist.uciPrintMoveGivenMove(m);
             cout << "\n";
         }
     } while (getline(cin, uciCommand));

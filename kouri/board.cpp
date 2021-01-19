@@ -47,7 +47,7 @@ char numToPieceChar(int num)
 }
 
 //Used for pawn promotion user command
-int charToPieceInt(char c)
+int charToPieceInt(char c) noexcept
 {
     switch (c) {
     case 'p': return B_PAWN; case 'P': return W_PAWN;
@@ -104,9 +104,9 @@ void BoardStructure::displayBoard()
     ///cout << "Enpass. square: " << enPassSquare << '\n';
 
     // Display estimated probability of winning
-    float p = -((float)ai.evaluate(*this)) / 100;
+    const float p = -((float)ai.evaluate(*this)) / 100;
     cout << "\nKouri's evaluation: I think I have a " <<
-        round((0.5 + 0.5 * p / (abs(p) + 2 / (abs(p) + 1))) * 100) <<
+        round((0.5 + 0.5 * p / ((double)abs(p) + 2 / ((double)abs(p) + 1))) * 100) <<
         "% chance of winning.";
 
     for (const auto i : ai.getEvaluationBreakdown(*this))
@@ -127,7 +127,7 @@ void BoardStructure::init(bool goFirst)
 }
 
 //Resets the board
-void BoardStructure::resetBoardToEmpty()
+void BoardStructure::resetBoardToEmpty() noexcept
 {
     //Set all squares on the board to the value -1 representing off board squares
     for (int i = 0; i < BOARD_SQUARE_COUNT; i++) {
@@ -168,17 +168,18 @@ void BoardStructure::resetBoardToEmpty()
 }
 
 //Sets up pieces given a FEN string. Returns 0 if successful.
-int BoardStructure::setUpBoardUsingFEN(char* fen)
+int BoardStructure::setUpBoardUsingFEN(string fen)
 {
     resetBoardToEmpty();
 
-    int currentRank = RANK_8, currentFile = FILE_A, emptyNum = 0, piece = 0, currentSquare = 0;
+    int currentRank = RANK_8, currentFile = FILE_A, emptyNum = 0, piece = 0;
+    size_t i = 0;
 
     //Set up board pieces using the infomation in fen
-    while ((currentRank >= RANK_1) && *fen) {
+    while ((currentRank >= RANK_1) && (i < fen.size())) {
         emptyNum = 1;
 
-        switch (*fen) {
+        switch (fen[i]) {
         case 'p': piece = B_PAWN; break; case 'P': piece = W_PAWN; break;
         case 'b': piece = B_BISHOP; break; case 'B': piece = W_BISHOP; break;
         case 'n': piece = B_KNIGHT; break; case 'N': piece = W_KNIGHT; break;
@@ -187,60 +188,60 @@ int BoardStructure::setUpBoardUsingFEN(char* fen)
         case 'k': piece = B_KING; break; case 'K': piece = W_KING; break;
 
         case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8':
-            piece = 0; emptyNum = *fen - '0'; break;
+            piece = 0; emptyNum = fen[i] - '0'; break;
 
         case '/': case ' ':
-            currentRank--; currentFile = FILE_A; fen++; continue;
+            currentRank--; currentFile = FILE_A; i++; continue;
         default:
             return -1;
         }
 
-        for (int i = 0; i < emptyNum; i++) {
+        for (int j = 0; j < emptyNum; j++) {
             if (piece != 0) {
                 pieces[squareID120[currentRank * 8 + currentFile]] = piece;
             }
             currentFile++;
         }
 
-        fen++;
+        i++;
     }
 
     //Set the side to move using infomation in FEN
-    sideToMove = (*fen == 'w') ? 0 : 1;
+    sideToMove = (fen[i] == 'w') ? 0 : 1;
 
     //Set castling permissions using infomation in FEN
     fen += 2;
-    for (int i = 0; i < 4; i++) {
-        if (*fen == ' ') {
+    for (int j = 0; j < 4; j++) {
+        if (fen[i] == ' ') {
             break;
         }
 
         //for a FEN such as ...blah blah w KQkq blah blah...
-        switch (*fen) {
+        switch (fen[i]) {
         case 'K': castlePerms |= 1;  break; //... if there is a K, do castlePerms OR 0001; e.g. 0000 | 0001 = 0001
         case 'Q': castlePerms |= 2;  break; //... if there is a Q, do castlePerms OR 0010; e.g. 0001 | 0010 = 0011
         case 'k': castlePerms |= 4;  break; //... if there is a k, do castlePerms OR 0100; e.g. 0011 | 0100 = 0111
         case 'q': castlePerms |= 8; break; //... if there is a q, do castlePerms OR 1000; e.g. 0111 | 1000 = 1111
         default: break;
         }
-        fen++;
+        i++;
     }
 
     //Generate position id
     positionID = generateAndGetPositionID();
 
     //Update material[] and kingSquare[]
-    for (int i = 0; i < BOARD_SQUARE_COUNT; i++) {
-        if (pieces[i] > 0) {
-            int color = getPieceColor(pieces[i]);
-            material[color] += PIECE_VALUE[pieces[i]];
-            pieceCount[pieces[i]]++;
+    for (int j = 0; j < BOARD_SQUARE_COUNT; j++) {
+        if (pieces[j] > 0) {
+            int color = getPieceColor(pieces[j]);
+            material[color] += PIECE_VALUE[pieces[j]];
+            pieceCount[pieces[j]]++;
 
-            if (pieces[i] == W_KING) {
-                kingSquare[WHITE] = i;
+            if (pieces[j] == W_KING) {
+                kingSquare[WHITE] = j;
             }
-            else if (pieces[i] == B_KING) {
-                kingSquare[BLACK] = i;
+            else if (pieces[j] == B_KING) {
+                kingSquare[BLACK] = j;
             }
 
         }
@@ -250,7 +251,7 @@ int BoardStructure::setUpBoardUsingFEN(char* fen)
 }
 
 //Retrieves the color of a piece
-int BoardStructure::getPieceColor(int pieceNum)
+int BoardStructure::getPieceColor(int pieceNum) noexcept
 {
     switch (pieceNum) {
     case B_PAWN: case B_BISHOP: case B_KNIGHT: case B_ROOK: case B_QUEEN: case B_KING:
@@ -389,7 +390,7 @@ bool BoardStructure::isSquareAttacked(int square, int attackingSide)
 }
 
 //Remove the piece from square square and update variables as needed
-void BoardStructure::removePieceFromSquare(int square)
+void BoardStructure::removePieceFromSquare(int square) noexcept
 {
     //Update positionID, material, and pieceCount
     positionID ^= pieceSquareKey[pieces[square]][square];
@@ -401,7 +402,7 @@ void BoardStructure::removePieceFromSquare(int square)
 }
 
 //Add piece piece to square square and update variables as needed
-void BoardStructure::addPieceToSquare(int square, int piece)
+void BoardStructure::addPieceToSquare(int square, int piece) noexcept
 {
     //Update positionID, material, and pieceCount
     positionID ^= pieceSquareKey[pieces[square]][square];
@@ -413,9 +414,9 @@ void BoardStructure::addPieceToSquare(int square, int piece)
 }
 
 //Move piece piece from square fromSquare to square toSquare
-void BoardStructure::movePieceToSquare(int fromSquare, int toSquare)
+void BoardStructure::movePieceToSquare(int fromSquare, int toSquare) noexcept
 {
-    int piece = pieces[fromSquare];
+    const int piece = pieces[fromSquare];
 
     //Update positionID and set toSquare to the piece and set fromSquare to EMPTY
     positionID ^= pieceSquareKey[pieces[fromSquare]][fromSquare];
@@ -430,12 +431,12 @@ void BoardStructure::movePieceToSquare(int fromSquare, int toSquare)
 bool BoardStructure::makeMove(Move m)
 {
     //Inits and validations before we even attempt to make the move--------------------------------------	
-    int fromSquare = m.getFromSquare();
-    int toSquare = m.getToSquare();
-    int capturedPiece = m.getCapturedPiece();
-    int castling = m.getCastling();
-    int promotedPiece = m.getPromoted();
-    int side = sideToMove;
+    const int fromSquare = m.getFromSquare();
+    const int toSquare = m.getToSquare();
+    const int capturedPiece = m.getCapturedPiece();
+    const int castling = m.getCastling();
+    const int promotedPiece = m.getPromoted();
+    const int side = sideToMove;
 
     //If board is not valid, show an error message
     if (!isBoardValid()) {
@@ -555,18 +556,18 @@ void BoardStructure::undoMove()
     ply--; historyPly--;
 
     //Init variables
-    int m = history[historyPly].move;
-    int fromSquare = m & 0x7F;
-    int toSquare = (m >> 7) & 0x7F;
-    int captured = (m >> 14) & 0xF;
-    int promotedPiece = (m >> 18) & 0xF;
-    int castling = (m >> 22) & 0x7;
+    const int m = history[historyPly].move;
+    const int fromSquare = m & 0x7F;
+    const int toSquare = (m >> 7) & 0x7F;
+    const int captured = (m >> 14) & 0xF;
+    const int promotedPiece = (m >> 18) & 0xF;
+    const int castling = (m >> 22) & 0x7;
 
     //If square fromSquare or toSquare is not on the board, output an error message
-    if (FILES[fromSquare] == -1) {
+    if (fromSquare >= BOARD_SQUARE_COUNT || FILES[fromSquare] == -1) {
         cout << "\nERROR: FROMSQUARE " << fromSquare << " IS NOT VALID.\n";
     }
-    if (FILES[toSquare] == -1) {
+    if (toSquare >= BOARD_SQUARE_COUNT || FILES[toSquare] == -1) {
         cout << "\nERROR: TOSQUARE " << toSquare << " IS NOT VALID.\n";
     }
 
@@ -626,7 +627,7 @@ void BoardStructure::undoMove()
 }
 
 // Counts all the pieces on the board and records them in the pieceCount[] array
-void BoardStructure::countPieces()
+void BoardStructure::countPieces() noexcept
 {
     //Initialize pieceCount[] array
     for (int i = 0; i < 13; i++) {
@@ -654,7 +655,7 @@ void BoardStructure::countPieces()
 }
 
 //Has this position occured before in the game? If yes, return true. Used for checking threefold repetition.
-bool BoardStructure::isRepetition()
+bool BoardStructure::isRepetition() noexcept
 {
     for (int i = 0; i < historyPly - 1; i++) {
         if (positionID == history[i].positionID) {
@@ -665,7 +666,7 @@ bool BoardStructure::isRepetition()
 }
 
 //Generate and return a position id representing this board's position
-U64 BoardStructure::generateAndGetPositionID()
+U64 BoardStructure::generateAndGetPositionID() noexcept
 {
     U64 id = 0;
 
