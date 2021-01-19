@@ -82,8 +82,8 @@ void AI::init(Board_Structure& board) noexcept
     board.ply = 0;
 
     table.clear_PV_table();
-    nodes_count = 0;
-    evals_count = 0;
+    node_count = 0;
+    eval_count = 0;
 }
 
 //Returns the best move found by the negamax function
@@ -115,7 +115,7 @@ Move AI::find_best_move(Board_Structure& board, int depth)
         cout << "\n\nI, " << NAME << ", have decided to make move ";
         move_list.uci_print_move_given_move(best_move);
         cout << " after searching to depth " << ai.max_depth << ".\n";
-        cout << "\nNumber of nodes scanned: " << nodes_count << ". Number of evaluations made: " << evals_count << ".\n";
+        cout << "\nNumber of nodes scanned: " << node_count << ". Number of evaluations made: " << eval_count << ".\n";
         cout << "Total calculation time: " << ((float)timer) / CLOCKS_PER_SEC << " seconds. \n"; //Convert clock_t object to time in seconds and print out
 
         //Print the pv (principal variation)
@@ -133,11 +133,11 @@ Move AI::find_best_move(Board_Structure& board, int depth)
 // the parameter board.
 int AI::negamax(int alpha, int beta, Board_Structure& board, int depth)
 {
-    nodes_count++;
+    node_count++;
 
     //If depth == 0 or ply too high, go back up the tree
     if (depth == 0 || board.ply > 63) {
-        evals_count++;
+        eval_count++;
         return evaluate(board);
     }
 
@@ -199,6 +199,7 @@ int AI::negamax(int alpha, int beta, Board_Structure& board, int depth)
             pv_best_move = gen1.moves[i];
             if (depth == max_depth) {
                 best_move = gen1.moves[i];
+                best_move_score = -score;
                 if (!uci_mode) {
                     cout << "\nSetting best_move to ";
                     gen1.uci_print_move_given_move(gen1.moves[i]);
