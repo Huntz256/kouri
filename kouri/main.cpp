@@ -61,9 +61,16 @@ int translate_move_command(string com) noexcept
         return -1;
     }
 
-    //Regular move with possible promotion
     const int from = (com[0] - 'a' + 1) + (com[1] - '1' + 2) * 10;
     const int to = (com[2] - 'a' + 1) + (com[3] - '1' + 2) * 10;
+
+    //Castling
+    if (com.length() == 4 && board.side_to_move == WHITE && from == 25 && to == 27) return MOVE(25, 27, 0, 0, 1);
+    if (com.length() == 4 && board.side_to_move == WHITE && from == 25 && to == 23) return MOVE(25, 23, 0, 0, 2);
+    if (com.length() == 4 && board.side_to_move == BLACK && from == 95 && to == 97) return MOVE(95, 97, 0, 0, 3);
+    if (com.length() == 4 && board.side_to_move == BLACK && from == 95 && to == 93) return MOVE(95, 93, 0, 0, 4);
+
+    //Regular move with possible promotion
     const int prom = (com.length() == 5) ? char_to_piece_int(com[4]) : 0;
 
     ///cout << "Attempting to make non-castling move:" << from << " " << to << " " << board.pieces[to] << " " << prom << "\n";
