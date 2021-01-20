@@ -274,7 +274,7 @@ private:
     int node_count; //Number of nodes scanned for a search
     int eval_count; //Number of evaluations done for a search
     Move best_move;
-    int best_move_score;
+    int best_move_score; //For UCI info command
 };
 
 extern AI ai;

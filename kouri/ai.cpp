@@ -199,7 +199,7 @@ int AI::negamax(int alpha, int beta, Board_Structure& board, int depth)
             pv_best_move = gen1.moves[i];
             if (depth == max_depth) {
                 best_move = gen1.moves[i];
-                best_move_score = -score;
+                best_move_score = score;
                 if (!uci_mode) {
                     cout << "\nSetting best_move to ";
                     gen1.uci_print_move_given_move(gen1.moves[i]);
