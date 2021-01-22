@@ -1,4 +1,9 @@
-#include "defs.h"
+#include "ai.h"
+#include "board.h"
+#include "misc.h"
+#include "moves.h"
+#include "pvtable.h"
+
 #include <iostream>
 #include <string>
 #include <random>
@@ -7,7 +12,7 @@
 using namespace std;
 
 Board_Structure board; //Board_Structure* boardpt;
-U64 piece_square_key[13][BOARD_SQUARE_COUNT], side_key, castle_perm_key[16];
+U64 piece_square_key[13][board_square_count], side_key, castle_perm_key[16];
 Move_List_Generator move_list;
 PV_Table table;
 AI ai;
@@ -201,7 +206,7 @@ void test_function3()
             moveNum = get_random_integer(0, move_list.moves_count - 1);
         }
 
-        cout << "\n\n" << NAME << " has decided to make move " << moveNum << "!";
+        cout << "\n\n" << name << " has decided to make move " << moveNum << "!";
         //board.side_to_move = board.side_to_move ^ 1;
 
         getline(cin, x);
@@ -228,7 +233,7 @@ void test_function4()
             move_num = get_random_integer(0, move_list.moves_count - 1);
         }
 
-        cout << "\n\nI, " << NAME << ", have decided to make move " << move_num << ".";
+        cout << "\n\nI, " << name << ", have decided to make move " << move_num << ".";
     }
 }
 
@@ -282,7 +287,7 @@ void test_function5()
             move_num = get_random_integer(0, move_list.moves_count - 1);
         }
 
-        cout << "\n\nI, " << NAME << ", have decided to make move " << move_num << ".";
+        cout << "\n\nI, " << name << ", have decided to make move " << move_num << ".";
     }
 }
 
@@ -604,7 +609,7 @@ int main()
 
     // Interface with human
     else {
-        cout << "\nHello. My name is " << NAME << ".\n";
+        cout << "\nHello. My name is " << name << ".\n";
         cout << "\nI have been created by Minter (Hunter and Minh).";
         cout << "\nCurrently, I understand most rules of chess.";
         cout << "\nI also have some idea regarding what makes one move better than another.\n\n";

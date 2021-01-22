@@ -1,4 +1,8 @@
-#include "defs.h"
+#include "moves.h"
+
+#include "board.h"
+#include "misc.h"
+
 #include <iostream>
 using namespace std;
 
@@ -146,7 +150,7 @@ void Move_List_Generator::add_pawn_move(int from_square, int to_square, int side
 void Move_List_Generator::generate_pawn_moves(Board_Structure& board)
 {
     //Go through every square on the board
-    for (int i = 0; i < BOARD_SQUARE_COUNT; i++) {
+    for (int i = 0; i < board_square_count; i++) {
 
         if (board.side_to_move == WHITE) {
 
@@ -234,7 +238,7 @@ void Move_List_Generator::generate_slider_moves(Board_Structure& board) noexcept
 
     while (piece != 0) {
         //Go through every square on the board
-        for (int i = 0; i < BOARD_SQUARE_COUNT; i++) {
+        for (int i = 0; i < board_square_count; i++) {
 
             //If there is a piece on square i that is a slider piece...
             if (board.pieces[i] == piece) {
@@ -284,7 +288,7 @@ void Move_List_Generator::generate_non_slider_moves(Board_Structure& board) noex
     while (piece != 0) {
 
         //Go through every square on the board
-        for (int i = 0; i < BOARD_SQUARE_COUNT; i++) {
+        for (int i = 0; i < board_square_count; i++) {
 
             //If there is a piece on square i that is a non slider piece...
             if (board.pieces[i] == piece) {

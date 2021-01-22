@@ -32,7 +32,19 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="defs.h">
+    <ClInclude Include="ai.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="board.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="moves.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pvtable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="misc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

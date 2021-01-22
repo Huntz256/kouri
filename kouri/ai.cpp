@@ -1,4 +1,10 @@
-#include "defs.h"
+#include "ai.h"
+
+#include "board.h"
+#include "misc.h"
+#include "moves.h"
+#include "pvtable.h"
+
 #include <iostream>
 #include <limits>
 #include <algorithm>
@@ -89,7 +95,7 @@ void AI::init(Board_Structure& board) noexcept
 //Returns the best move found by the negamax function
 Move AI::find_best_move(Board_Structure& board, int depth)
 {
-    int best_score = -INFIN, pv_moves_count = 0;
+    int best_score = -infinity, pv_moves_count = 0;
 
     //Clock to retrieve system time
     clock_t timer = clock();
@@ -98,7 +104,7 @@ Move AI::find_best_move(Board_Structure& board, int depth)
     init(board);
 
     //Negamax searches for the best move
-    best_score = negamax(-INFIN, INFIN, board, depth);
+    best_score = negamax(-infinity, infinity, board, depth);
 
     //Print the best move
     if (!uci_mode) {
@@ -112,7 +118,7 @@ Move AI::find_best_move(Board_Structure& board, int depth)
     timer = clock() - timer;
 
     if (!uci_mode) {
-        cout << "\n\nI, " << NAME << ", have decided to make move ";
+        cout << "\n\nI, " << name << ", have decided to make move ";
         move_list.uci_print_move_given_move(best_move);
         cout << " after searching to depth " << ai.max_depth << ".\n";
         cout << "\nNumber of nodes scanned: " << node_count << ". Number of evaluations made: " << eval_count << ".\n";
@@ -156,7 +162,7 @@ int AI::negamax(int alpha, int beta, Board_Structure& board, int depth)
     }
 
     Move pv_best_move; pv_best_move.move = 0;
-    int legal_moves_count = 0, score = -INFIN;
+    int legal_moves_count = 0, score = -infinity;
     const int old_alpha = alpha;
 
     //Go through all of the generated moves
@@ -216,7 +222,7 @@ int AI::negamax(int alpha, int beta, Board_Structure& board, int depth)
         if (board.is_square_attacked(board.king_square[board.side_to_move], board.side_to_move ^ 1)) {
 
             //Note that adding board.ply means that a mate in 3 is better than a mate in 6
-            return -MATE + board.ply;
+            return -mate + board.ply;
         }
 
         //Otherwise, it is stalemate. Good game.

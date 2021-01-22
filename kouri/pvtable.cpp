@@ -3,7 +3,11 @@
 // and therefore expect to be played."
 //https://chessprogramming.wikispaces.com/Principal+variation
 
-#include "defs.h"
+#include "pvtable.h"
+
+#include "board.h"
+#include "moves.h"
+
 #include <iostream>
 using namespace std;
 

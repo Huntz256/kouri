@@ -1,4 +1,10 @@
-#include "defs.h"
+#include "board.h"
+
+#include "ai.h"
+#include "misc.h"
+#include "moves.h"
+#include "pvtable.h"
+
 #include <iostream>
 #include <unordered_map>
 #include <fstream>
@@ -46,6 +52,7 @@ char num_to_piece_char(int num)
     return '~';
 }
 
+//Converts char like 'p' or 'Q' to the corresponding integer
 //Used for pawn promotion user command
 int char_to_piece_int(char c) noexcept
 {
@@ -63,7 +70,7 @@ int char_to_piece_int(char c) noexcept
 //Outputs full 10x12 board to console
 void Board_Structure::display_full_board(bool disp_pieces)
 {
-    for (int i = 0; i < BOARD_SQUARE_COUNT; i++) {
+    for (int i = 0; i < board_square_count; i++) {
         if (i % 10 == 0) {
             cout << "\n------------------------------\n";
         }
@@ -130,7 +137,7 @@ void Board_Structure::init(bool go_first)
 void Board_Structure::reset_board_to_empty() noexcept
 {
     //Set all squares on the board to the value -1 representing off board squares
-    for (int i = 0; i < BOARD_SQUARE_COUNT; i++) {
+    for (int i = 0; i < board_square_count; i++) {
         pieces[i] = -1;
     }
 
@@ -231,7 +238,7 @@ int Board_Structure::setup_board_using_FEN(string fen)
     position_ID = generate_and_get_position_ID();
 
     //Update material[] and king_square[]
-    for (int j = 0; j < BOARD_SQUARE_COUNT; j++) {
+    for (int j = 0; j < board_square_count; j++) {
         if (pieces[j] > 0) {
             int color = get_piece_color(pieces[j]);
             material[color] += piece_value[pieces[j]];
@@ -274,7 +281,7 @@ void Board_Structure::display_history()
     cout << "\n";
 }
 
-//Prints a square. For example, print_square(55) prints "e4"
+//Prints a square in algebraic notation. For example, print_square(55) prints "e4"
 void print_square(int square)
 {
     cout << files_to_char[files[square]] << (1 + ranks[square]);
@@ -563,10 +570,10 @@ void Board_Structure::undo_move()
     const int castling = (m >> 22) & 0x7;
 
     //If square from_square or to_square is not on the board, output an error message
-    if (from_square >= BOARD_SQUARE_COUNT || files[from_square] == -1) {
+    if (from_square >= board_square_count || files[from_square] == -1) {
         cout << "\nERROR: FROMSQUARE " << from_square << " IS NOT VALID.\n";
     }
-    if (to_square >= BOARD_SQUARE_COUNT || files[to_square] == -1) {
+    if (to_square >= board_square_count || files[to_square] == -1) {
         cout << "\nERROR: TOSQUARE " << to_square << " IS NOT VALID.\n";
     }
 
@@ -634,7 +641,7 @@ void Board_Structure::count_pieces() noexcept
     }
 
     //Loop through the entire board
-    for (int i = 0; i < BOARD_SQUARE_COUNT; i++) {
+    for (int i = 0; i < board_square_count; i++) {
         switch (pieces[i]) {
         case EMPTY: piece_count[EMPTY]++; break;
         case B_PAWN: piece_count[B_PAWN]++; break;
@@ -670,7 +677,7 @@ U64 Board_Structure::generate_and_get_position_ID() noexcept
     U64 id = 0;
 
     //Go through each square on the board
-    for (int i = 0; i < BOARD_SQUARE_COUNT; i++) {
+    for (int i = 0; i < board_square_count; i++) {
 
         //If the square contains a piece, modify id 
         if (pieces[i] > 0) {
