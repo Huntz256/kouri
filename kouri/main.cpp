@@ -573,7 +573,7 @@ void uci(string in)
         else if (uci_command.substr(0, 2) == "go") {
             m = ai.find_best_move(board, ai.max_depth);
 
-            cout << "info depth " << ai.max_depth << " score cp " << ai.get_best_move_score() << " nodes " << ai.get_node_count() << " pv ";
+            cout << "info depth " << ai.max_depth << " score cp " << ai.best_move_score() << " nodes " << ai.node_count() << " pv ";
             move_list.uci_print_move_given_move(m);
 
             cout << "\nbestmove ";

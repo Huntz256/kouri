@@ -34,13 +34,13 @@ public:
     int negamax(int alpha, int beta, Board_Structure& board, int depth); // Negamax algorithm with alpha-beta pruning
     Move find_best_move(Board_Structure& board, int depth); // Uses negamax to find best move
     int max_depth = 6;
-    int get_node_count() noexcept { return node_count; };
-    int get_best_move_score() noexcept { return best_move_score; };
+    int node_count() noexcept { return node_count_; };
+    int best_move_score() noexcept { return best_move_score_; };
 private:
-    int node_count; //Number of nodes scanned for a search
-    int eval_count; //Number of evaluations done for a search
-    Move best_move;
-    int best_move_score; //For UCI info command
+    int node_count_; //Number of nodes scanned for a search
+    int eval_count_; //Number of evaluations done for a search
+    Move best_move_;
+    int best_move_score_; //For UCI info command
 };
 
 extern AI ai;

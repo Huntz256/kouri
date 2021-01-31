@@ -80,16 +80,16 @@ const int mirror_64[64] = {
 //Inits AI. This is called in find_best_move().
 void AI::init(Board_Structure& board) noexcept
 {
-    // Reset best_move to no move
-    best_move.move = 0;
+    // Reset best_move_ to no move
+    best_move_.move = 0;
 
     //Note that histPly stores # of half-moves for the entire game,
     // while ply stores # of half-moves for the current search
     board.ply = 0;
 
     table.clear_PV_table();
-    node_count = 0;
-    eval_count = 0;
+    node_count_ = 0;
+    eval_count_ = 0;
 }
 
 //Returns the best move found by the negamax function
@@ -108,7 +108,7 @@ Move AI::find_best_move(Board_Structure& board, int depth)
 
     //Print the best move
     if (!uci_mode) {
-        cout << "best_move is:"; move_list.uci_print_move_given_move(best_move);
+        cout << "best_move_ is:"; move_list.uci_print_move_given_move(best_move_);
     }
 
     //Fill pv_array and get number of moves in pv
@@ -119,9 +119,9 @@ Move AI::find_best_move(Board_Structure& board, int depth)
 
     if (!uci_mode) {
         cout << "\n\nI, " << name << ", have decided to make move ";
-        move_list.uci_print_move_given_move(best_move);
+        move_list.uci_print_move_given_move(best_move_);
         cout << " after searching to depth " << ai.max_depth << ".\n";
-        cout << "\nNumber of nodes scanned: " << node_count << ". Number of evaluations made: " << eval_count << ".\n";
+        cout << "\nNumber of nodes scanned: " << node_count_ << ". Number of evaluations made: " << eval_count_ << ".\n";
         cout << "Total calculation time: " << ((float)timer) / CLOCKS_PER_SEC << " seconds. \n"; //Convert clock_t object to time in seconds and print out
 
         //Print the pv (principal variation)
@@ -131,7 +131,7 @@ Move AI::find_best_move(Board_Structure& board, int depth)
         }
     }
 
-    return best_move;
+    return best_move_;
 }
 
 // Negamax with alpha-beta pruning.
@@ -139,11 +139,11 @@ Move AI::find_best_move(Board_Structure& board, int depth)
 // the parameter board.
 int AI::negamax(int alpha, int beta, Board_Structure& board, int depth)
 {
-    node_count++;
+    node_count_++;
 
     //If depth == 0 or ply too high, go back up the tree
     if (depth == 0 || board.ply > 63) {
-        eval_count++;
+        eval_count_++;
         return evaluate(board);
     }
 
@@ -158,7 +158,7 @@ int AI::negamax(int alpha, int beta, Board_Structure& board, int depth)
 
     //Default best move
     if (depth == max_depth) {
-        best_move = gen1.moves[0];
+        best_move_ = gen1.moves[0];
     }
 
     Move pv_best_move; pv_best_move.move = 0;
@@ -204,10 +204,10 @@ int AI::negamax(int alpha, int beta, Board_Structure& board, int depth)
 
             pv_best_move = gen1.moves[i];
             if (depth == max_depth) {
-                best_move = gen1.moves[i];
-                best_move_score = score;
+                best_move_ = gen1.moves[i];
+                best_move_score_ = score;
                 if (!uci_mode) {
-                    cout << "\nSetting best_move to ";
+                    cout << "\nSetting best_move_ to ";
                     gen1.uci_print_move_given_move(gen1.moves[i]);
                 }
             }
