@@ -33,7 +33,7 @@ public:
     std::vector<int> get_eval_breakdown(Board_Structure& board); // Gets the evaluation of the board but as a vector
     int negamax(int alpha, int beta, Board_Structure& board, int depth); // Negamax algorithm with alpha-beta pruning
     Move find_best_move(Board_Structure& board, int depth); // Uses negamax to find best move
-    int max_depth = 6;
+    int max_depth = 4;
     int node_count() noexcept { return node_count_; };
     int best_move_score() noexcept { return best_move_score_; };
 private:
