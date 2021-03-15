@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <fstream>
 #include <cmath>
+#include <windows.h>
 using namespace std;
 
 const int castle_permissions[120] = {
@@ -94,12 +95,23 @@ void Board_Structure::display_full_board(bool disp_pieces)
 //Outputs 8x8 board to console
 void Board_Structure::display_board()
 {
+    HANDLE h_console = GetStdHandle(STD_OUTPUT_HANDLE);
+
     //Display the board with white on bottom
     cout << "\n";
     for (int rank = RANK_8; rank >= RANK_1; rank--) {
         cout << rank + 1 << " ";
         for (int file = FILE_A; file <= FILE_H; file++) {
-            cout << " " << num_to_piece_char(pieces[square_ID_120[rank * 8 + file]]) << "|";
+            const int piece_num = pieces[square_ID_120[rank * 8 + file]];
+            if (piece_num % 2 == 1) {
+                SetConsoleTextAttribute(h_console, 12); // Set console text color to red
+            }
+            else {
+                SetConsoleTextAttribute(h_console, 14); // Set console text color to yellow
+            }
+            cout << " " << num_to_piece_char(piece_num);
+            SetConsoleTextAttribute(h_console, 7); // Set console text color to white
+            cout << "|";
         }
         cout << "\n  ------------------------\n";
     }
