@@ -82,4 +82,4 @@ public:
 };
 
 void print_square(int square);
-int char_to_piece_int(char c) noexcept;
+int char_to_piece_int(char c, int side_to_move) noexcept;

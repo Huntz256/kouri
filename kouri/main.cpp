@@ -76,7 +76,7 @@ int translate_move_command(string com) noexcept
     if (com.length() == 4 && board.side_to_move == BLACK && from == 95 && to == 93) return MOVE(95, 93, 0, 0, 4);
 
     //Regular move with possible promotion
-    const int prom = (com.length() == 5) ? char_to_piece_int(com[4]) : 0;
+    const int prom = (com.length() == 5) ? char_to_piece_int(com[4], board.side_to_move) : 0;
 
     ///cout << "Attempting to make non-castling move:" << from << " " << to << " " << board.pieces[to] << " " << prom << "\n";
     return MOVE(from, to, board.pieces[to], prom, 0);

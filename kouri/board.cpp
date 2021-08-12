@@ -55,16 +55,43 @@ char num_to_piece_char(int num)
 
 //Converts char like 'p' or 'Q' to the corresponding integer
 //Used for pawn promotion user command
-int char_to_piece_int(char c) noexcept
+int char_to_piece_int(char c, int side_to_move) noexcept
 {
-    switch (c) {
-    case 'p': return B_PAWN; case 'P': return W_PAWN;
-    case 'b': return B_BISHOP; case 'B': return W_BISHOP;
-    case 'n': return B_KNIGHT; case 'N': return W_KNIGHT;
-    case 'r': return B_ROOK; case 'R': return W_ROOK;
-    case 'q': return B_QUEEN; case 'Q': return W_QUEEN;
-    case 'k': return B_KING; case 'K': return W_KING;
-    default: return -1;
+    if (side_to_move == WHITE) {
+        switch (c) {
+        case 'p': case 'P':
+            return W_PAWN;
+        case 'b': case 'B':
+            return W_BISHOP;
+        case 'n': case 'N':
+            return W_KNIGHT;
+        case 'r': case 'R':
+            return W_ROOK;
+        case 'q': case 'Q':
+            return W_QUEEN;
+        case 'k': case 'K':
+            return W_KING;
+        default:
+            return -1;
+        }
+    }
+    else {
+        switch (c) {
+        case 'p': case 'P':
+            return B_PAWN;
+        case 'b': case 'B':
+            return B_BISHOP;
+        case 'n': case 'N':
+            return B_KNIGHT;
+        case 'r': case 'R':
+            return B_ROOK;
+        case 'q': case 'Q':
+            return B_QUEEN;
+        case 'k': case 'K':
+            return B_KING;
+        default:
+            return -1;
+        }
     }
 }
 
