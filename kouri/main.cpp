@@ -398,7 +398,7 @@ void test_function70()
 void test_function23()
 {
     string x; Move m; board.init(true);
-    string help = "\nTo make a move, type a command in the form: a2a4 \nPawn promotions are done as such: a1b2=Q \nCastling is done using: O-O or O-O-O \nFor a movelist, type: hint \nTo forfeit, type: f \n";
+    string help = "\nTo make a move, type a command in the form: a2a4 \nPawn promotions are done as such: a1b2=Q \nCastling is done using: O-O or O-O-O \nFor a movelist, type: hint \nTo undo, type: undo\nTo forfeit, type: f \n";
     bool quit = false;
 
     board.init(true);
@@ -422,21 +422,44 @@ void test_function23()
         cout << "For a list of commands, type: help \nEnter your command (e.g. e2e4): ";
         getline(cin, x);
 
-        while (x.compare("f") == 0 || x.compare("hint") == 0 || x.compare("help") == 0 || !(move_list.is_move_valid(board, translate_move_command(x)))) {
-            if (x.compare("help") != 0 && x.compare("hint") != 0 && x.compare("f") != 0) {
+        while (x.compare("f") == 0 || x.compare("hint") == 0 || x.compare("help") == 0 || x.compare("undo") == 0 || !(move_list.is_move_valid(board, translate_move_command(x)))) {
+            if (x.compare("help") != 0 && x.compare("hint") != 0 && x.compare("f") != 0 && x.compare("undo") != 0) {
                 cout << "\n\nThat is not a valid move or command.\n";
             }
 
-            if (x.compare("hint") == 0) move_list.print_move_list(board);
-            else if (x.compare("f") == 0) break;
-            else if (x.compare("help") == 0) cout << help << "\n";
+            if (x.compare("hint") == 0) {
+                move_list.print_move_list(board);
+            }
+            else if (x.compare("f") == 0) {
+                break;
+            }
+            else if (x.compare("help") == 0) {
+                cout << help << "\n";
+            }
+            else if (x.compare("undo") == 0) {
+                if (board.history_ply > 1) {
+                    board.undo_move();
+                    board.undo_move();
+                    break;
+                }
+                else {
+                    cout << "Cannot undo.\n";
+                }
+            }
 
             cout << "Enter your command (e.g. e2e4): ";
             getline(cin, x);
         }
 
         // Quit game if player requests so
-        if (x.compare("f") == 0) break;
+        if (x.compare("f") == 0) {
+            break;
+        }
+
+        // Display the board after undo
+        else if (x.compare("undo") == 0) {
+            continue;
+        }
 
         // Make player's move
         m.move = translate_move_command(x);
@@ -579,6 +602,14 @@ void uci(string in)
             cout << "\nbestmove ";
             move_list.uci_print_move_given_move(m);
             cout << "\n";
+        }
+        else if (uci_command.substr(0, 4) == "undo") { // For debugging purposes - not an official UCI command
+            if (board.history_ply > 0) {
+                board.undo_move();
+            }
+        }
+        else if (uci_command.substr(0, 7) == "display") { // For debugging purposes - not an official UCI command
+            board.display_board();
         }
         else if (uci_command.substr(0, 4) == "quit") {
             break;
