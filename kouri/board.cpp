@@ -663,7 +663,7 @@ void Board_Structure::undo_move()
     //Then, undo promotion if there was a promotion
     if (promoted_piece != EMPTY) {
         remove_piece_from_square(from_square);
-        add_piece_to_square(from_square, ((get_piece_color(pieces[from_square]) == WHITE) ? W_PAWN : B_PAWN));
+        add_piece_to_square(from_square, ((side_to_move == WHITE) ? W_PAWN : B_PAWN));
     }
 
     //Update posiition ID
