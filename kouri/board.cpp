@@ -146,8 +146,8 @@ void Board_Structure::display_board()
 
     //Also display some more infomation
     cout << "Side to move: " << (side_to_move == 0 ? "White" : "Black");
-    ///cout << "Enpass. square: " << en_pass_square << '\n';
     cout << "\nCastling permissions: " << castle_perms << '\n';
+    cout << "Enpass. square: " << en_pass_square << '\n';
 
     // Display estimated probability of winning
     const float p = -((float)ai.evaluate(*this)) / 100;
@@ -512,8 +512,15 @@ bool Board_Structure::make_move(Move m)
     //Update history[]'s position ID
     history[history_ply].position_ID = position_ID;
 
-    //If en passant move, make the en passant portion (i.e. clearing a pawn) of the move
-        //to do later
+    //If en passant move, make the removing portion of the move
+    if (to_square == en_pass_square) {
+        if (side == WHITE) {
+            remove_piece_from_square(to_square - 10);
+        }
+        else {
+            remove_piece_from_square(to_square + 10);
+        }
+    }
 
     //If castling move, make the rook movement portion of the castling move
     if (castling != 0) {
@@ -559,14 +566,14 @@ bool Board_Structure::make_move(Move m)
     history_ply++; ply++;
 
     //Update en pass square if needed
-    /*if (pieces[m.get_from_square()] == W_PAWN || (pieces[m.get_from_square()] == B_PAWN)) {
-        if (side_to_move == WHITE) {
+    if (pieces[m.get_from_square()] == W_PAWN || (pieces[m.get_from_square()] == B_PAWN)) {
+        if (side_to_move == WHITE && ranks[m.get_from_square()] == RANK_2 && ranks[m.get_to_square()] == RANK_4) {
             en_pass_square = m.get_from_square() + 10;
         }
-        else {
+        else if (side_to_move == BLACK && ranks[m.get_from_square()] == RANK_7 && ranks[m.get_to_square()] == RANK_5) {
             en_pass_square = m.get_from_square() - 10;
         }
-    }*/
+    }
 
     //Now that the captured piece is removed, we can now actually move the piece we want to move
     move_piece_to_square(from_square, to_square);
@@ -623,8 +630,15 @@ void Board_Structure::undo_move()
     //Flip side to move and update position_ID
     side_to_move ^= 1; position_ID = generate_and_get_position_ID();
 
-    //If en passant move, undo the en passant portion (i.e. clearing a pawn) of the move
-        //to do later
+    //If en passant move, undo the removing portion of the move
+    if (to_square == en_pass_square) {
+        if (side_to_move == WHITE) {
+            add_piece_to_square(to_square - 10, B_PAWN);
+        }
+        else {
+            add_piece_to_square(to_square + 10, W_PAWN);
+        }
+    }
 
     //If castling move, undo the rook movement portion of the castling move
     //In other words move the rooks back to their home squares if needed

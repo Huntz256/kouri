@@ -180,11 +180,11 @@ void Move_List_Generator::generate_pawn_moves(Board_Structure& board)
 
                 if (board.en_pass_square != 0) {
                     //En passant 
-                    if (board.pieces[i + 9] > 0 && board.pieces[i + 9] == board.en_pass_square) {
-                        //add_pawn_capturing_move(board, i, i + 9, 0, WHITE);
+                    if (i + 9 == board.en_pass_square) {
+                        add_pawn_capturing_move(i, i + 9, 0, WHITE);
                     }
-                    if (board.pieces[i + 11] > 0 && board.pieces[i + 11] == board.en_pass_square) {
-                        //add_pawn_capturing_move(board, i, i + 11, 0, WHITE);
+                    if (i + 11 == board.en_pass_square) {
+                        add_pawn_capturing_move(i, i + 11, 0, WHITE);
                     }
                 }
 
@@ -219,11 +219,11 @@ void Move_List_Generator::generate_pawn_moves(Board_Structure& board)
 
                 if (board.en_pass_square != 0) {
                     //En passant 
-                    if (i >= 9 && board.pieces[i - 9] > 0 && board.pieces[i - 9] == board.en_pass_square) {
-                        //	add_pawn_capturing_move(board, i, i - 9, 0, BLACK);
+                    if (i - 9 == board.en_pass_square) {
+                        add_pawn_capturing_move(i, i - 9, 0, BLACK);
                     }
-                    if (i >= 11 && board.pieces[i - 11] > 0 && board.pieces[i - 11] == board.en_pass_square) {
-                        //add_pawn_capturing_move(board, i, i - 11, 0, BLACK);
+                    if (i - 11 == board.en_pass_square) {
+                        add_pawn_capturing_move(i, i - 11, 0, BLACK);
                     }
                 }
             }
