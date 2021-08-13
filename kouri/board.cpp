@@ -146,8 +146,8 @@ void Board_Structure::display_board()
 
     //Also display some more infomation
     cout << "Side to move: " << (side_to_move == 0 ? "White" : "Black");
-    //cout << "\nCastling permissions: " << castle_perms << '\n';
     ///cout << "Enpass. square: " << en_pass_square << '\n';
+    cout << "\nCastling permissions: " << castle_perms << '\n';
 
     // Display estimated probability of winning
     const float p = -((float)ai.evaluate(*this)) / 100;
@@ -255,8 +255,8 @@ int Board_Structure::setup_board_using_FEN(string fen)
     //Set the side to move using infomation in FEN
     side_to_move = (fen[i] == 'w') ? 0 : 1;
 
-    //Set castling permissions using infomation in FEN
-    fen += 2;
+    //Set castling permissions using information in FEN
+    i += 2;
     for (int j = 0; j < 4; j++) {
         if (fen[i] == ' ') {
             break;
