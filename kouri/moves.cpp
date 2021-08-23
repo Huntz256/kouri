@@ -6,24 +6,24 @@
 #include <iostream>
 using namespace std;
 
-//Represents where a knight/rook/bishop/queeen/king can move
+// Represents where a knight/rook/bishop/queeen/king can move
 const int knight_movements[8] = { -19, -8, 12, 21, 19, 8, -12, -21 };
 const int rook_movements[4] = { -10, 1, 10, -1 };
 const int bishop_movements[4] = { -9, 11, 9, -11 };
 const int king_movements[8] = { -10, -9, 1, 11, 10, 9, -1, -11 };
 
-//Used in generate_slider_moves()
+// Used in generate_slider_moves()
 const int sliding_pieces[8] = { W_BISHOP, W_ROOK, W_QUEEN, 0, B_BISHOP, B_ROOK, B_QUEEN };
 const int sliding_pieces_start_index[2] = { 0, 4 };
 
-//Used in generate_non_slider_moves()
+// Used in generate_non_slider_moves()
 const int non_sliding_pieces[6] = { W_KNIGHT, W_KING, 0, B_KNIGHT, B_KING, 0 };
 const int non_sliding_pieces_start_index[2] = { 0, 3 };
 
-//For a piece i, number_of_directions[i] is the max number of directions it can move
+// For a piece i, number_of_directions[i] is the max number of directions it can move
 const int number_of_directions[13] = { 0, 0, 0, 4, 4, 8, 8, 4, 4, 8, 8, 8, 8 };
 
-//Used in generate_slider_moves() and generate_non_slider_moves()
+// Used in generate_slider_moves() and generate_non_slider_moves()
 const int piece_movements[13][8] = {
     { 0, 0, 0, 0, 0, 0, 0, 0 },
     { 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -40,48 +40,25 @@ const int piece_movements[13][8] = {
     { -10, -9, 1, 11, 10, 9, -1, -11 }
 };
 
-
-//Used for debugging the function is_square_attacked()
-void test_is_square_attacked(int side, Board_Structure& board)
-{
-    cout << "All squares attacked by side " << side << '\n';
-
-    //Display the board
-    cout << "\n";
-    for (int rank = RANK_8; rank >= RANK_1; rank--) {
-        cout << rank + 1 << " ";
-        for (int file = FILE_A; file <= FILE_H; file++) {
-            if (board.is_square_attacked(square_ID_120[rank * 8 + file], side)) {
-                cout << " X|";
-            }
-            else {
-                cout << "  |";
-            }
-        }
-        cout << "\n  ------------------------\n";
-    }
-    cout << "   a  b  c  d  e  f  g  h\n\n";
-}
-
 int Move::get_from_square() noexcept
 {
-    return move & 0x7F;
+    return move_ & 0x7F;
 }
 int Move::get_to_square() noexcept
 {
-    return (move >> 7) & 0x7F;
+    return (move_ >> 7) & 0x7F;
 }
 int Move::get_captured_piece() noexcept
 {
-    return (move >> 14) & 0xF;
+    return (move_ >> 14) & 0xF;
 }
 int Move::get_promoted() noexcept
 {
-    return (move >> 18) & 0xF;
+    return (move_ >> 18) & 0xF;
 }
 int Move::get_castling() noexcept
 {
-    return (move >> 22) & 0x7;
+    return (move_ >> 22) & 0x7;
 }
 
 void Move_List_Generator::add_pawn_capturing_move(int from_square, int to_square, int capture, int side)
@@ -95,81 +72,89 @@ void Move_List_Generator::add_pawn_capturing_move(int from_square, int to_square
 
     if (side == WHITE) {
         if (ranks[from_square] == RANK_7) {
-            moves[moves_count].move = MOVE(from_square, to_square, capture, W_QUEEN, 0); moves_count++;
-            moves[moves_count].move = MOVE(from_square, to_square, capture, W_ROOK, 0); moves_count++;
-            moves[moves_count].move = MOVE(from_square, to_square, capture, W_KNIGHT, 0); moves_count++;
-            moves[moves_count].move = MOVE(from_square, to_square, capture, W_BISHOP, 0); moves_count++;
+            moves[moves_count] = Move(MOVE(from_square, to_square, capture, W_QUEEN, 0));
+            moves[moves_count] = Move(MOVE(from_square, to_square, capture, W_ROOK, 0));
+            moves[moves_count] = Move(MOVE(from_square, to_square, capture, W_KNIGHT, 0));
+            moves[moves_count] = Move(MOVE(from_square, to_square, capture, W_BISHOP, 0));
+            moves_count += 4;
         }
         else {
-            moves[moves_count].move = MOVE(from_square, to_square, capture, 0, 0); moves_count++;
+            moves[moves_count] = Move(MOVE(from_square, to_square, capture, 0, 0));
+            moves_count++;
         }
     }
     else {
         if (ranks[from_square] == RANK_2) {
-            moves[moves_count].move = MOVE(from_square, to_square, capture, B_QUEEN, 0); moves_count++;
-            moves[moves_count].move = MOVE(from_square, to_square, capture, B_ROOK, 0); moves_count++;
-            moves[moves_count].move = MOVE(from_square, to_square, capture, B_KNIGHT, 0); moves_count++;
-            moves[moves_count].move = MOVE(from_square, to_square, capture, B_BISHOP, 0); moves_count++;
+            moves[moves_count] = Move(MOVE(from_square, to_square, capture, B_QUEEN, 0));
+            moves[moves_count] = Move(MOVE(from_square, to_square, capture, B_ROOK, 0));
+            moves[moves_count] = Move(MOVE(from_square, to_square, capture, B_KNIGHT, 0));
+            moves[moves_count] = Move(MOVE(from_square, to_square, capture, B_BISHOP, 0));
+            moves_count += 4;
         }
         else {
-            moves[moves_count].move = MOVE(from_square, to_square, capture, 0, 0); moves_count++;
+            moves[moves_count] = Move(MOVE(from_square, to_square, capture, 0, 0));
+            moves_count++;
         }
     }
 }
 void Move_List_Generator::add_pawn_move(int from_square, int to_square, int side) noexcept
 {
-    //White----
+    // White----
     if (side == WHITE) {
-        //Promotions
+        // Promotions
         if (ranks[from_square] == RANK_7) {
-            moves[moves_count].move = MOVE(from_square, to_square, 0, W_QUEEN, 0); moves_count++;
-            moves[moves_count].move = MOVE(from_square, to_square, 0, W_ROOK, 0); moves_count++;
-            moves[moves_count].move = MOVE(from_square, to_square, 0, W_KNIGHT, 0); moves_count++;
-            moves[moves_count].move = MOVE(from_square, to_square, 0, W_BISHOP, 0); moves_count++;
+            moves[moves_count] = Move(MOVE(from_square, to_square, 0, W_QUEEN, 0));
+            moves[moves_count] = Move(MOVE(from_square, to_square, 0, W_ROOK, 0));
+            moves[moves_count] = Move(MOVE(from_square, to_square, 0, W_KNIGHT, 0));
+            moves[moves_count] = Move(MOVE(from_square, to_square, 0, W_BISHOP, 0));
+            moves_count += 4;
         }
         else {
-            moves[moves_count].move = MOVE(from_square, to_square, 0, 0, 0); moves_count++;
+            moves[moves_count] = Move(MOVE(from_square, to_square, 0, 0, 0));
+            moves_count++;
         }
 
     }
 
-    //Black----
+    // Black----
     else {
-        //Promotions
+        // Promotions
         if (ranks[from_square] == RANK_2) {
-            moves[moves_count].move = MOVE(from_square, to_square, 0, B_QUEEN, 0); moves_count++;
-            moves[moves_count].move = MOVE(from_square, to_square, 0, B_ROOK, 0); moves_count++;
-            moves[moves_count].move = MOVE(from_square, to_square, 0, B_KNIGHT, 0); moves_count++;
-            moves[moves_count].move = MOVE(from_square, to_square, 0, B_BISHOP, 0); moves_count++;
+            moves[moves_count] = Move(MOVE(from_square, to_square, 0, B_QUEEN, 0));
+            moves[moves_count] = Move(MOVE(from_square, to_square, 0, B_ROOK, 0));
+            moves[moves_count] = Move(MOVE(from_square, to_square, 0, B_KNIGHT, 0));
+            moves[moves_count] = Move(MOVE(from_square, to_square, 0, B_BISHOP, 0));
+            moves_count += 4;
         }
         else {
-            moves[moves_count].move = MOVE(from_square, to_square, 0, 0, 0); moves_count++;
+            moves[moves_count] = Move(MOVE(from_square, to_square, 0, 0, 0));
+            moves_count++;
         }
     }
 }
 void Move_List_Generator::generate_pawn_moves(Board_Structure& board)
 {
-    //Go through every square on the board
+    // Go through every square on the board
     for (int i = 0; i < board_square_count; i++) {
 
         if (board.side_to_move == WHITE) {
 
-            //If the current square is a white pawn...
+            // If the current square is a white pawn...
             if (board.pieces[i] == 2) {
 
-                //... and the square in front of it is empty, add a move
+                // ... and the square in front of it is empty, add a move
                 if (board.pieces[i + 10] == 0) {
 
-                    //.. and the pawn is on starting rank
+                    // .. and the pawn is on starting rank
                     if (ranks[i] == RANK_2 && board.pieces[i + 20] == 0) {
                         add_pawn_move(i, i + 20, WHITE);
                     }
 
-                    //.. regardless ...
+                    // .. regardless ...
                     add_pawn_move(i, i + 10, WHITE);
                 }
 
-                //Pawn capturing
+                // Pawn capturing
                 if (board.pieces[i + 9] > 0 && board.get_piece_color(board.pieces[i + 9]) == BLACK) {
                     add_pawn_capturing_move(i, i + 9, board.pieces[i + 9], WHITE);
                 }
@@ -179,7 +164,7 @@ void Move_List_Generator::generate_pawn_moves(Board_Structure& board)
                 }
 
                 if (board.en_pass_square != 0) {
-                    //En passant 
+                    // En passant 
                     if (i + 9 == board.en_pass_square) {
                         add_pawn_capturing_move(i, i + 9, 0, WHITE);
                     }
@@ -187,28 +172,26 @@ void Move_List_Generator::generate_pawn_moves(Board_Structure& board)
                         add_pawn_capturing_move(i, i + 11, 0, WHITE);
                     }
                 }
-
             }
-
         }
         else {
 
-            //If the current square is a black pawn...
+            // If the current square is a black pawn...
             if (board.pieces[i] == 1) {
 
-                //... and the square in front of it is empty, add a move
+                // ... and the square in front of it is empty, add a move
                 if (i >= 10 && board.pieces[i - 10] == 0) {
 
-                    //.. and the pawn is on starting rank
+                    // .. and the pawn is on starting rank
                     if (ranks[i] == RANK_7 && board.pieces[i - 20] == 0) {
                         add_pawn_move(i, i - 20, BLACK);
                     }
 
-                    //.. regardless...
+                    // .. regardless...
                     add_pawn_move(i, i - 10, BLACK);
                 }
 
-                //Pawn capturing
+                // Pawn capturing
                 if (i >= 9 && board.pieces[i - 9] > 0 && board.get_piece_color(board.pieces[i - 9]) == WHITE) {
                     add_pawn_capturing_move(i, i - 9, board.pieces[i - 9], BLACK);
                 }
@@ -218,7 +201,7 @@ void Move_List_Generator::generate_pawn_moves(Board_Structure& board)
                 }
 
                 if (board.en_pass_square != 0) {
-                    //En passant 
+                    // En passant 
                     if (i - 9 == board.en_pass_square) {
                         add_pawn_capturing_move(i, i - 9, 0, BLACK);
                     }
@@ -230,6 +213,7 @@ void Move_List_Generator::generate_pawn_moves(Board_Structure& board)
         }
     }
 }
+
 void Move_List_Generator::generate_slider_moves(Board_Structure& board) noexcept
 {
     int piece_index = sliding_pieces_start_index[board.side_to_move];
@@ -237,38 +221,36 @@ void Move_List_Generator::generate_slider_moves(Board_Structure& board) noexcept
     piece_index++;
 
     while (piece != 0) {
-        //Go through every square on the board
+        // Go through every square on the board
         for (int i = 0; i < board_square_count; i++) {
 
-            //If there is a piece on square i that is a slider piece...
+            // If there is a piece on square i that is a slider piece...
             if (board.pieces[i] == piece) {
 
-                //For each direction...
+                // For each direction...
                 for (int j = 0; j < number_of_directions[piece]; j++) {
                     int temp_square = i + piece_movements[piece][j];
 
-                    //While temp_square is not off board...
+                    // While temp_square is not off board...
                     while (board.pieces[temp_square] != -1) {
 
-                        //If temp_square is not empty, generate a capturing move
+                        // If temp_square is not empty, generate a capturing move
                         if (board.pieces[temp_square] != 0) {
-                            //If temp_square has a piece opposite in color to the piece on square i
-                            //BLACK ^ 1 == WHITE, WHITE ^ 1 == BLACK (^ is the XOR operator)
+                            // If temp_square has a piece opposite in color to the piece on square i
                             if (board.get_piece_color(board.pieces[temp_square]) == (board.side_to_move ^ 1)) {
-                                moves[moves_count].move = MOVE(i, temp_square, board.pieces[temp_square], 0, 0);
+                                moves[moves_count] = Move(MOVE(i, temp_square, board.pieces[temp_square], 0, 0));
                                 moves_count++;
                             }
                             break;
                         }
 
-                        //If temp_square is empty, generate a non capture move 
+                        // If temp_square is empty, generate a non capture move 
                         else if (board.pieces[temp_square] == 0) {
-                            moves[moves_count].move = MOVE(i, temp_square, 0, 0, 0);
+                            moves[moves_count] = Move(MOVE(i, temp_square, 0, 0, 0));
                             moves_count++;
                         }
 
                         temp_square += piece_movements[piece][j];
-
                     }
                 }
             }
@@ -277,8 +259,8 @@ void Move_List_Generator::generate_slider_moves(Board_Structure& board) noexcept
         piece = sliding_pieces[piece_index];
         piece_index++;
     }
-
 }
+
 void Move_List_Generator::generate_non_slider_moves(Board_Structure& board) noexcept
 {
     int piece_index = non_sliding_pieces_start_index[board.side_to_move];
@@ -287,47 +269,38 @@ void Move_List_Generator::generate_non_slider_moves(Board_Structure& board) noex
 
     while (piece != 0) {
 
-        //Go through every square on the board
+        // Go through every square on the board
         for (int i = 0; i < board_square_count; i++) {
 
-            //If there is a piece on square i that is a non slider piece...
+            // If there is a piece on square i that is a non slider piece...
             if (board.pieces[i] == piece) {
 
                 if (piece == 0) {
                     break;
                 }
 
-                //For each direction...
+                // For each direction...
                 for (int j = 0; j < number_of_directions[piece]; j++) {
                     const int tempSquare = i + piece_movements[piece][j];
 
-                    //If temp_square is off board, move on to the next direction
+                    // If temp_square is off board, move on to the next direction
                     if (board.pieces[tempSquare] == -1) {
                         continue;
                     }
 
-                    //If temp_square is not empty, generate a capturing move
+                    // If temp_square is not empty, generate a capturing move
                     if (board.pieces[tempSquare] != 0) {
 
-                        //If temp_square has a piece opposite in color to the piece on square i
-                        //BLACK ^ 1 == WHITE, WHITE ^ 1 == BLACK (^ is the XOR operator)
+                        // If temp_square has a piece opposite in color to the piece on square i
                         if (board.get_piece_color(board.pieces[tempSquare]) == (board.side_to_move ^ 1)) {
-                            //cout << "board.get_piece_color(board.pieces[temp_square])" << board.get_piece_color(board.pieces[temp_square]) << "\n";
-                            //cout << "board.side_to_move:" << board.side_to_move << "\n";
-
-                            moves[moves_count].move = MOVE(i, tempSquare, board.pieces[tempSquare], 0, 0);
+                            moves[moves_count] = Move(MOVE(i, tempSquare, board.pieces[tempSquare], 0, 0));
                             moves_count++;
-
-                            //If king is attacked by the other side when this move is made
-                            //if (board.is_square_attacked(board.king_square[board.side_to_move], board.side_to_move ^ 1)) {
-                                //board.undo_move();
-                            //}
                         }
                     }
 
-                    //If temp_square is empty, generate a non capture move 
+                    // If temp_square is empty, generate a non capture move 
                     else if (board.pieces[tempSquare] == 0) {
-                        moves[moves_count].move = MOVE(i, tempSquare, 0, 0, 0);
+                        moves[moves_count] = Move(MOVE(i, tempSquare, 0, 0, 0));
                         moves_count++;
                     }
                 }
@@ -338,64 +311,66 @@ void Move_List_Generator::generate_non_slider_moves(Board_Structure& board) noex
         piece_index++;
     }
 }
+
 void Move_List_Generator::generate_castling_moves(Board_Structure& board)
 {
     if (board.side_to_move == WHITE) {
-        //White Kingside Castling
+        // White Kingside Castling
         if ((board.castle_perms & 1) && (board.pieces[26] == 0 && board.pieces[27] == 0)) {
             if (!board.is_square_attacked(25, BLACK) && !board.is_square_attacked(26, BLACK) && !board.is_square_attacked(27, BLACK)) {
-                moves[moves_count].move = MOVE(25, 27, 0, 0, 1);
+                moves[moves_count] = Move(MOVE(25, 27, 0, 0, 1));
                 moves_count++;
             }
         }
 
-        //White Queenside Castling
+        // White Queenside Castling
         if ((board.castle_perms & 2) && (board.pieces[22] == 0 && board.pieces[23] == 0 && board.pieces[24] == 0)) {
             if (!board.is_square_attacked(23, BLACK) && !board.is_square_attacked(24, BLACK) && !board.is_square_attacked(25, BLACK)) {
-                moves[moves_count].move = MOVE(25, 23, 0, 0, 2);
+                moves[moves_count] = Move(MOVE(25, 23, 0, 0, 2));
                 moves_count++;
             }
         }
     }
     else {
-        //Black Kingside Castling
+        // Black Kingside Castling
         if ((board.castle_perms & 4) && (board.pieces[96] == 0 && board.pieces[97] == 0)) {
             if (!board.is_square_attacked(95, WHITE) && !board.is_square_attacked(96, WHITE) && !board.is_square_attacked(97, WHITE)) {
-                moves[moves_count].move = MOVE(95, 97, 0, 0, 3);
+                moves[moves_count] = Move(MOVE(95, 97, 0, 0, 3));
                 moves_count++;
             }
         }
         
-        //Black Queenside Castling
+        // Black Queenside Castling
         if ((board.castle_perms & 8) && (board.pieces[92] == 0 && board.pieces[93] == 0 && board.pieces[94] == 0)) {
             if (!board.is_square_attacked(93, WHITE) && !board.is_square_attacked(94, WHITE) && !board.is_square_attacked(95, WHITE)) {
-                moves[moves_count].move = MOVE(95, 93, 0, 0, 4);
+                moves[moves_count] = Move(MOVE(95, 93, 0, 0, 4));
                 moves_count++;
             }
         }
     }
 }
+
 void Move_List_Generator::generate_move_list(Board_Structure& board)
 {
-    //Clear move arrays
+    // Clear move arrays
     for (int i = 0; i <= moves_count; i++) {
-        moves[i].move = 0;
+        moves[i] = Move(0);
     }
 
     moves_count = 0;
 
-    //Generate psuedo-legal moves
+    // Generate psuedo-legal moves
     generate_pawn_moves(board);
     generate_slider_moves(board);
     generate_non_slider_moves(board);
     generate_castling_moves(board);
 
-    //Regenerate position key
+    // Regenerate position key
     board.position_ID = board.generate_and_get_position_ID();
 }
 
-//Prints all of the moves in our move list in algebraic notation
-//MUST be called immediately after generate_move_list() for piece num printing to be accuarate
+// Prints all of the moves in our move list in algebraic notation
+// MUST be called immediately after generate_move_list() for piece num printing to be accuarate
 void Move_List_Generator::print_move_list(const Board_Structure& board)
 {
     const char piece_num_to_char[13] = { ' ', ' ', ' ', 'B', 'B', 'N', 'N', 'R', 'R', 'Q', 'Q', 'K', 'K' };
@@ -407,7 +382,6 @@ void Move_List_Generator::print_move_list(const Board_Structure& board)
         const int prom_piece = moves[i].get_promoted();
 
         cout << "Move " << i << " Found: "; cout << "(piece num: " << board.pieces[from_square] << ")";
-        //cout << "Move " << i << " Found: "; cout << "(piece num: " << board.pieces[from_square] << ")";
 
         if ((moves[i].get_castling() == 1) || (moves[i].get_castling() == 3)) {
             cout << "O-O\n";
@@ -417,11 +391,9 @@ void Move_List_Generator::print_move_list(const Board_Structure& board)
         }
         else {
             cout << piece_num_to_char[board.pieces[moves[i].get_from_square()]];
-            //cout << piece_num_to_char[board.pieces[from_square]];
 
             if (moves[i].get_captured_piece() != 0) {
                 cout << files_to_char[files[moves[i].get_from_square()]] << "x";
-                //cout << files_to_char[files[from_square]] << "x";
             }
 
             print_square(to_square);
@@ -433,22 +405,7 @@ void Move_List_Generator::print_move_list(const Board_Structure& board)
     cout << "# of moves: " << moves_count << "\n\n";
 }
 
-//Prints a move in UCI format given a move number on a move list. E.g. uciPrintMove(board, 4)
-void Move_List_Generator::uci_print_move_given_move_list_number(int move_num)
-{
-    const char piece_num_to_char[13] = { ' ', ' ', ' ', 'B', 'B', 'N', 'N', 'R', 'R', 'Q', 'Q', 'K', 'K' };
-
-    const int fromSquare = moves[move_num].get_from_square();
-    const int toSquare = moves[move_num].get_to_square();
-
-    print_square(fromSquare);
-
-    print_square(toSquare);
-
-    cout << "\n";
-}
-
-//Prints a move in UCI format given a move. E.g. uciPrintMove(board, m)
+// Prints a move in UCI format given a move
 void Move_List_Generator::uci_print_move_given_move(Move m)
 {
     const char piece_num_to_char[13] = { ' ', ' ', ' ', 'B', 'B', 'N', 'N', 'R', 'R', 'Q', 'Q', 'K', 'K' };
@@ -458,15 +415,14 @@ void Move_List_Generator::uci_print_move_given_move(Move m)
 
     print_square(from_square);
     print_square(to_square);
-    //cout << "\n";
 }
 
-//Prints a move in UCI format given a move integer. E.g. uciPrintMove(board, m.move)
+// Prints a move in UCI format given a move integer
 void Move_List_Generator::uci_print_move_given_move_int(int move)
 {
     const char piece_num_to_char[13] = { ' ', ' ', ' ', 'B', 'B', 'N', 'N', 'R', 'R', 'Q', 'Q', 'K', 'K' };
 
-    Move m; m.move = move;
+    Move m(move);
     const int from_square = m.get_from_square();
     const int to_square = m.get_to_square();
 
@@ -475,7 +431,7 @@ void Move_List_Generator::uci_print_move_given_move_int(int move)
     cout << "\n";
 }
 
-//Checks if a move integer is contained in the generated movelist and is valid
+// Checks if a move integer is contained in the generated movelist and is valid
 bool Move_List_Generator::is_move_valid(Board_Structure& board, int move)
 {
     const int from_square = move & 0x7F;
@@ -498,7 +454,7 @@ bool Move_List_Generator::is_move_valid(Board_Structure& board, int move)
             continue;
         }
         board.undo_move();
-        if (moves[i].move == move) {
+        if (moves[i].move() == move) {
             return true;
         }
     }

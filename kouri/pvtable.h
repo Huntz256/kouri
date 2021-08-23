@@ -3,14 +3,14 @@
 #include "board.h"
 #include "misc.h"
 
-//Principal variation entity
+// Principal variation entity
 class PV_Entity {
 public:
     int move;
     U64 position_ID;
 };
 
-//Principal variation table: contains many pv entities
+// Principal variation table: contains many pv entities
 class PV_Table {
 public:
     PV_Entity pv_table[2048];
@@ -24,7 +24,7 @@ public:
 
 };
 
-//A principal variation array
+// A principal variation array
 extern int pv_array[64];
 
 extern PV_Table table;

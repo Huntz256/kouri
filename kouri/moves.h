@@ -2,18 +2,22 @@
 
 #include "board.h"
 
-//Move class represents a move
+// Move class represents a move
 class Move {
 public:
-    int move; //Stores all infomation regarding a single move
+    Move() noexcept { move_ = 0; };
+    Move(int move) noexcept : move_{move} {};
     int get_from_square() noexcept;
     int get_to_square() noexcept;
     int get_captured_piece() noexcept;
     int get_promoted() noexcept;
     int get_castling() noexcept;
+    int move() noexcept { return move_; }
+private:
+    int move_; // Stores all information regarding a single move
 };
 
-//Contains all move generation functions
+// Contains all move generation functions
 class Move_List_Generator {
 public:
     Move moves[2048];
@@ -27,7 +31,6 @@ public:
     void add_pawn_capturing_move(int from_square, int to_square, int capture, int side);
     void add_pawn_move(int from_square, int to_square, int side) noexcept;
     void print_move_list(const Board_Structure& board);
-    void uci_print_move_given_move_list_number(int move_num);
     void uci_print_move_given_move(Move m);
     void uci_print_move_given_move_int(int move);
 
@@ -36,5 +39,3 @@ public:
 };
 
 extern Move_List_Generator move_list;
-
-void test_is_square_attacked(int side, Board_Structure& board);

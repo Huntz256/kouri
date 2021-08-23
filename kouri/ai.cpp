@@ -15,9 +15,9 @@
 using namespace std;
 
 // Piece square tables
-// These are used in evaluation to assign values to specific pieces on specific locations.
+// These are used in evaluation to assign values to specific pieces on specific locations
 
-// The d2 and e2 pawns should advance before the other pawns. 
+// The d2 and e2 pawns should advance before the other pawns
 const int pawn_table[64] = {
     0,   0,  0,  0,    0,  0,  0,  0,
     10, 10,  0, -10, -10,  0, 10, 10,
@@ -54,7 +54,7 @@ const int bishop_table[64] = {
 };
 
 // Rooks should be in the center files or the
-// 7th rank if possible.
+// 7th rank if possible
 const int rook_table[64] = {
     0,   0,  5, 10, 10,  5,  0,  0,
     0,   0,  5, 10, 10,  5,  0,  0,
@@ -77,13 +77,13 @@ const int mirror_64[64] = {
      0,  1,  2,  3,  4,  5,  6,  7
 };
 
-//Inits AI. This is called in find_best_move().
+// Inits AI. This is called in find_best_move()
 void AI::init(Board_Structure& board) noexcept
 {
     // Reset best_move_ to no move
-    best_move_.move = 0;
+    best_move_ = Move(0);
 
-    //Note that histPly stores # of half-moves for the entire game,
+    // Note that histPly stores # of half-moves for the entire game,
     // while ply stores # of half-moves for the current search
     board.ply = 0;
 
@@ -92,29 +92,29 @@ void AI::init(Board_Structure& board) noexcept
     eval_count_ = 0;
 }
 
-//Returns the best move found by the negamax function
+// Returns the best move found by the negamax function
 Move AI::find_best_move(Board_Structure& board, int depth)
 {
     int best_score = -infinity, pv_moves_count = 0;
 
-    //Clock to retrieve system time
+    // Clock to retrieve system time
     clock_t timer = clock();
 
-    //Inits the AI
+    // Init the AI
     init(board);
 
-    //Negamax searches for the best move
+    // Search for the best move using negamax
     best_score = negamax(-infinity, infinity, board, depth);
 
-    //Print the best move
+    // Print the best move
     if (!uci_mode) {
         cout << "best_move_ is:"; move_list.uci_print_move_given_move(best_move_);
     }
 
-    //Fill pv_array and get number of moves in pv
+    // Fill pv_array and get number of moves in pv
     pv_moves_count = table.get_PV_line(board, depth);
 
-    //Find time difference between previously retrieved system time and current time
+    // Find time difference between previously retrieved system time and current time
     timer = clock() - timer;
 
     if (!uci_mode) {
@@ -124,7 +124,7 @@ Move AI::find_best_move(Board_Structure& board, int depth)
         cout << "\nNumber of nodes scanned: " << node_count_ << ". Number of evaluations made: " << eval_count_ << ".\n";
         cout << "Total calculation time: " << ((float)timer) / CLOCKS_PER_SEC << " seconds. \n"; //Convert clock_t object to time in seconds and print out
 
-        //Print the pv (principal variation)
+        // Print the pv (principal variation)
         cout << "\nPrincipal variation is:\n";
         for (int i = 0; i < pv_moves_count; i++) {
             move_list.uci_print_move_given_move_int(pv_array[i]);
@@ -134,41 +134,41 @@ Move AI::find_best_move(Board_Structure& board, int depth)
     return best_move_;
 }
 
-// Negamax with alpha-beta pruning.
+// Negamax with alpha-beta pruning
 // Searches recursively for the best move in the board position given by 
-// the parameter board.
+// the parameter board
 int AI::negamax(int alpha, int beta, Board_Structure& board, int depth)
 {
     node_count_++;
 
-    //If depth == 0 or ply too high, go back up the tree
+    // If depth == 0 or ply too high, go back up the tree
     if (depth == 0 || board.ply > 63) {
         eval_count_++;
         return evaluate(board);
     }
 
-    //If this is a tie, return 0
+    // If this is a tie, return 0
     if (board.is_repetition()) {
         return 0;
     }
 
-    //Generate all moves for this position
+    // Generate all moves for this position
     Move_List_Generator gen1;
     gen1.generate_move_list(board);
 
-    //Default best move
+    // Default best move
     if (depth == max_depth) {
         best_move_ = gen1.moves[0];
     }
 
-    Move pv_best_move; pv_best_move.move = 0;
+    Move pv_best_move(0);
     int legal_moves_count = 0, score = -infinity;
     const int old_alpha = alpha;
 
-    //Go through all of the generated moves
+    // Go through all of the generated moves
     for (int i = 0; i < gen1.moves_count; i++) {
 
-        //Make move i. If move i is invalid, go to the next move in the move list
+        // Make move i. If move i is invalid, go to the next move in the move list
         if (!board.make_move(gen1.moves[i])) {
             if (!uci_mode && depth == max_depth) {
                 cout << "\ni:" << i << " move ";
@@ -177,23 +177,23 @@ int AI::negamax(int alpha, int beta, Board_Structure& board, int depth)
             continue;
         }
 
-        //If move i is valid (legal), continue and increment legal counter
+        // If move i is valid (legal), continue and increment legal counter
         legal_moves_count++;
 
-        //Print what kouri is thinking about
+        // Print what kouri is thinking about
         if (!uci_mode && depth == max_depth) {
             cout << "\ni:" << i << " thinking about valid move ";
             gen1.uci_print_move_given_move(gen1.moves[i]); cout << "...";
         }
 
-        //Call negaMax() to get the move's score
+        // Call negamax() to get the move's score
         score = -negamax(-beta, -alpha, board, depth - 1);
 
         if (!uci_mode && depth == max_depth) {
             cout << " score: " << score;
         }
 
-        //Undo the move we just made
+        // Undo the move we just made
         board.undo_move();
 
         if (score > alpha) {
@@ -215,38 +215,38 @@ int AI::negamax(int alpha, int beta, Board_Structure& board, int depth)
 
     }
 
-    //What if there are no legal moves found? We must be in checkmate or stalemate!
+    // What if there are no legal moves found? We must be in checkmate or stalemate!
     if (legal_moves_count == 0) {
 
-        //If our king is attacked, it is checkmate! Game over.
+        // If our king is attacked, it is checkmate! Game over
         if (board.is_square_attacked(board.king_square[board.side_to_move], board.side_to_move ^ 1)) {
 
-            //Note that adding board.ply means that a mate in 3 is better than a mate in 6
+            // Note that adding board.ply means that a mate in 3 is better than a mate in 6
             return -mate + board.ply;
         }
 
-        //Otherwise, it is stalemate. Good game.
+        // Otherwise, it is stalemate. Good game
         else {
             return 0;
         }
 
     }
 
-    //Store the best move in pv table
+    // Store the best move in pv table
     if (alpha != old_alpha) {
-        table.store_PV_move(board, pv_best_move.move);
+        table.store_PV_move(board, pv_best_move.move());
     }
 
     return alpha;
 }
 
-// Returns an an evaluation of the board.
+// Returns an an evaluation of the board
 //  - A positive score represents a board in favor of the size to move, while a negative score means that
-//  the other side has an advantage.
-//  - Material: See piece_value[]. A pawn is worth 100 points, a bishop 300 points, etc.
+//  the other side has an advantage
+//  - Material: See piece_value[]. A pawn is worth 100 points, a bishop 300 points, etc
 int AI::evaluate(Board_Structure& board)
 {
-    //Evaluate material
+    // Evaluate material
     board.count_pieces();
     const int material_score = piece_value[12] * (board.piece_count[W_KING] - board.piece_count[B_KING])
         + piece_value[10] * (board.piece_count[W_QUEEN] - board.piece_count[B_QUEEN])
@@ -254,7 +254,7 @@ int AI::evaluate(Board_Structure& board)
         + piece_value[6] * (board.piece_count[W_BISHOP] - board.piece_count[B_BISHOP] + board.piece_count[W_KNIGHT] - board.piece_count[B_KNIGHT])
         + piece_value[2] * (board.piece_count[W_PAWN] - board.piece_count[B_PAWN]);
 
-    //Evaluate position
+    // Evaluate position
     int positional_score = 0;
     for (int i = 21; i < 98; i++) {
         if (ranks[i] != -1) {
@@ -306,7 +306,7 @@ vector<int> AI::get_eval_breakdown(Board_Structure& board)
 {
     vector<int> evaluation;
 
-    //Evaluate material
+    // Evaluate material
     board.count_pieces();
     const int material_score = piece_value[12] * (board.piece_count[W_KING] - board.piece_count[B_KING])
         + piece_value[10] * (board.piece_count[W_QUEEN] - board.piece_count[B_QUEEN])
@@ -314,7 +314,7 @@ vector<int> AI::get_eval_breakdown(Board_Structure& board)
         + piece_value[6] * (board.piece_count[W_BISHOP] - board.piece_count[B_BISHOP] + board.piece_count[W_KNIGHT] - board.piece_count[B_KNIGHT])
         + piece_value[2] * (board.piece_count[W_PAWN] - board.piece_count[B_PAWN]);
 
-    //Evaluate position
+    // Evaluate position
     int positional_score = 0;
     for (int i = 21; i < 98; i++) {
         if (ranks[i] != -1) {

@@ -37,10 +37,10 @@ public:
     int node_count() noexcept { return node_count_; };
     int best_move_score() noexcept { return best_move_score_; };
 private:
-    int node_count_; //Number of nodes scanned for a search
-    int eval_count_; //Number of evaluations done for a search
-    Move best_move_;
-    int best_move_score_; //For UCI info command
+    int node_count_ = 0; // Number of nodes scanned for a search
+    int eval_count_ = 0; // Number of evaluations done for a search
+    Move best_move_ = Move(0);
+    int best_move_score_ = 0; // For UCI info command
 };
 
 extern AI ai;
