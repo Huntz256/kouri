@@ -373,7 +373,7 @@ void Move_List_Generator::generate_move_list(Board_Structure& board)
 // MUST be called immediately after generate_move_list() for piece num printing to be accuarate
 void Move_List_Generator::print_move_list(const Board_Structure& board)
 {
-    const char piece_num_to_char[13] = { ' ', ' ', ' ', 'B', 'B', 'N', 'N', 'R', 'R', 'Q', 'Q', 'K', 'K' };
+    const char piece_num_to_char[13] = { '\0', '\0', '\0', 'B', 'B', 'N', 'N', 'R', 'R', 'Q', 'Q', 'K', 'K' };
 
     for (int i = 0; i < moves_count; i++) {
         const int from_square = moves[i].get_from_square();
@@ -381,7 +381,7 @@ void Move_List_Generator::print_move_list(const Board_Structure& board)
         const int cap_piece = moves[i].get_captured_piece();
         const int prom_piece = moves[i].get_promoted();
 
-        cout << "Move " << i << " Found: "; cout << "(piece num: " << board.pieces[from_square] << ")";
+        cout << "Move " << i << " Found: ";
 
         if ((moves[i].get_castling() == 1) || (moves[i].get_castling() == 3)) {
             cout << "O-O\n";
@@ -406,7 +406,7 @@ void Move_List_Generator::print_move_list(const Board_Structure& board)
 }
 
 // Prints a move in UCI format given a move
-void Move_List_Generator::uci_print_move_given_move(Move m)
+void Move_List_Generator::print_move_uci(Move m)
 {
     const char piece_num_to_char[13] = { ' ', ' ', ' ', 'B', 'B', 'N', 'N', 'R', 'R', 'Q', 'Q', 'K', 'K' };
 
@@ -417,18 +417,28 @@ void Move_List_Generator::uci_print_move_given_move(Move m)
     print_square(to_square);
 }
 
-// Prints a move in UCI format given a move integer
-void Move_List_Generator::uci_print_move_given_move_int(int move)
+// Prints a move in algebraic notation given a move
+void Move_List_Generator::print_move_algebraic(Move m, const Board_Structure& board)
 {
-    const char piece_num_to_char[13] = { ' ', ' ', ' ', 'B', 'B', 'N', 'N', 'R', 'R', 'Q', 'Q', 'K', 'K' };
-
-    Move m(move);
+    const char piece_num_to_char[13] = {'\0', '\0', '\0', 'B', 'B', 'N', 'N', 'R', 'R', 'Q', 'Q', 'K', 'K'};
     const int from_square = m.get_from_square();
     const int to_square = m.get_to_square();
 
-    print_square(from_square);
-    print_square(to_square);
-    cout << "\n";
+    if ((m.get_castling() == 1) || (m.get_castling() == 3)) {
+        cout << "O-O\n";
+    }
+    else if ((m.get_castling() == 2) || (m.get_castling() == 4)) {
+        cout << "O-O-O\n";
+    }
+    else {
+        cout << piece_num_to_char[board.pieces[m.get_from_square()]];
+
+        if (m.get_captured_piece() != 0) {
+            cout << files_to_char[files[m.get_from_square()]] << "x";
+        }
+
+        print_square(to_square);
+    }
 }
 
 // Checks if a move integer is contained in the generated movelist and is valid

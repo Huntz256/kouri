@@ -260,7 +260,7 @@ void test_player_vs_player()
             ///max = table.get_PV_line(board, 4);
             cout << "max: " << max << "\n";
             for (int i = 0; i < max; i++) {
-                move_list.uci_print_move_given_move(Move(pv_array[i]));
+                move_list.print_move_uci(Move(pv_array[i]));
             }
         }
         else {
@@ -295,6 +295,12 @@ int test_fen()
         board.display_board();
         move_list.generate_move_list(board);
         move_list.print_move_list(board);
+
+        cout << "Best move: ";
+        uci_mode = true;
+        move_list.print_move_algebraic(Move(ai.find_best_move(board, ai.max_depth)), board);
+        uci_mode = false;
+
         cout << "\nGive me a valid FEN string:\n";
         getline(cin, fen);
     }
@@ -342,7 +348,7 @@ void test_promotion()
     board.display_board();
     pause();
 
-    Move m(MOVE(87, 98, B_ROOK, W_QUEEN, 0));
+    const Move m(MOVE(87, 98, B_ROOK, W_QUEEN, 0));
     board.make_move(m);
     board.display_board();
     pause();
@@ -443,10 +449,10 @@ void uci_interface(string in)
             const Move m = ai.find_best_move(board, ai.max_depth);
 
             cout << "info depth " << ai.max_depth << " score cp " << ai.best_move_score() << " nodes " << ai.node_count() << " pv ";
-            move_list.uci_print_move_given_move(m);
+            move_list.print_move_uci(m);
 
             cout << "\nbestmove ";
-            move_list.uci_print_move_given_move(m);
+            move_list.print_move_uci(m);
             cout << "\n";
         }
         else if (uci_command.substr(0, 4) == "undo") { // For debugging purposes - not an official UCI command

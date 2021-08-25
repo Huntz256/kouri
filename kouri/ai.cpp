@@ -108,7 +108,8 @@ Move AI::find_best_move(Board_Structure& board, int depth)
 
     // Print the best move
     if (!uci_mode) {
-        cout << "best_move_ is:"; move_list.uci_print_move_given_move(best_move_);
+        cout << "\nbest_move_ is:";
+        move_list.print_move_uci(best_move_);
     }
 
     // Fill pv_array and get number of moves in pv
@@ -119,7 +120,7 @@ Move AI::find_best_move(Board_Structure& board, int depth)
 
     if (!uci_mode) {
         cout << "\n\nI, " << name << ", have decided to make move ";
-        move_list.uci_print_move_given_move(best_move_);
+        move_list.print_move_uci(best_move_);
         cout << " after searching to depth " << ai.max_depth << ".\n";
         cout << "\nNumber of nodes scanned: " << node_count_ << ". Number of evaluations made: " << eval_count_ << ".\n";
         cout << "Total calculation time: " << ((float)timer) / CLOCKS_PER_SEC << " seconds. \n"; //Convert clock_t object to time in seconds and print out
@@ -127,7 +128,8 @@ Move AI::find_best_move(Board_Structure& board, int depth)
         // Print the pv (principal variation)
         cout << "\nPrincipal variation is:\n";
         for (int i = 0; i < pv_moves_count; i++) {
-            move_list.uci_print_move_given_move_int(pv_array[i]);
+            move_list.print_move_uci(Move(pv_array[i]));
+            cout << "\n";
         }
     }
 
@@ -172,7 +174,7 @@ int AI::negamax(int alpha, int beta, Board_Structure& board, int depth)
         if (!board.make_move(gen1.moves[i])) {
             if (!uci_mode && depth == max_depth) {
                 cout << "\ni:" << i << " move ";
-                gen1.uci_print_move_given_move(gen1.moves[i]); cout << " is invalid.";
+                gen1.print_move_uci(gen1.moves[i]); cout << " is invalid.";
             }
             continue;
         }
@@ -183,7 +185,7 @@ int AI::negamax(int alpha, int beta, Board_Structure& board, int depth)
         // Print what kouri is thinking about
         if (!uci_mode && depth == max_depth) {
             cout << "\ni:" << i << " thinking about valid move ";
-            gen1.uci_print_move_given_move(gen1.moves[i]); cout << "...";
+            gen1.print_move_uci(gen1.moves[i]); cout << "...";
         }
 
         // Call negamax() to get the move's score
@@ -208,7 +210,7 @@ int AI::negamax(int alpha, int beta, Board_Structure& board, int depth)
                 best_move_score_ = score;
                 if (!uci_mode) {
                     cout << "\nSetting best_move_ to ";
-                    gen1.uci_print_move_given_move(gen1.moves[i]);
+                    gen1.print_move_uci(gen1.moves[i]);
                 }
             }
         }
