@@ -28,7 +28,7 @@ constexpr int square_ID_64[board_square_count] = {
 
 class AI {
 public:
-    void init(Board_Structure& board) noexcept; // Init AI by clearing the PV table and other variables
+    void init(Board_Structure& board); // Init AI by clearing the PV table and other variables
     int evaluate(Board_Structure& board); // Does a basic evaluation of a board from the perspective of the size to move
     std::vector<int> get_eval_breakdown(Board_Structure& board); // Gets the evaluation of the board but as a vector
     int negamax(int alpha, int beta, Board_Structure& board, int depth); // Negamax algorithm with alpha-beta pruning

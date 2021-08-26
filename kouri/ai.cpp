@@ -78,10 +78,12 @@ const int mirror_64[64] = {
 };
 
 // Inits AI. This is called in find_best_move()
-void AI::init(Board_Structure& board) noexcept
+void AI::init(Board_Structure& board)
 {
-    // Reset best_move_ to no move
-    best_move_ = Move(0);
+    // Set default best move
+    Move_List_Generator gen1;
+    gen1.generate_move_list(board);
+    best_move_ = gen1.moves[0];
 
     // Note that histPly stores # of half-moves for the entire game,
     // while ply stores # of half-moves for the current search
@@ -95,7 +97,7 @@ void AI::init(Board_Structure& board) noexcept
 // Returns the best move found by the negamax function
 Move AI::find_best_move(Board_Structure& board, int depth)
 {
-    int best_score = -infinity, pv_moves_count = 0;
+    int pv_moves_count = 0;
 
     // Clock to retrieve system time
     clock_t timer = clock();
@@ -104,7 +106,7 @@ Move AI::find_best_move(Board_Structure& board, int depth)
     init(board);
 
     // Search for the best move using negamax
-    best_score = negamax(-infinity, infinity, board, depth);
+    best_move_score_ = negamax(-infinity, infinity, board, depth);
 
     // Print the best move
     if (!uci_mode) {
@@ -157,11 +159,6 @@ int AI::negamax(int alpha, int beta, Board_Structure& board, int depth)
     // Generate all moves for this position
     Move_List_Generator gen1;
     gen1.generate_move_list(board);
-
-    // Default best move
-    if (depth == max_depth) {
-        best_move_ = gen1.moves[0];
-    }
 
     Move pv_best_move(0);
     int legal_moves_count = 0, score = -infinity;
