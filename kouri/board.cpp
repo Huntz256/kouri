@@ -681,15 +681,16 @@ void Board_Structure::count_pieces() noexcept
     }
 }
 
-// Has this position occured before in the game? If yes, return true. Used for checking threefold repetition
-bool Board_Structure::is_repetition() noexcept
+// Has a position occured at least three times during the game? If yes, return true.
+bool Board_Structure::is_threefold_repetition() noexcept
 {
+    int count = 1;
     for (int i = 0; i < history_ply - 1; i++) {
         if (position_ID == history[i].position_ID) {
-            return true;
+            count++;
         }
     }
-    return false;
+    return count >= 3;
 }
 
 // Generate and return a position id representing this board's position

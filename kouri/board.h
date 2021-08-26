@@ -69,7 +69,7 @@ public:
     void display_history(); // Displays all the moves so far as move integers
     bool is_square_attacked(int square, int attacking_side); // Returns true if square square is being attacked by a piece from the side attacking_side
     void count_pieces() noexcept; // Counts all the pieces on the board and records them in the piece_count[] array
-    bool is_repetition() noexcept; // Has this position occured before in the game? If yes, return true.  Used for checking threefold repetition
+    bool is_threefold_repetition() noexcept; // Has a position occured at least three times during the game? If yes, return true.
     U64 generate_and_get_position_ID() noexcept; // Generate and return a position id representing this board's position. Used for checking threefold repetition
     bool is_board_valid(); // Looks at some aspects of the board and returns false if there is something wrong with the current board
 };

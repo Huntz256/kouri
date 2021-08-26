@@ -274,8 +274,8 @@ void test_player_vs_player()
             }
         }
 
-        if (board.is_repetition()) {
-            cout << "REP REP REP REP REP REP REP REP. \n";
+        if (board.is_threefold_repetition()) {
+            cout << "Threefold repetition \n";
         }
     }
 }

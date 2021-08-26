@@ -149,8 +149,8 @@ int AI::negamax(int alpha, int beta, Board_Structure& board, int depth)
         return evaluate(board);
     }
 
-    // If this is a tie, return 0
-    if (board.is_repetition()) {
+    // If threefold repetition, assume the game is a draw
+    if (board.is_threefold_repetition()) {
         return 0;
     }
 
@@ -220,14 +220,14 @@ int AI::negamax(int alpha, int beta, Board_Structure& board, int depth)
     // What if there are no legal moves found? We must be in checkmate or stalemate!
     if (legal_moves_count == 0) {
 
-        // If our king is attacked, it is checkmate! Game over
+        // If our king is attacked, it is checkmate!
         if (board.is_square_attacked(board.king_square[board.side_to_move], board.side_to_move ^ 1)) {
 
-            // Note that adding board.ply means that a mate in 3 is better than a mate in 6
+            // Adding board.ply means that a mate in 3 is better than a mate in 6
             return -mate + board.ply;
         }
 
-        // Otherwise, it is stalemate. Good game
+        // Otherwise, it is stalemate and the game is a draw
         else {
             return 0;
         }
